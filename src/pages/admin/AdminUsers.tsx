@@ -55,6 +55,7 @@ const AdminUsers = () => {
     first_name: '',
     last_name: '',
     address: '',
+    address_complement: '',
     city: '',
     postal_code: '',
     country: 'France',
@@ -77,6 +78,7 @@ const AdminUsers = () => {
         first_name: profile.first_name || '',
         last_name: profile.last_name || '',
         address: profile.address || '',
+        address_complement: (profile as any).address_complement || '',
         city: profile.city || '',
         postal_code: profile.postal_code || '',
         country: profile.country || 'France',
@@ -108,6 +110,7 @@ const AdminUsers = () => {
       first_name: '',
       last_name: '',
       address: '',
+      address_complement: '',
       city: '',
       postal_code: '',
       country: 'France',
@@ -266,13 +269,16 @@ const AdminUsers = () => {
                       <div className="font-medium">
                         {profile?.first_name} {profile?.last_name}
                       </div>
-                      {profile?.address && (
-                        <div className="text-sm text-muted-foreground space-y-1">
-                          <div>{profile.address}</div>
-                          <div>{profile.postal_code} {profile.city}</div>
-                          <div>{profile.country}</div>
-                        </div>
-                      )}
+                       {profile?.address && (
+                         <div className="text-sm text-muted-foreground space-y-1">
+                           <div>{profile.address}</div>
+                           {(profile as any).address_complement && (
+                             <div>{(profile as any).address_complement}</div>
+                           )}
+                           <div>{profile.postal_code} {profile.city}</div>
+                           <div>{profile.country}</div>
+                         </div>
+                       )}
                       {!profile?.address && (
                         <div className="text-sm text-muted-foreground italic">
                           Aucune adresse par défaut définie
@@ -349,15 +355,24 @@ const AdminUsers = () => {
                     <CardTitle className="text-lg">Adresse par défaut</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
-                    <div>
-                      <Label htmlFor="address">Adresse</Label>
-                      <Input
-                        id="address"
-                        value={profileForm.address}
-                        onChange={(e) => setProfileForm(prev => ({ ...prev, address: e.target.value }))}
-                        placeholder="123 Rue de la Paix"
-                      />
-                    </div>
+                     <div>
+                       <Label htmlFor="address">Adresse</Label>
+                       <Input
+                         id="address"
+                         value={profileForm.address}
+                         onChange={(e) => setProfileForm(prev => ({ ...prev, address: e.target.value }))}
+                         placeholder="123 Rue de la Paix"
+                       />
+                     </div>
+                     <div>
+                       <Label htmlFor="address_complement">Complément d'adresse</Label>
+                       <Input
+                         id="address_complement"
+                         value={profileForm.address_complement}
+                         onChange={(e) => setProfileForm(prev => ({ ...prev, address_complement: e.target.value }))}
+                         placeholder="Bâtiment A, Apt 4"
+                       />
+                     </div>
                     <div className="grid grid-cols-3 gap-4">
                       <div>
                         <Label htmlFor="postal_code">Code postal</Label>

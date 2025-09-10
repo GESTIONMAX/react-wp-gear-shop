@@ -403,6 +403,7 @@ export type Database = {
       profiles: {
         Row: {
           address: string | null
+          address_complement: string | null
           avatar_url: string | null
           city: string | null
           country: string | null
@@ -421,6 +422,7 @@ export type Database = {
         }
         Insert: {
           address?: string | null
+          address_complement?: string | null
           avatar_url?: string | null
           city?: string | null
           country?: string | null
@@ -439,6 +441,7 @@ export type Database = {
         }
         Update: {
           address?: string | null
+          address_complement?: string | null
           avatar_url?: string | null
           city?: string | null
           country?: string | null
