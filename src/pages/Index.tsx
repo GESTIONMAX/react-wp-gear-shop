@@ -1,7 +1,5 @@
 import React from 'react';
-import Header from '@/components/Header';
 import Hero from '@/components/Hero';
-import Footer from '@/components/Footer';
 import { ProductCard } from '@/components/ProductCard';
 import { ProductFilters } from '@/components/ProductFilters';
 import { Badge } from '@/components/ui/badge';
@@ -17,8 +15,6 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <Header />
-      
       {/* Hero Section */}
       <Hero />
       
@@ -170,8 +166,6 @@ const Index = () => {
           </div>
         </div>
       </section>
-
-      <Footer />
     </div>
   );
 };
