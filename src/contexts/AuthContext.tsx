@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
+import { clearAuthData, recoverFromTokenError } from '@/utils/authRecovery';
 
 interface AuthContextType {
   user: User | null;
@@ -23,17 +24,39 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   useEffect(() => {
     // Set up auth state listener FIRST
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
-        setSession(session);
-        setUser(session?.user ?? null);
+      async (event, session) => {
+        console.log('Auth state change:', event, session);
+        
+        if (event === 'SIGNED_OUT' || event === 'TOKEN_REFRESHED') {
+          setSession(session);
+          setUser(session?.user ?? null);
+        } else if (event === 'SIGNED_IN') {
+          setSession(session);
+          setUser(session?.user ?? null);
+        }
         setLoading(false);
       }
     );
 
     // THEN check for existing session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
+    supabase.auth.getSession().then(({ data: { session }, error }) => {
+      if (error) {
+        console.error('Session error:', error);
+        
+        // Handle specific refresh token errors
+        if (error.message.includes('refresh') && error.message.includes('not found')) {
+          console.log('Invalid refresh token detected, clearing auth data');
+          recoverFromTokenError();
+          return;
+        }
+        
+        // Clear any invalid session data
+        setSession(null);
+        setUser(null);
+      } else {
+        setSession(session);
+        setUser(session?.user ?? null);
+      }
       setLoading(false);
     });
 
@@ -66,7 +89,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const signOut = async () => {
+    // Clear localStorage tokens before signing out
+    clearAuthData();
     await supabase.auth.signOut();
+    // Force clear state
+    setSession(null);
+    setUser(null);
   };
 
   const resetPassword = async (email: string) => {
