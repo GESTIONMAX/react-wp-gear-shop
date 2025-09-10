@@ -13,6 +13,7 @@ import Auth from "./pages/Auth";
 import Account from "./pages/Account";
 import Blog from "./pages/Blog";
 import AdminDashboard from "./pages/admin/AdminDashboard";
+import AdminUsers from "./pages/admin/AdminUsers";
 import ProtectedRoute from "./components/admin/ProtectedRoute";
 import Checkout from "./pages/Checkout";
 import OrderSuccess from "./pages/OrderSuccess";
@@ -35,9 +36,14 @@ const App = () => (
               <Route path="/blog" element={<Blog />} />
               <Route path="/auth" element={<Auth />} />
               <Route path="/account" element={<Account />} />
-              <Route path="/admin/*" element={
+              <Route path="/admin" element={
                 <ProtectedRoute>
                   <AdminDashboard />
+                </ProtectedRoute>
+              } />
+              <Route path="/admin/users" element={
+                <ProtectedRoute>
+                  <AdminUsers />
                 </ProtectedRoute>
               } />
               <Route path="/checkout" element={<Checkout />} />
