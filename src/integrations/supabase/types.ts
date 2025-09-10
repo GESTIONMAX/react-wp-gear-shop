@@ -342,6 +342,33 @@ export type Database = {
         }
         Relationships: []
       }
+      profiles_audit_log: {
+        Row: {
+          action: string | null
+          id: string
+          ip_address: unknown | null
+          timestamp: string | null
+          user_agent: string | null
+          user_id: string | null
+        }
+        Insert: {
+          action?: string | null
+          id?: string
+          ip_address?: unknown | null
+          timestamp?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          action?: string | null
+          id?: string
+          ip_address?: unknown | null
+          timestamp?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       shopping_cart: {
         Row: {
           created_at: string
@@ -395,6 +422,10 @@ export type Database = {
       generate_order_number: {
         Args: Record<PropertyKey, never>
         Returns: string
+      }
+      validate_profile_access: {
+        Args: { profile_user_id: string }
+        Returns: boolean
       }
     }
     Enums: {
