@@ -21,15 +21,18 @@ import {
   Calendar,
   ShoppingBag,
   FileText,
-  LogOut
+  LogOut,
+  Receipt
 } from 'lucide-react';
 import { useOrders } from '@/hooks/useOrders';
+import { useInvoices } from '@/hooks/useInvoices';
 import { toast } from '@/hooks/use-toast';
 
 const Account = () => {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
   const { data: orders, isLoading } = useOrders();
+  const { data: invoices, isLoading: invoicesLoading } = useInvoices();
   const [activeTab, setActiveTab] = useState('dashboard');
 
   if (!user) {
@@ -55,6 +58,17 @@ const Account = () => {
       cancelled: { label: 'Annulé', variant: 'destructive' as const },
     };
     const config = statusConfig[status as keyof typeof statusConfig] || statusConfig.pending;
+    return <Badge variant={config.variant}>{config.label}</Badge>;
+  };
+
+  const getInvoiceStatusBadge = (status: string) => {
+    const statusConfig = {
+      draft: { label: 'Brouillon', variant: 'secondary' as const },
+      sent: { label: 'Envoyée', variant: 'default' as const },
+      paid: { label: 'Payée', variant: 'default' as const },
+      cancelled: { label: 'Annulée', variant: 'destructive' as const },
+    };
+    const config = statusConfig[status as keyof typeof statusConfig] || statusConfig.draft;
     return <Badge variant={config.variant}>{config.label}</Badge>;
   };
 
@@ -126,7 +140,7 @@ const Account = () => {
           </div>
 
           <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-8">
-            <TabsList className="grid grid-cols-4 lg:w-[480px] mb-2 gap-2">
+            <TabsList className="grid grid-cols-5 lg:w-[600px] mb-2 gap-2">
               <TabsTrigger value="dashboard" className="flex items-center gap-2 py-3 px-3">
                 <User className="h-4 w-4" />
                 <span className="hidden sm:inline">Tableau de bord</span>
@@ -134,6 +148,10 @@ const Account = () => {
               <TabsTrigger value="orders" className="flex items-center gap-2 py-3 px-3">
                 <Package className="h-4 w-4" />
                 <span className="hidden sm:inline">Commandes</span>
+              </TabsTrigger>
+              <TabsTrigger value="invoices" className="flex items-center gap-2 py-3 px-3">
+                <Receipt className="h-4 w-4" />
+                <span className="hidden sm:inline">Factures</span>
               </TabsTrigger>
               <TabsTrigger value="profile" className="flex items-center gap-2 py-3 px-3">
                 <Settings className="h-4 w-4" />
@@ -296,6 +314,65 @@ const Account = () => {
                       <Button className="mt-4" onClick={() => navigate('/')}>
                         Passer votre première commande
                       </Button>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="invoices" className="space-y-8 mt-8">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Mes Factures</CardTitle>
+                  <CardDescription>
+                    Historique complet de vos factures
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  {invoicesLoading ? (
+                    <div className="text-center py-8">
+                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
+                      <p className="text-sm text-muted-foreground mt-2">Chargement...</p>
+                    </div>
+                  ) : invoices && invoices.length > 0 ? (
+                    <div className="space-y-4">
+                      {invoices.map((invoice) => (
+                        <Card key={invoice.id} className="border-l-4 border-l-secondary">
+                          <CardContent className="p-6">
+                            <div className="flex items-start justify-between mb-4">
+                              <div>
+                                <h4 className="font-semibold text-lg flex items-center gap-2">
+                                  <Receipt className="h-5 w-5" />
+                                  Facture {invoice.invoice_number}
+                                </h4>
+                                <p className="text-sm text-muted-foreground flex items-center mt-1">
+                                  <Calendar className="h-4 w-4 mr-1" />
+                                  {formatDate(invoice.invoice_date)}
+                                </p>
+                                <p className="text-xs text-muted-foreground mt-1">
+                                  Échéance : {formatDate(invoice.due_date)}
+                                </p>
+                              </div>
+                              <div className="text-right">
+                                <p className="font-bold text-lg">{formatPrice(invoice.total_amount)}</p>
+                                {getInvoiceStatusBadge(invoice.status)}
+                              </div>
+                            </div>
+                            
+                            {invoice.notes && (
+                              <div className="mt-4 p-3 bg-muted/50 rounded-lg">
+                                <p className="text-sm font-medium mb-1">Notes</p>
+                                <p className="text-sm text-muted-foreground">{invoice.notes}</p>
+                              </div>
+                            )}
+                          </CardContent>
+                        </Card>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="text-center py-8">
+                      <Receipt className="h-12 w-12 text-muted-foreground mx-auto mb-2" />
+                      <p className="text-sm text-muted-foreground">Aucune facture pour le moment</p>
                     </div>
                   )}
                 </CardContent>
