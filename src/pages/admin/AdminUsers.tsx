@@ -7,16 +7,276 @@ import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Loader2, Search, UserCheck, UserX, Crown, Users } from 'lucide-react';
+import { 
+  Loader2, 
+  Search, 
+  UserCheck, 
+  UserX, 
+  Crown, 
+  Users, 
+  Eye, 
+  Mail, 
+  Phone, 
+  Calendar,
+  ShoppingBag,
+  Euro,
+  FileText
+} from 'lucide-react';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useUsers, useUpdateUserRole } from '@/hooks/useUsers';
+import { useAdminOrders } from '@/hooks/useOrders';
+import { useInvoices } from '@/hooks/useInvoices';
 import { toast } from '@/hooks/use-toast';
+import { formatDistanceToNow } from 'date-fns';
+import { fr } from 'date-fns/locale';
 
 const AdminUsers = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [roleFilter, setRoleFilter] = useState<string>('all');
+  const [selectedUser, setSelectedUser] = useState<any>(null);
   
   const { data: users = [], isLoading, error } = useUsers();
+  const { data: orders = [] } = useAdminOrders();
+  const { data: invoices = [] } = useInvoices();
   const updateUserRole = useUpdateUserRole();
+
+  // Composant pour les détails d'un client
+  const ClientDetailDialog = ({ user }: { user: any }) => {
+    if (!user) return null;
+
+    const userOrders = orders.filter(order => order.profiles?.id === user.id);
+    const userInvoices = invoices.filter(invoice => invoice.user_id === user.user_id);
+    
+    const totalSpent = userOrders.reduce((sum, order) => sum + (order.total_amount || 0), 0);
+    const totalInvoices = userInvoices.reduce((sum, invoice) => sum + (invoice.total_amount || 0), 0);
+
+    const formatPrice = (price: number) => {
+      return new Intl.NumberFormat('fr-FR', {
+        style: 'currency',
+        currency: 'EUR'
+      }).format(price / 100);
+    };
+
+    return (
+      <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle className="flex items-center gap-2">
+            <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
+              <span className="text-lg font-medium text-primary">
+                {user.first_name?.charAt(0) || user.email?.charAt(0) || '?'}
+              </span>
+            </div>
+            {user.first_name || user.last_name 
+              ? `${user.first_name || ''} ${user.last_name || ''}`.trim()
+              : 'Client sans nom'
+            }
+          </DialogTitle>
+          <DialogDescription>
+            Informations détaillées et historique du client
+          </DialogDescription>
+        </DialogHeader>
+
+        <Tabs defaultValue="profile" className="w-full">
+          <TabsList className="grid w-full grid-cols-4">
+            <TabsTrigger value="profile">Profil</TabsTrigger>
+            <TabsTrigger value="orders">Commandes ({userOrders.length})</TabsTrigger>
+            <TabsTrigger value="invoices">Factures ({userInvoices.length})</TabsTrigger>
+            <TabsTrigger value="stats">Statistiques</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="profile" className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-lg">Informations personnelles</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  <div className="flex items-center gap-2">
+                    <Mail className="h-4 w-4 text-muted-foreground" />
+                    <span>{user.email}</span>
+                  </div>
+                  {user.phone && (
+                    <div className="flex items-center gap-2">
+                      <Phone className="h-4 w-4 text-muted-foreground" />
+                      <span>{user.phone}</span>
+                    </div>
+                  )}
+                  <div className="flex items-center gap-2">
+                    <Calendar className="h-4 w-4 text-muted-foreground" />
+                    <span>Inscrit {formatDistanceToNow(new Date(user.created_at), { addSuffix: true, locale: fr })}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Crown className="h-4 w-4 text-muted-foreground" />
+                    <Badge variant={user.role === 'admin' ? 'default' : 'secondary'}>
+                      {user.role === 'admin' ? 'Administrateur' : 'Client'}
+                    </Badge>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-lg">Activité récente</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-2">
+                    <div className="flex justify-between">
+                      <span className="text-sm text-muted-foreground">Dernière commande</span>
+                      <span className="text-sm">
+                        {userOrders.length > 0 
+                          ? formatDistanceToNow(new Date(userOrders[0].created_at), { addSuffix: true, locale: fr })
+                          : 'Aucune commande'
+                        }
+                      </span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-sm text-muted-foreground">Dernière facture</span>
+                      <span className="text-sm">
+                        {userInvoices.length > 0 
+                          ? formatDistanceToNow(new Date(userInvoices[0].created_at), { addSuffix: true, locale: fr })
+                          : 'Aucune facture'
+                        }
+                      </span>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="orders" className="space-y-4">
+            {userOrders.length > 0 ? (
+              <Card>
+                <CardContent className="p-0">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>N° Commande</TableHead>
+                        <TableHead>Date</TableHead>
+                        <TableHead>Statut</TableHead>
+                        <TableHead>Montant</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {userOrders.map((order) => (
+                        <TableRow key={order.id}>
+                          <TableCell className="font-mono text-sm">{order.order_number}</TableCell>
+                          <TableCell>{new Date(order.created_at).toLocaleDateString('fr-FR')}</TableCell>
+                          <TableCell>
+                            <Badge variant="outline">{order.status}</Badge>
+                          </TableCell>
+                          <TableCell>{formatPrice(order.total_amount)}</TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </CardContent>
+              </Card>
+            ) : (
+              <Card>
+                <CardContent className="text-center py-8">
+                  <ShoppingBag className="h-12 w-12 mx-auto text-muted-foreground/50 mb-4" />
+                  <p className="text-muted-foreground">Aucune commande pour ce client</p>
+                </CardContent>
+              </Card>
+            )}
+          </TabsContent>
+
+          <TabsContent value="invoices" className="space-y-4">
+            {userInvoices.length > 0 ? (
+              <Card>
+                <CardContent className="p-0">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>N° Facture</TableHead>
+                        <TableHead>Date</TableHead>
+                        <TableHead>Statut</TableHead>
+                        <TableHead>Montant</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {userInvoices.map((invoice) => (
+                        <TableRow key={invoice.id}>
+                          <TableCell className="font-mono text-sm">{invoice.invoice_number}</TableCell>
+                          <TableCell>{new Date(invoice.created_at).toLocaleDateString('fr-FR')}</TableCell>
+                          <TableCell>
+                            <Badge variant={invoice.status === 'paid' ? 'default' : 'secondary'}>
+                              {invoice.status}
+                            </Badge>
+                          </TableCell>
+                          <TableCell>{formatPrice(invoice.total_amount)}</TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </CardContent>
+              </Card>
+            ) : (
+              <Card>
+                <CardContent className="text-center py-8">
+                  <FileText className="h-12 w-12 mx-auto text-muted-foreground/50 mb-4" />
+                  <p className="text-muted-foreground">Aucune facture pour ce client</p>
+                </CardContent>
+              </Card>
+            )}
+          </TabsContent>
+
+          <TabsContent value="stats" className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <Card>
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-sm font-medium">Total dépensé</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold text-green-600">
+                    {formatPrice(totalSpent)}
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    Sur {userOrders.length} commande{userOrders.length > 1 ? 's' : ''}
+                  </p>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-sm font-medium">Panier moyen</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold text-blue-600">
+                    {userOrders.length > 0 ? formatPrice(totalSpent / userOrders.length) : '0 €'}
+                  </div>
+                  <p className="text-xs text-muted-foreground">Par commande</p>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-sm font-medium">Factures impayées</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold text-orange-600">
+                    {userInvoices.filter(inv => inv.status !== 'paid').length}
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    {formatPrice(userInvoices.filter(inv => inv.status !== 'paid').reduce((sum, inv) => sum + inv.total_amount, 0))}
+                  </p>
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
+        </Tabs>
+      </DialogContent>
+    );
+  };
 
   const handleRoleChange = async (userId: string, newRole: 'admin' | 'user') => {
     try {
@@ -47,15 +307,20 @@ const AdminUsers = () => {
     return matchesSearch && matchesRole;
   });
 
+  // Statistics enriched with order data
   const userStats = {
     total: users.length,
     admins: users.filter(u => u.role === 'admin').length,
     users: users.filter(u => !u.role || u.role === 'user').length,
+    activeClients: users.filter(u => {
+      const userOrders = orders.filter(order => order.profiles?.id === u.id);
+      return userOrders.length > 0;
+    }).length,
   };
 
   if (isLoading) {
     return (
-      <AdminLayout title="Gestion des utilisateurs" description="Gérez les utilisateurs et leurs permissions">
+      <AdminLayout title="Gestion des clients" description="Gérez vos clients, leurs commandes et leurs informations">
         <div className="flex items-center justify-center py-12">
           <Loader2 className="h-8 w-8 animate-spin text-primary" />
         </div>
@@ -65,10 +330,10 @@ const AdminUsers = () => {
 
   if (error) {
     return (
-      <AdminLayout title="Gestion des utilisateurs" description="Gérez les utilisateurs et leurs permissions">
+      <AdminLayout title="Gestion des clients" description="Gérez vos clients, leurs commandes et leurs informations">
         <Alert variant="destructive">
           <AlertDescription>
-            Erreur lors du chargement des utilisateurs. Veuillez réessayer.
+            Erreur lors du chargement des clients. Veuillez réessayer.
           </AlertDescription>
         </Alert>
       </AdminLayout>
@@ -77,19 +342,35 @@ const AdminUsers = () => {
 
   return (
     <AdminLayout 
-      title="Gestion des utilisateurs" 
-      description="Gérez les utilisateurs et leurs permissions"
+      title="Gestion des clients" 
+      description="Gérez vos clients, leurs commandes et leurs informations"
     >
       <div className="space-y-6">
         {/* Statistics Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total Utilisateurs</CardTitle>
+              <CardTitle className="text-sm font-medium">Total Clients</CardTitle>
               <Users className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{userStats.total}</div>
+              <p className="text-xs text-muted-foreground">
+                Tous les utilisateurs inscrits
+              </p>
+            </CardContent>
+          </Card>
+          
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Clients Actifs</CardTitle>
+              <ShoppingBag className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-green-600">{userStats.activeClients}</div>
+              <p className="text-xs text-muted-foreground">
+                Avec au moins une commande
+              </p>
             </CardContent>
           </Card>
           
@@ -100,6 +381,9 @@ const AdminUsers = () => {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold text-primary">{userStats.admins}</div>
+              <p className="text-xs text-muted-foreground">
+                Accès administration
+              </p>
             </CardContent>
           </Card>
           
@@ -110,6 +394,9 @@ const AdminUsers = () => {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold text-accent">{userStats.users}</div>
+              <p className="text-xs text-muted-foreground">
+                Clients réguliers
+              </p>
             </CardContent>
           </Card>
         </div>
@@ -147,9 +434,9 @@ const AdminUsers = () => {
         {/* Users Table */}
         <Card>
           <CardHeader>
-            <CardTitle>Liste des utilisateurs</CardTitle>
+            <CardTitle>Liste des clients</CardTitle>
             <CardDescription>
-              {filteredUsers.length} utilisateur{filteredUsers.length > 1 ? 's' : ''} trouvé{filteredUsers.length > 1 ? 's' : ''}
+              {filteredUsers.length} client{filteredUsers.length > 1 ? 's' : ''} trouvé{filteredUsers.length > 1 ? 's' : ''}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -157,78 +444,118 @@ const AdminUsers = () => {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Utilisateur</TableHead>
+                    <TableHead>Client</TableHead>
                     <TableHead>Email</TableHead>
                     <TableHead>Rôle</TableHead>
+                    <TableHead>Commandes</TableHead>
+                    <TableHead>Total dépensé</TableHead>
                     <TableHead>Date de création</TableHead>
                     <TableHead>Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {filteredUsers.map((user) => (
-                    <TableRow key={user.id}>
-                      <TableCell>
-                        <div className="flex items-center space-x-3">
-                          <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center">
-                            <span className="text-sm font-medium text-primary">
-                              {user.first_name?.charAt(0) || user.email?.charAt(0) || '?'}
+                  {filteredUsers.map((user) => {
+                    const userOrders = orders.filter(order => order.profiles?.id === user.id);
+                    const totalSpent = userOrders.reduce((sum, order) => sum + (order.total_amount || 0), 0);
+                    
+                    return (
+                      <TableRow key={user.id}>
+                        <TableCell>
+                          <div className="flex items-center space-x-3">
+                            <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center">
+                              <span className="text-sm font-medium text-primary">
+                                {user.first_name?.charAt(0) || user.email?.charAt(0) || '?'}
+                              </span>
+                            </div>
+                            <div>
+                              <p className="font-medium">
+                                {user.first_name || user.last_name 
+                                  ? `${user.first_name || ''} ${user.last_name || ''}`.trim()
+                                  : 'Sans nom'
+                                }
+                              </p>
+                            </div>
+                          </div>
+                        </TableCell>
+                        <TableCell>{user.email}</TableCell>
+                        <TableCell>
+                          <Badge variant={user.role === 'admin' ? 'default' : 'secondary'}>
+                            {user.role === 'admin' ? (
+                              <>
+                                <Crown className="h-3 w-3 mr-1" />
+                                Admin
+                              </>
+                            ) : (
+                              <>
+                                <UserCheck className="h-3 w-3 mr-1" />
+                                Client
+                              </>
+                            )}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-1">
+                            <ShoppingBag className="h-4 w-4 text-muted-foreground" />
+                            <span>{userOrders.length}</span>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-1 text-green-600 font-medium">
+                            <Euro className="h-4 w-4" />
+                            <span>
+                              {new Intl.NumberFormat('fr-FR', {
+                                style: 'currency',
+                                currency: 'EUR'
+                              }).format(totalSpent / 100)}
                             </span>
                           </div>
-                          <div>
-                            <p className="font-medium">
-                              {user.first_name || user.last_name 
-                                ? `${user.first_name || ''} ${user.last_name || ''}`.trim()
-                                : 'Sans nom'
+                        </TableCell>
+                        <TableCell>
+                          {new Date(user.created_at).toLocaleDateString('fr-FR')}
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-2">
+                            <Dialog>
+                              <DialogTrigger asChild>
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() => setSelectedUser(user)}
+                                >
+                                  <Eye className="h-4 w-4 mr-1" />
+                                  Voir
+                                </Button>
+                              </DialogTrigger>
+                              <ClientDetailDialog user={selectedUser} />
+                            </Dialog>
+                            
+                            <Select
+                              value={user.role || 'user'}
+                              onValueChange={(newRole: 'admin' | 'user') => 
+                                handleRoleChange(user.user_id, newRole)
                               }
-                            </p>
+                              disabled={updateUserRole.isPending}
+                            >
+                              <SelectTrigger className="w-20">
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="user">Client</SelectItem>
+                                <SelectItem value="admin">Admin</SelectItem>
+                              </SelectContent>
+                            </Select>
                           </div>
-                        </div>
-                      </TableCell>
-                      <TableCell>{user.email}</TableCell>
-                      <TableCell>
-                        <Badge variant={user.role === 'admin' ? 'default' : 'secondary'}>
-                          {user.role === 'admin' ? (
-                            <>
-                              <Crown className="h-3 w-3 mr-1" />
-                              Admin
-                            </>
-                          ) : (
-                            <>
-                              <UserCheck className="h-3 w-3 mr-1" />
-                              Utilisateur
-                            </>
-                          )}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>
-                        {new Date(user.created_at).toLocaleDateString('fr-FR')}
-                      </TableCell>
-                      <TableCell>
-                        <Select
-                          value={user.role || 'user'}
-                          onValueChange={(newRole: 'admin' | 'user') => 
-                            handleRoleChange(user.user_id, newRole)
-                          }
-                          disabled={updateUserRole.isPending}
-                        >
-                          <SelectTrigger className="w-32">
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="user">Utilisateur</SelectItem>
-                            <SelectItem value="admin">Admin</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </TableCell>
-                    </TableRow>
-                  ))}
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
                 </TableBody>
               </Table>
               
               {filteredUsers.length === 0 && (
                 <div className="text-center py-8 text-muted-foreground">
                   <UserX className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                  <p>Aucun utilisateur trouvé</p>
+                  <p>Aucun client trouvé</p>
                   {searchTerm && (
                     <p className="text-sm">Essayez de modifier votre recherche</p>
                   )}
