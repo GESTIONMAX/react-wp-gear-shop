@@ -16,11 +16,11 @@ const Header = () => {
   const { user, signOut, loading } = useAuth();
 
   const navigation = [
-    { name: 'SPORT', href: '#sport' },
-    { name: 'LIFESTYLE', href: '#lifestyle' },
-    { name: 'PRISMATIC', href: '#prismatic' },
-    { name: 'Accessoires', href: '#accessoires' },
-    { name: 'Blog', href: '#blog' },
+    { name: 'SPORT', href: '/?category=sport' },
+    { name: 'LIFESTYLE', href: '/?category=lifestyle' },
+    { name: 'PRISMATIC', href: '/?category=prismatic' },
+    { name: 'Accessoires', href: '/?category=accessoires' },
+    { name: 'Blog', href: '/blog' },
   ];
 
   return (
@@ -39,26 +39,26 @@ const Header = () => {
               <SheetContent side="left" className="w-80">
                 <nav className="flex flex-col space-y-4 mt-8">
                   {navigation.map((item) => (
-                    <a
+                    <Link
                       key={item.name}
-                      href={item.href}
+                      to={item.href}
                       className="text-lg font-medium transition-colors hover:text-primary"
                     >
                       {item.name}
-                    </a>
+                    </Link>
                   ))}
                 </nav>
               </SheetContent>
             </Sheet>
             
-            <div className="flex items-center space-x-2">
+            <Link to="/" className="flex items-center space-x-2">
               <div className="w-8 h-8 gradient-primary rounded-lg flex items-center justify-center">
                 <span className="text-primary-foreground font-bold text-sm">MT</span>
               </div>
               <span className="font-merriweather font-bold text-xl text-primary">
                 MyTechGear
               </span>
-            </div>
+            </Link>
           </div>
 
           {/* Search bar - Desktop */}
@@ -164,14 +164,14 @@ const Header = () => {
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center space-x-8 pb-4">
           {navigation.map((item) => (
-            <a
+            <Link
               key={item.name}
-              href={item.href}
+              to={item.href}
               className="text-sm font-medium transition-colors hover:text-primary relative group"
             >
               {item.name}
               <span className="absolute inset-x-0 -bottom-1 h-0.5 bg-primary scale-x-0 group-hover:scale-x-100 transition-transform origin-left" />
-            </a>
+            </Link>
           ))}
         </nav>
       </div>
