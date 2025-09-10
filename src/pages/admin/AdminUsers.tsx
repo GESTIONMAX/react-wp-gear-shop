@@ -158,6 +158,10 @@ const ClientDetailDialog = ({
       
       // Forcer le rafraîchissement des données pour ce client spécifique
       await queryClient.invalidateQueries({ queryKey: ['clientData', user.user_id] });
+      await queryClient.invalidateQueries({ queryKey: ['allClients'] });
+      
+      // Forcer le re-rendu du composant
+      window.location.reload();
       
       setEditingProfile(false);
       
