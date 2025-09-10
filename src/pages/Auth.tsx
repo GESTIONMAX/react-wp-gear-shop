@@ -7,13 +7,11 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Separator } from '@/components/ui/separator';
 import { useAuth } from '@/contexts/AuthContext';
-import { useIsAdmin } from '@/hooks/useAdmin';
 import { toast } from '@/hooks/use-toast';
 import { Loader2, Mail, Lock, User, ArrowLeft } from 'lucide-react';
 
 const Auth = () => {
   const { user, signUp, signIn, resetPassword, updatePassword } = useAuth();
-  const { data: isAdmin } = useIsAdmin();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   
@@ -61,13 +59,12 @@ const Auth = () => {
 
   // Redirect if already authenticated and not in recovery mode
   useEffect(() => {
-    console.log('Auth redirect check - user:', !!user, 'isRecoverySession:', isRecoverySession, 'isAdmin:', isAdmin);
+    console.log('Auth redirect check - user:', !!user, 'isRecoverySession:', isRecoverySession);
     if (user && !isRecoverySession) {
-      const redirectPath = isAdmin ? '/admin' : '/account';
-      console.log('Redirecting to:', redirectPath);
-      navigate(redirectPath);
+      console.log('Redirecting to admin dashboard');
+      navigate('/admin');
     }
-  }, [user, navigate, isRecoverySession, isAdmin]);
+  }, [user, navigate, isRecoverySession]);
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -187,8 +184,7 @@ const Auth = () => {
           title: "Mot de passe mis à jour",
           description: "Votre mot de passe a été modifié avec succès",
         });
-        const redirectPath = isAdmin ? '/admin' : '/account';
-        navigate(redirectPath);
+        navigate('/admin');
       }
     } catch (error) {
       toast({
