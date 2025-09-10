@@ -7,12 +7,36 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import { products } from '@/data/products';
+import { useProducts } from '@/hooks/useProducts';
 import { useAuth } from '@/contexts/AuthContext';
-import { TrendingUp, Sparkles, Clock, User } from 'lucide-react';
+import { TrendingUp, Sparkles, Clock, User, Loader2 } from 'lucide-react';
 
 const Index = () => {
   const { user } = useAuth();
+  const { data: products = [], isLoading, error } = useProducts();
+  
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4 text-primary" />
+          <p className="text-muted-foreground">Chargement des produits...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-destructive mb-4">Erreur lors du chargement des produits</p>
+          <Button onClick={() => window.location.reload()}>Réessayer</Button>
+        </div>
+      </div>
+    );
+  }
+
   const featuredProducts = products.slice(0, 4);
   const onSaleProducts = products.filter(p => p.salePrice && p.salePrice < p.price);
 

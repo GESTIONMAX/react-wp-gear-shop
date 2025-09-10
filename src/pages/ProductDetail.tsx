@@ -1,26 +1,36 @@
 import React, { useState } from 'react';
 import { useParams, Navigate } from 'react-router-dom';
-import { ArrowLeft, Heart, Share2, Star, Zap, Shield, Truck, ChevronRight } from 'lucide-react';
+import { ArrowLeft, Heart, Share2, Star, Zap, Shield, Truck, ChevronRight, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { products } from '@/data/products';
+import { useProductBySlug } from '@/hooks/useProducts';
 import { useCart } from '@/contexts/CartContext';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from '@/hooks/use-toast';
 
 const ProductDetail = () => {
   const { slug } = useParams();
   const { addItem } = useCart();
-  const { toast } = useToast();
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [selectedVariant, setSelectedVariant] = useState<string>('');
   const [quantity, setQuantity] = useState(1);
 
-  const product = products.find(p => p.slug === slug);
+  const { data: product, isLoading, error } = useProductBySlug(slug || '');
 
-  if (!product) {
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4 text-primary" />
+          <p className="text-muted-foreground">Chargement du produit...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error || !product) {
     return <Navigate to="/404" replace />;
   }
 
@@ -69,7 +79,7 @@ const ProductDetail = () => {
             <Card className="overflow-hidden">
               <CardContent className="p-0 relative group">
                 <img
-                  src={product.images[selectedImageIndex]}
+                  src={product.images[selectedImageIndex] || 'https://images.unsplash.com/photo-1572635196237-14b3f281503f?w=600&h=600&fit=crop&crop=center'}
                   alt={product.name}
                   className="w-full h-96 lg:h-[500px] object-cover transition-transform duration-300 group-hover:scale-105"
                 />
@@ -82,25 +92,27 @@ const ProductDetail = () => {
             </Card>
 
             {/* Thumbnail Images */}
-            <div className="grid grid-cols-4 gap-2">
-              {product.images.map((image, index) => (
-                <Card
-                  key={index}
-                  className={`cursor-pointer overflow-hidden transition-all ${
-                    selectedImageIndex === index ? 'ring-2 ring-primary' : ''
-                  }`}
-                  onClick={() => setSelectedImageIndex(index)}
-                >
-                  <CardContent className="p-0">
-                    <img
-                      src={image}
-                      alt={`${product.name} ${index + 1}`}
-                      className="w-full h-20 object-cover"
-                    />
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
+            {product.images && product.images.length > 1 && (
+              <div className="grid grid-cols-4 gap-2">
+                {product.images.map((image, index) => (
+                  <Card
+                    key={index}
+                    className={`cursor-pointer overflow-hidden transition-all ${
+                      selectedImageIndex === index ? 'ring-2 ring-primary' : ''
+                    }`}
+                    onClick={() => setSelectedImageIndex(index)}
+                  >
+                    <CardContent className="p-0">
+                      <img
+                        src={image}
+                        alt={`${product.name} ${index + 1}`}
+                        className="w-full h-20 object-cover"
+                      />
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Product Info */}
@@ -275,7 +287,7 @@ const ProductDetail = () => {
               <Card>
                 <CardContent className="p-6">
                   <h3 className="text-xl font-semibold mb-4">Caractéristiques principales</h3>
-                  {product.features && (
+                  {product.features && product.features.length > 0 ? (
                     <ul className="space-y-3">
                       {product.features.map((feature, index) => (
                         <li key={index} className="flex items-start space-x-3">
@@ -284,6 +296,8 @@ const ProductDetail = () => {
                         </li>
                       ))}
                     </ul>
+                  ) : (
+                    <p className="text-muted-foreground">Aucune caractéristique disponible.</p>
                   )}
                 </CardContent>
               </Card>
@@ -293,7 +307,7 @@ const ProductDetail = () => {
               <Card>
                 <CardContent className="p-6">
                   <h3 className="text-xl font-semibold mb-4">Spécifications techniques</h3>
-                  {product.specifications && (
+                  {product.specifications && Object.keys(product.specifications).length > 0 ? (
                     <div className="grid md:grid-cols-2 gap-4">
                       {Object.entries(product.specifications).map(([key, value]) => (
                         <div key={key} className="flex justify-between items-center py-2 border-b border-muted">
@@ -302,6 +316,8 @@ const ProductDetail = () => {
                         </div>
                       ))}
                     </div>
+                  ) : (
+                    <p className="text-muted-foreground">Aucune spécification disponible.</p>
                   )}
                 </CardContent>
               </Card>
