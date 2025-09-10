@@ -11,7 +11,7 @@ import { toast } from '@/hooks/use-toast';
 import { Loader2, Mail, Lock, User, ArrowLeft } from 'lucide-react';
 
 const Auth = () => {
-  const { user, signUp, signIn, resetPassword } = useAuth();
+  const { user, signUp, signIn, resetPassword, updatePassword } = useAuth();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   
@@ -22,13 +22,26 @@ const Auth = () => {
   const [lastName, setLastName] = useState('');
   const [resetEmail, setResetEmail] = useState('');
   const [showResetForm, setShowResetForm] = useState(false);
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  
+  // Check if this is a password recovery session
+  const [isRecoverySession, setIsRecoverySession] = useState(false);
 
-  // Redirect if already authenticated
   useEffect(() => {
-    if (user) {
+    const urlParams = new URLSearchParams(window.location.search);
+    const type = urlParams.get('type');
+    if (type === 'recovery') {
+      setIsRecoverySession(true);
+    }
+  }, []);
+
+  // Redirect if already authenticated and not in recovery mode
+  useEffect(() => {
+    if (user && !isRecoverySession) {
       navigate('/');
     }
-  }, [user, navigate]);
+  }, [user, navigate, isRecoverySession]);
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -77,6 +90,56 @@ const Auth = () => {
         toast({
           title: "Connexion réussie",
           description: "Bienvenue sur MyTechGear !",
+        });
+        navigate('/');
+      }
+    } catch (error) {
+      toast({
+        title: "Erreur",
+        description: "Une erreur inattendue s'est produite",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleUpdatePassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (newPassword !== confirmPassword) {
+      toast({
+        title: "Erreur",
+        description: "Les mots de passe ne correspondent pas",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    if (newPassword.length < 6) {
+      toast({
+        title: "Erreur",
+        description: "Le mot de passe doit contenir au moins 6 caractères",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    setIsLoading(true);
+    
+    try {
+      const { error } = await updatePassword(newPassword);
+      
+      if (error) {
+        toast({
+          title: "Erreur",
+          description: error.message,
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Mot de passe mis à jour",
+          description: "Votre mot de passe a été modifié avec succès",
         });
         navigate('/');
       }
@@ -146,18 +209,79 @@ const Auth = () => {
         <Card className="shadow-elegant border-border/50">
           <CardHeader>
             <CardTitle className="text-center font-merriweather">
-              {showResetForm ? "Réinitialiser le mot de passe" : "Authentification"}
+              {isRecoverySession 
+                ? "Nouveau mot de passe" 
+                : showResetForm 
+                  ? "Réinitialiser le mot de passe" 
+                  : "Authentification"
+              }
             </CardTitle>
             <CardDescription className="text-center">
-              {showResetForm 
-                ? "Entrez votre email pour recevoir un lien de réinitialisation"
-                : "Connectez-vous ou créez votre compte pour continuer"
+              {isRecoverySession
+                ? "Saisissez votre nouveau mot de passe"
+                : showResetForm 
+                  ? "Entrez votre email pour recevoir un lien de réinitialisation"
+                  : "Connectez-vous ou créez votre compte pour continuer"
               }
             </CardDescription>
           </CardHeader>
           
           <CardContent>
-            {showResetForm ? (
+            {isRecoverySession ? (
+              <form onSubmit={handleUpdatePassword} className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="new-password">Nouveau mot de passe</Label>
+                  <div className="relative">
+                    <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      id="new-password"
+                      type="password"
+                      placeholder="••••••••"
+                      value={newPassword}
+                      onChange={(e) => setNewPassword(e.target.value)}
+                      className="pl-10"
+                      required
+                      minLength={6}
+                    />
+                  </div>
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="confirm-password">Confirmer le mot de passe</Label>
+                  <div className="relative">
+                    <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      id="confirm-password"
+                      type="password"
+                      placeholder="••••••••"
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      className="pl-10"
+                      required
+                      minLength={6}
+                    />
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    Minimum 6 caractères
+                  </p>
+                </div>
+                
+                <Button
+                  type="submit"
+                  className="w-full"
+                  disabled={isLoading}
+                >
+                  {isLoading ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Mise à jour...
+                    </>
+                  ) : (
+                    'Mettre à jour le mot de passe'
+                  )}
+                </Button>
+              </form>
+            ) : showResetForm ? (
               <form onSubmit={handleResetPassword} className="space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="reset-email">Email</Label>
