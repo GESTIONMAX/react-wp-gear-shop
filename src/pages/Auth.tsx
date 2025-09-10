@@ -7,11 +7,13 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Separator } from '@/components/ui/separator';
 import { useAuth } from '@/contexts/AuthContext';
+import { useIsAdmin } from '@/hooks/useAdmin';
 import { toast } from '@/hooks/use-toast';
 import { Loader2, Mail, Lock, User, ArrowLeft } from 'lucide-react';
 
 const Auth = () => {
   const { user, signUp, signIn, resetPassword, updatePassword } = useAuth();
+  const { data: isAdmin } = useIsAdmin();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   
@@ -59,12 +61,13 @@ const Auth = () => {
 
   // Redirect if already authenticated and not in recovery mode
   useEffect(() => {
-    console.log('Auth redirect check - user:', !!user, 'isRecoverySession:', isRecoverySession);
+    console.log('Auth redirect check - user:', !!user, 'isRecoverySession:', isRecoverySession, 'isAdmin:', isAdmin);
     if (user && !isRecoverySession) {
-      console.log('Redirecting to account');
-      navigate('/account');
+      const redirectPath = isAdmin ? '/admin' : '/account';
+      console.log('Redirecting to:', redirectPath);
+      navigate(redirectPath);
     }
-  }, [user, navigate, isRecoverySession]);
+  }, [user, navigate, isRecoverySession, isAdmin]);
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -133,7 +136,7 @@ const Auth = () => {
           title: "Connexion réussie",
           description: "Bienvenue sur MyTechGear !",
         });
-        navigate('/account');
+        // Redirection gérée par useEffect avec vérification du rôle
       }
     } catch (error) {
       console.error('Erreur inattendue:', error);
@@ -184,7 +187,8 @@ const Auth = () => {
           title: "Mot de passe mis à jour",
           description: "Votre mot de passe a été modifié avec succès",
         });
-        navigate('/');
+        const redirectPath = isAdmin ? '/admin' : '/account';
+        navigate(redirectPath);
       }
     } catch (error) {
       toast({
