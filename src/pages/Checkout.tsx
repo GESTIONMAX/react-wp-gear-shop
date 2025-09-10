@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, CreditCard, Truck, ShieldCheck, User, LogIn } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -15,6 +15,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useCreateOrder } from '@/hooks/useOrders';
 import { toast } from '@/hooks/use-toast';
 import { CheckoutFormData, ShippingAddress } from '@/types/order';
+import { supabase } from '@/integrations/supabase/client';
 
 const Checkout = () => {
   const navigate = useNavigate();
@@ -56,6 +57,66 @@ const Checkout = () => {
     paymentMethod: 'card',
     notes: '',
   });
+
+  // Charger le profil utilisateur et pré-remplir le formulaire
+  useEffect(() => {
+    const loadUserProfile = async () => {
+      if (user) {
+        try {
+          const { data: profile, error } = await supabase
+            .from('profiles')
+            .select('*')
+            .eq('user_id', user.id)
+            .single();
+
+          if (profile && !error) {
+            // Pré-remplir avec les informations disponibles du profil
+            setFormData(prev => ({
+              ...prev,
+              shippingAddress: {
+                firstName: profile.first_name || user.user_metadata?.first_name || '',
+                lastName: profile.last_name || user.user_metadata?.last_name || '',
+                address: '', // Champ à remplir par l'utilisateur
+                city: '', // Champ à remplir par l'utilisateur  
+                postalCode: '', // Champ à remplir par l'utilisateur
+                country: 'France',
+                phone: profile.phone || '',
+              },
+              billingAddress: {
+                firstName: profile.first_name || user.user_metadata?.first_name || '',
+                lastName: profile.last_name || user.user_metadata?.last_name || '',
+                address: '', // Champ à remplir par l'utilisateur
+                city: '', // Champ à remplir par l'utilisateur
+                postalCode: '', // Champ à remplir par l'utilisateur
+                country: 'France',
+                phone: profile.phone || '',
+              }
+            }));
+          } else {
+            // Si pas de profil, utiliser les métadonnées utilisateur
+            setFormData(prev => ({
+              ...prev,
+              shippingAddress: {
+                ...prev.shippingAddress,
+                firstName: user.user_metadata?.first_name || '',
+                lastName: user.user_metadata?.last_name || '',
+              },
+              billingAddress: {
+                ...prev.billingAddress,
+                firstName: user.user_metadata?.first_name || '',
+                lastName: user.user_metadata?.last_name || '',
+              }
+            }));
+          }
+        } catch (error) {
+          console.error('Erreur lors du chargement du profil:', error);
+        }
+        setShowAuth(false);
+      }
+    };
+
+    loadUserProfile();
+  }, [user]);
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('fr-FR', {
