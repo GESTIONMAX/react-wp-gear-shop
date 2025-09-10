@@ -28,7 +28,7 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
-import { useUsers, useUpdateUserRole } from '@/hooks/useUsers';
+import { useSystemUsers, useUpdateSystemUserRole, useAssignSystemRole, useRevokeSystemAccess } from '@/hooks/useSystemUsers';
 import { useIsAdmin } from '@/hooks/useAdmin';
 import { toast } from '@/hooks/use-toast';
 import { formatDistanceToNow } from 'date-fns';
@@ -45,9 +45,11 @@ const AdminSystemUsers = () => {
     role: 'user' as 'admin' | 'user'
   });
 
-  const { data: users = [], isLoading, error } = useUsers();
+  const { data: users = [], isLoading, error } = useSystemUsers();
   const { data: isCurrentUserAdmin } = useIsAdmin();
-  const updateUserRole = useUpdateUserRole();
+  const updateUserRole = useUpdateSystemUserRole();
+  const assignSystemRole = useAssignSystemRole();
+  const revokeSystemAccess = useRevokeSystemAccess();
 
   const handleRoleChange = async (userId: string, newRole: 'admin' | 'user') => {
     try {
@@ -85,14 +87,25 @@ const AdminSystemUsers = () => {
   };
 
   const handleAddUser = async () => {
-    // Cette fonctionnalité nécessiterait l'implémentation d'une invitation par email
-    // ou la création directe de comptes par l'admin
-    toast({
-      title: "Fonctionnalité à venir",
-      description: "L'ajout d'utilisateurs sera disponible prochainement.",
-      variant: "destructive",
-    });
-    setIsAddingUser(false);
+    if (!newUserForm.email.trim()) {
+      toast({
+        title: "Email requis",
+        description: "Veuillez saisir une adresse email.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      await assignSystemRole.mutateAsync({
+        userEmail: newUserForm.email,
+        role: newUserForm.role
+      });
+      setNewUserForm({ email: '', password: '', role: 'user' });
+      setIsAddingUser(false);
+    } catch (error) {
+      // Erreur déjà gérée par le hook
+    }
   };
 
   if (isLoading) {
@@ -136,19 +149,19 @@ const AdminSystemUsers = () => {
             <DialogTrigger asChild>
               <Button>
                 <Plus className="h-4 w-4 mr-2" />
-                Inviter un utilisateur
+                Attribuer un rôle système
               </Button>
             </DialogTrigger>
             <DialogContent>
               <DialogHeader>
-                <DialogTitle>Inviter un nouvel utilisateur</DialogTitle>
+                <DialogTitle>Attribuer un rôle système</DialogTitle>
                 <DialogDescription>
-                  Créer un compte utilisateur avec accès au système
+                  Donner accès au système à un utilisateur existant
                 </DialogDescription>
               </DialogHeader>
               <div className="space-y-4 py-4">
                 <div>
-                  <Label htmlFor="user-email">Adresse email</Label>
+                  <Label htmlFor="user-email">Adresse email de l'utilisateur</Label>
                   <Input
                     id="user-email"
                     type="email"
@@ -156,19 +169,12 @@ const AdminSystemUsers = () => {
                     value={newUserForm.email}
                     onChange={(e) => setNewUserForm(prev => ({ ...prev, email: e.target.value }))}
                   />
+                  <p className="text-sm text-muted-foreground mt-1">
+                    L'utilisateur doit déjà avoir un compte sur la plateforme
+                  </p>
                 </div>
                 <div>
-                  <Label htmlFor="user-password">Mot de passe temporaire</Label>
-                  <Input
-                    id="user-password"
-                    type="password"
-                    placeholder="Mot de passe temporaire"
-                    value={newUserForm.password}
-                    onChange={(e) => setNewUserForm(prev => ({ ...prev, password: e.target.value }))}
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="user-role">Rôle</Label>
+                  <Label htmlFor="user-role">Rôle système</Label>
                   <Select 
                     value={newUserForm.role} 
                     onValueChange={(value: 'admin' | 'user') => setNewUserForm(prev => ({ ...prev, role: value }))}
@@ -177,7 +183,7 @@ const AdminSystemUsers = () => {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="user">Utilisateur</SelectItem>
+                      <SelectItem value="user">Utilisateur système</SelectItem>
                       <SelectItem value="admin">Administrateur</SelectItem>
                     </SelectContent>
                   </Select>
@@ -187,8 +193,8 @@ const AdminSystemUsers = () => {
                 <Button variant="outline" onClick={() => setIsAddingUser(false)}>
                   Annuler
                 </Button>
-                <Button onClick={handleAddUser}>
-                  Créer le compte
+                <Button onClick={handleAddUser} disabled={assignSystemRole.isPending}>
+                  {assignSystemRole.isPending ? 'Traitement...' : 'Attribuer le rôle'}
                 </Button>
               </div>
             </DialogContent>
@@ -384,9 +390,9 @@ const AdminSystemUsers = () => {
                             </DialogTrigger>
                             <DialogContent>
                               <DialogHeader>
-                                <DialogTitle>Détails utilisateur</DialogTitle>
+                                <DialogTitle>Détails utilisateur système</DialogTitle>
                                 <DialogDescription>
-                                  Informations du compte système
+                                  Informations du compte d'accès au système
                                 </DialogDescription>
                               </DialogHeader>
                               {selectedUser && (
@@ -409,7 +415,7 @@ const AdminSystemUsers = () => {
                                       <Label>Rôle système</Label>
                                       <div className="font-medium">
                                         <Badge variant={selectedUser.role === 'admin' ? 'default' : 'secondary'}>
-                                          {selectedUser.role === 'admin' ? 'Administrateur' : 'Utilisateur'}
+                                          {selectedUser.role === 'admin' ? 'Administrateur' : 'Utilisateur système'}
                                         </Badge>
                                       </div>
                                     </div>
@@ -418,13 +424,13 @@ const AdminSystemUsers = () => {
                                       <div className="font-mono text-sm">{selectedUser.user_id}</div>
                                     </div>
                                     <div>
-                                      <Label>Compte créé</Label>
+                                      <Label>Accès attribué</Label>
                                       <div className="font-medium">
                                         {new Date(selectedUser.created_at).toLocaleDateString('fr-FR')}
                                       </div>
                                     </div>
                                     <div>
-                                      <Label>Dernière activité</Label>
+                                      <Label>Dernière modification</Label>
                                       <div className="font-medium">
                                         {new Date(selectedUser.updated_at).toLocaleDateString('fr-FR')}
                                       </div>
@@ -434,6 +440,15 @@ const AdminSystemUsers = () => {
                               )}
                             </DialogContent>
                           </Dialog>
+                          <Button 
+                            variant="outline" 
+                            size="sm"
+                            onClick={() => revokeSystemAccess.mutate(user.user_id)}
+                            disabled={revokeSystemAccess.isPending}
+                            className="text-red-600 hover:text-red-700"
+                          >
+                            Révoquer
+                          </Button>
                         </div>
                       </TableCell>
                     </TableRow>
