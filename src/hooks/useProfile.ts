@@ -18,6 +18,8 @@ export interface Profile {
   marketing_phone: string | null;
   marketing_consent: boolean;
   notes: string | null;
+  preferred_shipping_address: any | null;
+  preferred_billing_address: any | null;
   created_at: string;
   updated_at: string;
 }

@@ -62,7 +62,9 @@ const AdminUsers = () => {
     country: 'France',
     marketing_phone: '',
     marketing_consent: false,
-    notes: ''
+    notes: '',
+    preferred_shipping_address: null as any,
+    preferred_billing_address: null as any
   });
   
   // Debug: Track state changes
@@ -94,7 +96,9 @@ const AdminUsers = () => {
         country: profile.country || 'France',
         marketing_phone: profile.marketing_phone || '',
         marketing_consent: profile.marketing_consent || false,
-        notes: profile.notes || ''
+        notes: profile.notes || '',
+        preferred_shipping_address: (profile as any).preferred_shipping_address || null,
+        preferred_billing_address: (profile as any).preferred_billing_address || null
       };
       console.log('📋 Formulaire pré-rempli:', newForm);
       setProfileForm(newForm);
@@ -159,7 +163,9 @@ const AdminUsers = () => {
       country: 'France',
       marketing_phone: '',
       marketing_consent: false,
-      notes: ''
+      notes: '',
+      preferred_shipping_address: null,
+      preferred_billing_address: null
     });
   };
   const ClientDetailDialog = ({ user }: { user: any }) => {
