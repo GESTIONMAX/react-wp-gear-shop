@@ -41,12 +41,14 @@ import { Textarea } from '@/components/ui/textarea';
 import { useAllClients, useUpdateClientData, useClientData, useUpdateClientRole, ClientWithRole } from '@/hooks/useClientData';
 import { useAdminOrders } from '@/hooks/useOrders';
 import { useInvoices } from '@/hooks/useInvoices';
+import { useAuth } from '@/contexts/AuthContext';
 import { toast } from '@/hooks/use-toast';
 import { formatDistanceToNow } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { useQueryClient } from '@tanstack/react-query';
 
 const AdminUsers = () => {
+  const { user: currentUser, loading: authLoading } = useAuth();
   const [searchTerm, setSearchTerm] = useState('');
   const [roleFilter, setRoleFilter] = useState<string>('all');
   const [selectedUser, setSelectedUser] = useState<any>(null);
@@ -70,6 +72,15 @@ const AdminUsers = () => {
   const { data: orders = [] } = useAdminOrders();
   const { data: invoices = [] } = useInvoices();
   const updateClientRole = useUpdateClientRole();
+
+  // Vérifier l'authentification
+  if (authLoading) {
+    return <div>Chargement de l'authentification...</div>;
+  }
+
+  if (!currentUser) {
+    return <div>Vous devez être connecté pour accéder à cette page.</div>;
+  }
 // Composant séparé pour éviter les re-créations
 const ClientDetailDialog = ({ 
   user, 
