@@ -361,16 +361,15 @@ const AdminUsers = () => {
                 </Card>
 
                 <Tabs defaultValue="principal" className="w-full">
-                  <TabsList className="grid w-full grid-cols-3">
+                  <TabsList className="grid w-full grid-cols-2">
                     <TabsTrigger value="principal">Adresse principale</TabsTrigger>
-                    <TabsTrigger value="livraison">Livraison préférée</TabsTrigger>
-                    <TabsTrigger value="facturation">Facturation préférée</TabsTrigger>
+                    <TabsTrigger value="livraison">Adresse de livraison</TabsTrigger>
                   </TabsList>
                   
                   <TabsContent value="principal">
                     <Card>
                       <CardHeader>
-                        <CardTitle className="text-lg">Adresse par défaut</CardTitle>
+                        <CardTitle className="text-lg">Adresse principale</CardTitle>
                       </CardHeader>
                       <CardContent className="space-y-4">
                          <div>
@@ -380,15 +379,6 @@ const AdminUsers = () => {
                              value={profileForm.address}
                              onChange={(e) => setProfileForm(prev => ({ ...prev, address: e.target.value }))}
                              placeholder="123 Rue de la Paix"
-                           />
-                         </div>
-                         <div>
-                           <Label htmlFor="address_complement">Complément d'adresse</Label>
-                           <Input
-                             id="address_complement"
-                             value={profileForm.address_complement}
-                             onChange={(e) => setProfileForm(prev => ({ ...prev, address_complement: e.target.value }))}
-                             placeholder="Bâtiment A, Apt 4"
                            />
                          </div>
                         <div className="grid grid-cols-3 gap-4">
@@ -426,30 +416,72 @@ const AdminUsers = () => {
                   <TabsContent value="livraison">
                     <Card>
                       <CardHeader>
-                        <CardTitle className="text-lg">Adresse de livraison préférée</CardTitle>
+                        <CardTitle className="text-lg">Adresse de livraison</CardTitle>
                         <p className="text-sm text-muted-foreground">
-                          Cette adresse sera proposée par défaut lors du checkout (bureau, autre domicile...)
+                          Adresse différente pour les livraisons (si nécessaire)
                         </p>
                       </CardHeader>
                       <CardContent className="space-y-4">
-                        <div className="text-sm text-muted-foreground p-4 border rounded">
-                          Interface pour adresse de livraison préférée (à implémenter)
+                        <div>
+                          <Label htmlFor="shipping_address">Adresse</Label>
+                          <Input
+                            id="shipping_address"
+                            value={profileForm.preferred_shipping_address?.address || ''}
+                            onChange={(e) => setProfileForm(prev => ({
+                              ...prev,
+                              preferred_shipping_address: {
+                                ...prev.preferred_shipping_address,
+                                address: e.target.value
+                              }
+                            }))}
+                            placeholder="123 Rue de la Livraison"
+                          />
                         </div>
-                      </CardContent>
-                    </Card>
-                  </TabsContent>
-                  
-                  <TabsContent value="facturation">
-                    <Card>
-                      <CardHeader>
-                        <CardTitle className="text-lg">Adresse de facturation préférée</CardTitle>
-                        <p className="text-sm text-muted-foreground">
-                          Cette adresse sera utilisée pour la facturation (comptabilité, entreprise...)
-                        </p>
-                      </CardHeader>
-                      <CardContent className="space-y-4">
-                        <div className="text-sm text-muted-foreground p-4 border rounded">
-                          Interface pour adresse de facturation préférée (à implémenter)
+                        <div className="grid grid-cols-3 gap-4">
+                          <div>
+                            <Label htmlFor="shipping_postal">Code postal</Label>
+                            <Input
+                              id="shipping_postal"
+                              value={profileForm.preferred_shipping_address?.postal_code || ''}
+                              onChange={(e) => setProfileForm(prev => ({
+                                ...prev,
+                                preferred_shipping_address: {
+                                  ...prev.preferred_shipping_address,
+                                  postal_code: e.target.value
+                                }
+                              }))}
+                              placeholder="75001"
+                            />
+                          </div>
+                          <div>
+                            <Label htmlFor="shipping_city">Ville</Label>
+                            <Input
+                              id="shipping_city"
+                              value={profileForm.preferred_shipping_address?.city || ''}
+                              onChange={(e) => setProfileForm(prev => ({
+                                ...prev,
+                                preferred_shipping_address: {
+                                  ...prev.preferred_shipping_address,
+                                  city: e.target.value
+                                }
+                              }))}
+                              placeholder="Paris"
+                            />
+                          </div>
+                          <div>
+                            <Label htmlFor="shipping_country">Pays</Label>
+                            <Input
+                              id="shipping_country"
+                              value={profileForm.preferred_shipping_address?.country || 'France'}
+                              onChange={(e) => setProfileForm(prev => ({
+                                ...prev,
+                                preferred_shipping_address: {
+                                  ...prev.preferred_shipping_address,
+                                  country: e.target.value
+                                }
+                              }))}
+                            />
+                          </div>
                         </div>
                       </CardContent>
                     </Card>
