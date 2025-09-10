@@ -69,6 +69,43 @@ const Index = () => {
       {/* Hero Section */}
       <Hero />
       
+      {/* Paiement en plusieurs fois - CTA Section */}
+      <section className="py-12 gradient-accent">
+        <div className="container mx-auto px-4">
+          <div className="text-center text-primary-foreground">
+            <div className="inline-flex items-center justify-center mb-4">
+              <div className="bg-primary-foreground/20 rounded-full p-3 mr-4">
+                <svg className="h-8 w-8 text-primary-foreground" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4zm6 4a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
+                </svg>
+              </div>
+              <div className="text-left">
+                <h3 className="text-2xl font-bold font-merriweather">
+                  Paiement en 3x ou 4x sans frais
+                </h3>
+                <p className="text-primary-foreground/90">
+                  Financez vos lunettes connectées dès 67€/mois avec Klarna
+                </p>
+              </div>
+            </div>
+            <div className="flex flex-wrap justify-center items-center gap-6 mt-6">
+              <div className="flex items-center space-x-3">
+                <div className="w-2 h-2 bg-primary-foreground rounded-full"></div>
+                <span className="text-sm">Sans engagement</span>
+              </div>
+              <div className="flex items-center space-x-3">
+                <div className="w-2 h-2 bg-primary-foreground rounded-full"></div>
+                <span className="text-sm">Réponse instantanée</span>
+              </div>
+              <div className="flex items-center space-x-3">
+                <div className="w-2 h-2 bg-primary-foreground rounded-full"></div>
+                <span className="text-sm">100% sécurisé</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      
       {/* Featured Products Section */}
       <section className="py-16 bg-muted/30">
         <div className="container mx-auto px-4">
