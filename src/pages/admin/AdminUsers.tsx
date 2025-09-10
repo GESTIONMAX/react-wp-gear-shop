@@ -51,7 +51,6 @@ const AdminUsers = () => {
   const [roleFilter, setRoleFilter] = useState<string>('all');
   const [selectedUser, setSelectedUser] = useState<any>(null);
   const [editingProfile, setEditingProfile] = useState(false);
-  console.log('🔄 Component render - editingProfile:', editingProfile);
   const [profileForm, setProfileForm] = useState({
     first_name: '',
     last_name: '',
@@ -67,11 +66,6 @@ const AdminUsers = () => {
     preferred_billing_address: null as any
   });
   
-  // Debug: Track state changes
-  React.useEffect(() => {
-    console.log('🔄 editingProfile state changed to:', editingProfile);
-  }, [editingProfile]);
-  
   const { data: users = [], isLoading, error } = useUsers();
   const { data: orders = [] } = useAdminOrders();
   const { data: invoices = [] } = useInvoices();
@@ -80,11 +74,6 @@ const AdminUsers = () => {
   const updateProfile = useUpdateProfile();
 
   const handleEditProfile = () => {
-    console.log('📝 handleEditProfile called');
-    console.log('👤 selectedUser:', selectedUser);
-    console.log('🗂️ profile:', profile);
-    console.log('🔄 État editingProfile avant:', editingProfile);
-    
     if (profile) {
       const newForm = {
         first_name: profile.first_name || '',
@@ -100,54 +89,22 @@ const AdminUsers = () => {
         preferred_shipping_address: (profile as any).preferred_shipping_address || null,
         preferred_billing_address: (profile as any).preferred_billing_address || null
       };
-      console.log('📋 Formulaire pré-rempli:', newForm);
       setProfileForm(newForm);
-      console.log('🔄 Activation du mode édition...');
       setEditingProfile(true);
-      console.log('🔄 État editingProfile après setEditingProfile(true):', editingProfile);
-      
-      // Force re-render pour debug
-      setTimeout(() => {
-        console.log('🔄 État editingProfile après timeout:', editingProfile);
-      }, 100);
-    } else {
-      console.error('❌ Pas de profil disponible pour l\'édition');
     }
   };
 
   const handleSaveProfile = async () => {
-    console.log('🚀 handleSaveProfile called');
-    
-    if (!selectedUser) {
-      console.error('❌ Pas d\'utilisateur sélectionné');
-      return;
-    }
-    
-    if (!selectedUser.user_id) {
-      console.error('❌ Pas d\'user_id pour l\'utilisateur sélectionné:', selectedUser);
-      return;
-    }
-    
-    console.log('🔧 Tentative de sauvegarde du profil:', {
-      userId: selectedUser.user_id,
-      formData: profileForm,
-      profileExists: !!profile
-    });
+    if (!selectedUser?.user_id) return;
     
     try {
-      const result = await updateProfile.mutateAsync({
+      await updateProfile.mutateAsync({
         userId: selectedUser.user_id,
         updates: profileForm
       });
-      console.log('✅ Profil sauvegardé avec succès:', result);
       setEditingProfile(false);
     } catch (error) {
-      console.error('❌ Erreur lors de la sauvegarde:', error);
-      console.error('❌ Détails de l\'erreur:', {
-        message: error.message,
-        code: error.code,
-        details: error.details
-      });
+      console.error('Erreur lors de la sauvegarde:', error);
     }
   };
 
@@ -282,10 +239,7 @@ const AdminUsers = () => {
               </div>
               {!editingProfile ? (
                 <Button 
-                  onClick={() => {
-                    console.log('🖱️ Button "Modifier" clicked!');
-                    handleEditProfile();
-                  }} 
+                  onClick={handleEditProfile} 
                   variant="outline" 
                   size="sm"
                 >
@@ -308,35 +262,6 @@ const AdminUsers = () => {
                   </Button>
                 </div>
               )}
-            </div>
-
-            <div className="mb-4 p-2 bg-blue-50 rounded text-sm text-blue-700">
-              Mode édition: {editingProfile ? 'ACTIVÉ' : 'DÉSACTIVÉ'} | 
-              Profile ID: {profile?.id} | 
-              Selected User ID: {selectedUser?.user_id} |
-              updateProfile.isPending: {updateProfile.isPending ? 'OUI' : 'NON'}
-            </div>
-
-            <div className="mb-4 p-2 bg-yellow-50 rounded text-sm">
-              <button 
-                onClick={() => {
-                  console.log('🧪 TEST BUTTON CLICKED');
-                  alert('Test button fonctionne !');
-                }}
-                className="mr-2 px-2 py-1 bg-yellow-500 text-white rounded"
-              >
-                🧪 Test Click
-              </button>
-              
-              <button 
-                onClick={() => {
-                  console.log('🧪 FORCE SAVE TEST');
-                  handleSaveProfile();
-                }}
-                className="px-2 py-1 bg-green-500 text-white rounded"
-              >
-                🧪 Force Save
-              </button>
             </div>
 
             {!editingProfile ? (
