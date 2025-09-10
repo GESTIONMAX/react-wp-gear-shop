@@ -87,6 +87,10 @@ export const useUpdateClientData = () => {
   
   return useMutation({
     mutationFn: async ({ userId, updates }: { userId: string; updates: Partial<ClientData> }) => {
+      console.log('=== Début de la mutation updateClientData ===');
+      console.log('userId:', userId);
+      console.log('updates:', updates);
+      
       const { data, error } = await supabase
         .from('clients')
         .update({
@@ -97,7 +101,18 @@ export const useUpdateClientData = () => {
         .select()
         .single();
 
-      if (error) throw error;
+      console.log('=== Résultat de la requête ===');
+      console.log('data:', data);
+      console.log('error:', error);
+      
+      if (error) {
+        console.error('=== ERREUR SUPABASE ===');
+        console.error('Code:', error.code);
+        console.error('Message:', error.message);
+        console.error('Details:', error.details);
+        console.error('Hint:', error.hint);
+        throw error;
+      }
       return data;
     },
     onSuccess: (data) => {

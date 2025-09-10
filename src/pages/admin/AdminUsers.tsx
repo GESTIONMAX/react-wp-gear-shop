@@ -130,13 +130,23 @@ const ClientDetailDialog = ({
     if (!user?.user_id) return;
     
     try {
+      console.log('=== DEBUT handleSaveProfile ===');
+      console.log('user_id:', user.user_id);
+      console.log('profileForm:', profileForm);
+      console.log('updateClientData disponible:', !!updateClientData);
+      
       await updateClientData.mutateAsync({
         userId: user.user_id,
         updates: profileForm
       });
+      console.log('=== Mise à jour réussie ===');
       setEditingProfile(false);
     } catch (error) {
-      console.error('Erreur lors de la sauvegarde:', error);
+      console.error('=== ERREUR lors de la sauvegarde ===');
+      console.error('Erreur complète:', error);
+      console.error('Message:', error?.message);
+      console.error('Details:', error?.details);
+      console.error('Hint:', error?.hint);
     }
   };
 
