@@ -73,7 +73,48 @@ const AdminUsers = () => {
   const updateUserRole = useUpdateUserRole();
   const updateProfile = useUpdateProfile();
 
+  // Debug: monitorer les changements d'editingProfile
+  React.useEffect(() => {
+    console.log('=== CHANGEMENT editingProfile ===');
+    console.log('editingProfile:', editingProfile);
+    console.log('Stack trace:', new Error().stack);
+    console.log('=== FIN CHANGEMENT editingProfile ===');
+  }, [editingProfile]);
+// Composant séparé pour éviter les re-créations
+const ClientDetailDialog = ({ 
+  user, 
+  orders, 
+  invoices, 
+  profile,
+  editingProfile,
+  setEditingProfile,
+  profileForm,
+  setProfileForm,
+  updateProfile
+}: { 
+  user: any;
+  orders: any[];
+  invoices: any[];
+  profile: any;
+  editingProfile: boolean;
+  setEditingProfile: (editing: boolean) => void;
+  profileForm: any;
+  setProfileForm: (form: any) => void;
+  updateProfile: any;
+}) => {
+  if (!user) return null;
+
+  const userOrders = orders.filter(order => order.user_id === user.user_id);
+  const userInvoices = invoices.filter(invoice => invoice.user_id === user.user_id);
+  
+  const totalSpent = userOrders.reduce((sum, order) => sum + (order.total_amount || 0), 0);
+  const totalInvoices = userInvoices.reduce((sum, invoice) => sum + (invoice.total_amount || 0), 0);
+
   const handleEditProfile = () => {
+    console.log('=== DEBUT handleEditProfile ===');
+    console.log('profile:', profile);
+    console.log('editingProfile avant:', editingProfile);
+    
     if (profile) {
       const newForm = {
         first_name: profile.first_name || '',
@@ -89,17 +130,20 @@ const AdminUsers = () => {
         preferred_shipping_address: (profile as any).preferred_shipping_address || null,
         preferred_billing_address: (profile as any).preferred_billing_address || null
       };
+      console.log('newForm créé:', newForm);
       setProfileForm(newForm);
       setEditingProfile(true);
+      console.log('editingProfile mis à true');
     }
+    console.log('=== FIN handleEditProfile ===');
   };
 
   const handleSaveProfile = async () => {
-    if (!selectedUser?.user_id) return;
+    if (!user?.user_id) return;
     
     try {
       await updateProfile.mutateAsync({
-        userId: selectedUser.user_id,
+        userId: user.user_id,
         updates: profileForm
       });
       setEditingProfile(false);
@@ -125,14 +169,6 @@ const AdminUsers = () => {
       preferred_billing_address: null
     });
   };
-  const ClientDetailDialog = ({ user }: { user: any }) => {
-    if (!user) return null;
-
-    const userOrders = orders.filter(order => order.user_id === user.user_id);
-    const userInvoices = invoices.filter(invoice => invoice.user_id === user.user_id);
-    
-    const totalSpent = userOrders.reduce((sum, order) => sum + (order.total_amount || 0), 0);
-    const totalInvoices = userInvoices.reduce((sum, invoice) => sum + (invoice.total_amount || 0), 0);
 
     const formatPrice = (price: number) => {
       return new Intl.NumberFormat('fr-FR', {
@@ -342,11 +378,23 @@ const AdminUsers = () => {
                     <div className="grid grid-cols-2 gap-4">
                       <div>
                         <Label htmlFor="first_name">Prénom</Label>
-                        <Input
-                          id="first_name"
-                          value={profileForm.first_name}
-                          onChange={(e) => setProfileForm(prev => ({ ...prev, first_name: e.target.value }))}
-                        />
+                           <Input
+                             id="first_name"
+                             value={profileForm.first_name}
+                             onChange={(e) => {
+                               console.log('=== CHANGEMENT first_name ===');
+                               console.log('editingProfile avant:', editingProfile);
+                               console.log('nouvelle valeur:', e.target.value);
+                               setProfileForm(prev => {
+                                 console.log('prev form:', prev);
+                                 const newForm = { ...prev, first_name: e.target.value };
+                                 console.log('nouveau form:', newForm);
+                                 return newForm;
+                               });
+                               console.log('editingProfile après:', editingProfile);
+                               console.log('=== FIN CHANGEMENT first_name ===');
+                             }}
+                           />
                       </div>
                       <div>
                         <Label htmlFor="last_name">Nom</Label>
@@ -950,7 +998,17 @@ const AdminUsers = () => {
                                   Voir
                                 </Button>
                               </DialogTrigger>
-                              <ClientDetailDialog user={selectedUser} />
+                              <ClientDetailDialog 
+                                user={selectedUser} 
+                                orders={orders}
+                                invoices={invoices}
+                                profile={profile}
+                                editingProfile={editingProfile}
+                                setEditingProfile={setEditingProfile}
+                                profileForm={profileForm}
+                                setProfileForm={setProfileForm}
+                                updateProfile={updateProfile}
+                              />
                             </Dialog>
                             
                             <Select
