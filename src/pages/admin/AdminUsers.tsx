@@ -44,6 +44,7 @@ import { useInvoices } from '@/hooks/useInvoices';
 import { toast } from '@/hooks/use-toast';
 import { formatDistanceToNow } from 'date-fns';
 import { fr } from 'date-fns/locale';
+import { useQueryClient } from '@tanstack/react-query';
 
 const AdminUsers = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -89,6 +90,7 @@ const ClientDetailDialog = ({
 }) => {
   const { data: clientData } = useClientData(user?.user_id);
   const updateClientData = useUpdateClientData();
+  const queryClient = useQueryClient();
   
   if (!user) return null;
 
@@ -140,13 +142,28 @@ const ClientDetailDialog = ({
         updates: profileForm
       });
       console.log('=== Mise à jour réussie ===');
+      
+      // Forcer le rafraîchissement des données pour ce client spécifique
+      await queryClient.invalidateQueries({ queryKey: ['clientData', user.user_id] });
+      
       setEditingProfile(false);
+      
+      toast({
+        title: "Profil mis à jour",
+        description: "Les informations du client ont été sauvegardées avec succès.",
+      });
     } catch (error) {
       console.error('=== ERREUR lors de la sauvegarde ===');
       console.error('Erreur complète:', error);
       console.error('Message:', error?.message);
       console.error('Details:', error?.details);
       console.error('Hint:', error?.hint);
+      
+      toast({
+        title: "Erreur",
+        description: "Impossible de sauvegarder les modifications. Veuillez réessayer.",
+        variant: "destructive",
+      });
     }
   };
 
