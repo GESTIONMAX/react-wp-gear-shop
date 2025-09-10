@@ -8,6 +8,7 @@ import {
   BarChart3,
   Settings,
   Users,
+  UserCheck,
   ShoppingCart,
   Receipt,
   Layers3,
@@ -62,6 +63,12 @@ const navigationItems = [
     href: '/admin/users',
     icon: Users,
     description: 'Gestion des clients'
+  },
+  {
+    title: 'Fournisseurs',
+    href: '/admin/suppliers',
+    icon: UserCheck,
+    description: 'Gestion des fournisseurs'
   },
   {
     title: 'Statistiques',

@@ -14,6 +14,7 @@ import Account from "./pages/Account";
 import Blog from "./pages/Blog";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminUsers from "./pages/admin/AdminUsers";
+import AdminSuppliers from "./pages/admin/AdminSuppliers";
 import AdminProducts from "./pages/admin/AdminProducts";
 import AdminCollections from "./pages/admin/AdminCollections";
 import AdminVariants from "./pages/admin/AdminVariants";
@@ -50,6 +51,11 @@ const App = () => (
               <Route path="/admin/users" element={
                 <ProtectedRoute>
                   <AdminUsers />
+                </ProtectedRoute>
+              } />
+              <Route path="/admin/suppliers" element={
+                <ProtectedRoute>
+                  <AdminSuppliers />
                 </ProtectedRoute>
               } />
               <Route path="/admin/products" element={
