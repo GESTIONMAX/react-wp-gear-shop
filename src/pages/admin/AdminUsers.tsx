@@ -136,6 +136,7 @@ const ClientDetailDialog = ({
       setProfileForm(newForm);
       setEditingProfile(true);
       console.log('editingProfile mis à true');
+      console.log('BOUTONS SAUVEGARDE DEVRAIENT APPARAITRE MAINTENANT');
     }
     console.log('=== FIN handleEditProfile ===');
   };
@@ -302,7 +303,10 @@ const ClientDetailDialog = ({
               </div>
               {!editingProfile ? (
                 <Button 
-                  onClick={handleEditProfile} 
+                  onClick={() => {
+                    console.log('=== CLIC BOUTON MODIFIER ===');
+                    handleEditProfile();
+                  }} 
                   variant="outline" 
                   size="sm"
                 >
@@ -312,7 +316,10 @@ const ClientDetailDialog = ({
               ) : (
                 <div className="flex gap-2">
                   <Button 
-                    onClick={handleSaveProfile} 
+                    onClick={() => {
+                      console.log('=== CLIC BOUTON SAUVEGARDER ===');
+                      handleSaveProfile();
+                    }} 
                   size="sm"
                   disabled={updateClientData.isPending}
                   >
