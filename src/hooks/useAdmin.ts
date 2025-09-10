@@ -1,15 +1,17 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/contexts/AuthContext';
 import { toast } from '@/hooks/use-toast';
 
 export type UserRole = 'admin' | 'user';
 
 // Hook pour vérifier si l'utilisateur est admin
 export const useIsAdmin = () => {
+  const { user } = useAuth();
+  
   return useQuery({
-    queryKey: ['userRole'],
+    queryKey: ['userRole', user?.id],
     queryFn: async () => {
-      const { data: { user } } = await supabase.auth.getUser();
       if (!user) return false;
 
       const { data, error } = await supabase
@@ -20,18 +22,21 @@ export const useIsAdmin = () => {
         return false;
       }
 
+      console.log('useIsAdmin - user.id:', user.id, 'role:', data);
       return data === 'admin';
     },
+    enabled: !!user,
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
 };
 
 // Hook pour obtenir le rôle de l'utilisateur
 export const useUserRole = () => {
+  const { user } = useAuth();
+  
   return useQuery({
-    queryKey: ['userRole'],
+    queryKey: ['userRole', user?.id],
     queryFn: async () => {
-      const { data: { user } } = await supabase.auth.getUser();
       if (!user) return null;
 
       const { data, error } = await supabase
@@ -44,6 +49,7 @@ export const useUserRole = () => {
 
       return data as UserRole;
     },
+    enabled: !!user,
     staleTime: 5 * 60 * 1000,
   });
 };
@@ -51,10 +57,10 @@ export const useUserRole = () => {
 // Hook pour attribuer un rôle admin (pour le développement)
 export const useAssignAdminRole = () => {
   const queryClient = useQueryClient();
+  const { user } = useAuth();
   
   return useMutation({
     mutationFn: async () => {
-      const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error('Utilisateur non connecté');
 
       const { error } = await supabase
