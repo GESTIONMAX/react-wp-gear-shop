@@ -124,12 +124,6 @@ export const useAdminOrders = () => {
         .from('orders')
         .select(`
           *,
-          profiles!inner(
-            id,
-            first_name,
-            last_name,
-            email
-          ),
           order_items(
             id,
             product_id,
@@ -159,13 +153,6 @@ export const useAdminOrder = (orderId: string) => {
         .from('orders')
         .select(`
           *,
-          profiles!inner(
-            id,
-            first_name,
-            last_name,
-            email,
-            phone
-          ),
           order_items(
             id,
             product_id,

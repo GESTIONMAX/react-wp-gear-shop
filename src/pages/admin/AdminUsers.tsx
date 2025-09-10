@@ -122,7 +122,7 @@ const AdminUsers = () => {
   const ClientDetailDialog = ({ user }: { user: any }) => {
     if (!user) return null;
 
-    const userOrders = orders.filter(order => order.profiles?.id === user.id);
+    const userOrders = orders.filter(order => order.user_id === user.user_id);
     const userInvoices = invoices.filter(invoice => invoice.user_id === user.user_id);
     
     const totalSpent = userOrders.reduce((sum, order) => sum + (order.total_amount || 0), 0);

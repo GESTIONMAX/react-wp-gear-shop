@@ -11,6 +11,7 @@ export interface Profile {
   avatar_url: string | null;
   phone: string | null;
   address: string | null;
+  address_complement: string | null;
   city: string | null;
   postal_code: string | null;
   country: string | null;
