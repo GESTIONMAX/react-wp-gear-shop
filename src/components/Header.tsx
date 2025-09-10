@@ -13,10 +13,10 @@ const Header = () => {
   const { totalItems } = useCart();
 
   const navigation = [
-    { name: 'Smartphones', href: '#smartphones' },
-    { name: 'Ordinateurs', href: '#ordinateurs' },
-    { name: 'Audio', href: '#audio' },
-    { name: 'Gaming', href: '#gaming' },
+    { name: 'SPORT', href: '#sport' },
+    { name: 'LIFESTYLE', href: '#lifestyle' },
+    { name: 'PRISMATIC', href: '#prismatic' },
+    { name: 'Accessoires', href: '#accessoires' },
     { name: 'Blog', href: '#blog' },
   ];
 

@@ -14,37 +14,39 @@ interface ProductFiltersProps {
 
 export const ProductFilters: React.FC<ProductFiltersProps> = ({ onFiltersChange }) => {
   const [priceRange, setPriceRange] = React.useState([0, 2000]);
-  const [selectedCategories, setSelectedCategories] = React.useState<string[]>([]);
-  const [selectedBrands, setSelectedBrands] = React.useState<string[]>([]);
+  const [selectedCollections, setSelectedCollections] = React.useState<string[]>([]);
+  const [selectedModels, setSelectedModels] = React.useState<string[]>([]);
 
-  const categories = [
-    'Smartphones',
-    'Ordinateurs', 
-    'Audio',
-    'Gaming'
+  const collections = [
+    'SPORT',
+    'LIFESTYLE',
+    'PRISMATIC'
   ];
 
-  const brands = [
-    'Apple',
-    'Samsung',
-    'Sony',
-    'Dell',
-    'MacBook'
+  const models = [
+    'Music Shield',
+    'Falcon',
+    'Shield',
+    'Prime',
+    'Duck Classic',
+    'Dragon',
+    'Aura',
+    'Euphoria'
   ];
 
-  const handleCategoryChange = (category: string, checked: boolean) => {
+  const handleCollectionChange = (collection: string, checked: boolean) => {
     if (checked) {
-      setSelectedCategories([...selectedCategories, category]);
+      setSelectedCollections([...selectedCollections, collection]);
     } else {
-      setSelectedCategories(selectedCategories.filter(c => c !== category));
+      setSelectedCollections(selectedCollections.filter(c => c !== collection));
     }
   };
 
-  const handleBrandChange = (brand: string, checked: boolean) => {
+  const handleModelChange = (model: string, checked: boolean) => {
     if (checked) {
-      setSelectedBrands([...selectedBrands, brand]);
+      setSelectedModels([...selectedModels, model]);
     } else {
-      setSelectedBrands(selectedBrands.filter(b => b !== brand));
+      setSelectedModels(selectedModels.filter(m => m !== model));
     }
   };
 
@@ -95,44 +97,44 @@ export const ProductFilters: React.FC<ProductFiltersProps> = ({ onFiltersChange 
           </CollapsibleContent>
         </Collapsible>
 
-        {/* Categories */}
+        {/* Collections */}
         <Collapsible defaultOpen>
           <CollapsibleTrigger className="flex items-center justify-between w-full py-2">
-            <Label className="text-sm font-medium">Catégories</Label>
+            <Label className="text-sm font-medium">Collections</Label>
             <ChevronDown className="h-4 w-4" />
           </CollapsibleTrigger>
           <CollapsibleContent className="space-y-2 pt-2">
-            {categories.map((category) => (
-              <div key={category} className="flex items-center space-x-2">
+            {collections.map((collection) => (
+              <div key={collection} className="flex items-center space-x-2">
                 <Checkbox
-                  id={`category-${category}`}
-                  checked={selectedCategories.includes(category)}
-                  onCheckedChange={(checked) => handleCategoryChange(category, checked as boolean)}
+                  id={`collection-${collection}`}
+                  checked={selectedCollections.includes(collection)}
+                  onCheckedChange={(checked) => handleCollectionChange(collection, checked as boolean)}
                 />
-                <Label htmlFor={`category-${category}`} className="text-sm">
-                  {category}
+                <Label htmlFor={`collection-${collection}`} className="text-sm">
+                  {collection}
                 </Label>
               </div>
             ))}
           </CollapsibleContent>
         </Collapsible>
 
-        {/* Brands */}
+        {/* Models */}
         <Collapsible defaultOpen>
           <CollapsibleTrigger className="flex items-center justify-between w-full py-2">
-            <Label className="text-sm font-medium">Marques</Label>
+            <Label className="text-sm font-medium">Modèles</Label>
             <ChevronDown className="h-4 w-4" />
           </CollapsibleTrigger>
           <CollapsibleContent className="space-y-2 pt-2">
-            {brands.map((brand) => (
-              <div key={brand} className="flex items-center space-x-2">
+            {models.map((model) => (
+              <div key={model} className="flex items-center space-x-2">
                 <Checkbox
-                  id={`brand-${brand}`}
-                  checked={selectedBrands.includes(brand)}
-                  onCheckedChange={(checked) => handleBrandChange(brand, checked as boolean)}
+                  id={`model-${model}`}
+                  checked={selectedModels.includes(model)}
+                  onCheckedChange={(checked) => handleModelChange(model, checked as boolean)}
                 />
-                <Label htmlFor={`brand-${brand}`} className="text-sm">
-                  {brand}
+                <Label htmlFor={`model-${model}`} className="text-sm">
+                  {model}
                 </Label>
               </div>
             ))}
@@ -144,8 +146,8 @@ export const ProductFilters: React.FC<ProductFiltersProps> = ({ onFiltersChange 
           variant="outline" 
           className="w-full" 
           onClick={() => {
-            setSelectedCategories([]);
-            setSelectedBrands([]);
+            setSelectedCollections([]);
+            setSelectedModels([]);
             setPriceRange([0, 2000]);
           }}
         >
