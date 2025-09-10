@@ -12,7 +12,10 @@ import {
   AlertCircle,
   CheckCircle,
   Clock,
-  Truck
+  Truck,
+  FolderOpen,
+  Layers3,
+  Settings
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 
@@ -77,21 +80,47 @@ const AdminDashboard: React.FC = () => {
     <AdminLayout title="Dashboard" description="Vue d'ensemble de votre boutique">
       <div className="space-y-8">
         {/* Cartes de statistiques principales */}
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-          <Card className="border-l-4 border-l-blue-500">
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-6">
+          <Card className="border-l-4 border-l-blue-500 xl:col-span-2">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Produits Total</CardTitle>
+              <CardTitle className="text-sm font-medium">Produits</CardTitle>
               <Package className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{stats?.products.total || 0}</div>
               <p className="text-xs text-muted-foreground">
-                {stats?.products.active || 0} actifs, {stats?.products.inactive || 0} inactifs
+                {stats?.products.active || 0} en stock • {stats?.products.withVariants || 0} avec variantes
               </p>
             </CardContent>
           </Card>
 
           <Card className="border-l-4 border-l-green-500">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Collections</CardTitle>
+              <FolderOpen className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{stats?.categories.total || 0}</div>
+              <p className="text-xs text-muted-foreground">
+                {stats?.categories.active || 0} actives
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card className="border-l-4 border-l-indigo-500">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Variantes</CardTitle>
+              <Layers3 className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{stats?.variants.total || 0}</div>
+              <p className="text-xs text-muted-foreground">
+                {stats?.variants.active || 0} disponibles
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card className="border-l-4 border-l-orange-500">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Commandes</CardTitle>
               <ShoppingCart className="h-4 w-4 text-muted-foreground" />
@@ -99,7 +128,7 @@ const AdminDashboard: React.FC = () => {
             <CardContent>
               <div className="text-2xl font-bold">{stats?.orders.total || 0}</div>
               <p className="text-xs text-muted-foreground">
-                {stats?.orders.recent || 0} ces 30 derniers jours
+                {stats?.orders.recent || 0} ce mois
               </p>
             </CardContent>
           </Card>
@@ -114,14 +143,14 @@ const AdminDashboard: React.FC = () => {
                 {formatPrice(stats?.revenue.total || 0)}
               </div>
               <p className="text-xs text-muted-foreground">
-                {formatPrice(stats?.revenue.recent || 0)} ces 30 jours
+                {formatPrice(stats?.revenue.recent || 0)} ce mois
               </p>
             </CardContent>
           </Card>
 
-          <Card className="border-l-4 border-l-orange-500">
+          <Card className="border-l-4 border-l-rose-500">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Utilisateurs</CardTitle>
+              <CardTitle className="text-sm font-medium">Clients</CardTitle>
               <Users className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
@@ -134,13 +163,34 @@ const AdminDashboard: React.FC = () => {
         </div>
 
         {/* Graphiques et détails */}
-        <div className="grid gap-6 md:grid-cols-2">
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {/* Répartition des produits par catégorie */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Produits par Collection</CardTitle>
+              <CardDescription>
+                Répartition de vos produits
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {stats?.products.byCategory && Object.entries(stats.products.byCategory).map(([category, count]) => (
+                <div key={category} className="flex items-center justify-between">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-3 h-3 rounded-full bg-primary"></div>
+                    <span className="text-sm font-medium">{category}</span>
+                  </div>
+                  <Badge variant="outline">{count as number}</Badge>
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+
           {/* Statut des commandes */}
           <Card>
             <CardHeader>
               <CardTitle>Statut des Commandes</CardTitle>
               <CardDescription>
-                Répartition des commandes par statut
+                État actuel des commandes
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -184,8 +234,8 @@ const AdminDashboard: React.FC = () => {
                 Ajouter un produit
               </Button>
               <Button className="w-full justify-start" variant="outline" onClick={() => window.location.href = '/admin/categories'}>
-                <Package className="h-4 w-4 mr-2" />
-                Gérer les catégories
+                <FolderOpen className="h-4 w-4 mr-2" />
+                Gérer les collections
               </Button>
               <Button className="w-full justify-start" variant="outline" onClick={() => window.location.href = '/admin/orders'}>
                 <ShoppingCart className="h-4 w-4 mr-2" />

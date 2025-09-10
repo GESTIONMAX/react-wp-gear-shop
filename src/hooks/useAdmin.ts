@@ -88,12 +88,34 @@ export const useAdminStats = () => {
   return useQuery({
     queryKey: ['adminStats'],
     queryFn: async () => {
-      // Statistiques des produits
+      // Statistiques des produits avec catégories
       const { data: productsStats, error: productsError } = await supabase
         .from('products')
-        .select('id, price, sale_price, in_stock, created_at');
+        .select(`
+          id, 
+          price, 
+          sale_price, 
+          in_stock, 
+          created_at,
+          category_id,
+          categories(id, name)
+        `);
 
       if (productsError) throw productsError;
+
+      // Statistiques des catégories
+      const { data: categoriesStats, error: categoriesError } = await supabase
+        .from('categories')
+        .select('id, name, is_active, created_at');
+
+      if (categoriesError) throw categoriesError;
+
+      // Statistiques des variantes
+      const { data: variantsStats, error: variantsError } = await supabase
+        .from('product_variants')
+        .select('id, product_id, in_stock, price, created_at');
+
+      if (variantsError) throw variantsError;
 
       // Statistiques des commandes
       const { data: ordersStats, error: ordersError } = await supabase
@@ -109,9 +131,29 @@ export const useAdminStats = () => {
 
       if (usersError) throw usersError;
 
-      // Calculs
+      // Calculs des produits
       const totalProducts = productsStats?.length || 0;
       const activeProducts = productsStats?.filter(p => p.in_stock).length || 0;
+      const productsWithVariants = productsStats?.filter(p => 
+        variantsStats?.some(v => v.product_id === p.id)
+      ).length || 0;
+
+      // Calculs des catégories
+      const totalCategories = categoriesStats?.length || 0;
+      const activeCategories = categoriesStats?.filter(c => c.is_active).length || 0;
+      
+      // Répartition des produits par catégorie
+      const productsByCategory = productsStats?.reduce((acc: any, product) => {
+        const categoryName = product.categories?.name || 'Sans catégorie';
+        acc[categoryName] = (acc[categoryName] || 0) + 1;
+        return acc;
+      }, {}) || {};
+
+      // Calculs des variantes
+      const totalVariants = variantsStats?.length || 0;
+      const activeVariants = variantsStats?.filter(v => v.in_stock).length || 0;
+
+      // Calculs des commandes
       const totalOrders = ordersStats?.length || 0;
       const totalRevenue = ordersStats?.reduce((sum, order) => sum + (order.total_amount || 0), 0) || 0;
       const totalUsers = usersStats?.length || 0;
@@ -136,7 +178,20 @@ export const useAdminStats = () => {
         products: {
           total: totalProducts,
           active: activeProducts,
-          inactive: totalProducts - activeProducts
+          inactive: totalProducts - activeProducts,
+          withVariants: productsWithVariants,
+          withoutVariants: totalProducts - productsWithVariants,
+          byCategory: productsByCategory
+        },
+        categories: {
+          total: totalCategories,
+          active: activeCategories,
+          inactive: totalCategories - activeCategories
+        },
+        variants: {
+          total: totalVariants,
+          active: activeVariants,
+          inactive: totalVariants - activeVariants
         },
         orders: {
           total: totalOrders,
