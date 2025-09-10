@@ -275,12 +275,15 @@ const ProductForm: React.FC<ProductFormProps> = ({
         <CardContent>
           <div className="space-y-2">
             <Label>Catégorie</Label>
-            <Select onValueChange={(value) => setValue('category_id', value)}>
+            <Select 
+              defaultValue={product?.category_id || "none"} 
+              onValueChange={(value) => setValue('category_id', value === "none" ? "" : value)}
+            >
               <SelectTrigger>
                 <SelectValue placeholder="Sélectionnez une catégorie" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Aucune catégorie</SelectItem>
+                <SelectItem value="none">Aucune catégorie</SelectItem>
                 {categories.map((category) => (
                   <SelectItem key={category.id} value={category.id}>
                     {category.name}
