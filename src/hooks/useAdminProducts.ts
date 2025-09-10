@@ -228,6 +228,40 @@ export const useDeleteProduct = () => {
   });
 };
 
+// Hook pour activer/désactiver un produit
+export const useToggleProductStatus = () => {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: async ({ productId, isActive }: { productId: string; isActive: boolean }) => {
+      const { data, error } = await supabase
+        .from('products')
+        .update({ is_active: isActive })
+        .eq('id', productId)
+        .select()
+        .single();
+
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['adminProducts'] });
+      toast({
+        title: "Statut mis à jour",
+        description: "Le statut du produit a été mis à jour avec succès.",
+      });
+    },
+    onError: (error) => {
+      console.error('Erreur lors du changement de statut:', error);
+      toast({
+        title: "Erreur",
+        description: "Impossible de changer le statut du produit. Veuillez réessayer.",
+        variant: "destructive",
+      });
+    },
+  });
+};
+
 // Hook pour récupérer les catégories pour l'admin
 export const useAdminCategories = () => {
   return useQuery({

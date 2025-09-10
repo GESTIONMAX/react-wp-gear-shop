@@ -14,6 +14,7 @@ import Account from "./pages/Account";
 import Blog from "./pages/Blog";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminUsers from "./pages/admin/AdminUsers";
+import AdminProducts from "./pages/admin/AdminProducts";
 import ProtectedRoute from "./components/admin/ProtectedRoute";
 import Checkout from "./pages/Checkout";
 import OrderSuccess from "./pages/OrderSuccess";
@@ -44,6 +45,11 @@ const App = () => (
               <Route path="/admin/users" element={
                 <ProtectedRoute>
                   <AdminUsers />
+                </ProtectedRoute>
+              } />
+              <Route path="/admin/products" element={
+                <ProtectedRoute>
+                  <AdminProducts />
                 </ProtectedRoute>
               } />
               <Route path="/checkout" element={<Checkout />} />
