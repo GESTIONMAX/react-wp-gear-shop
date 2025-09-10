@@ -29,6 +29,7 @@ const Auth = () => {
   const [isRecoverySession, setIsRecoverySession] = useState(false);
 
   useEffect(() => {
+    // Check URL parameters
     const urlParams = new URLSearchParams(window.location.search);
     const type = urlParams.get('type');
     const accessToken = urlParams.get('access_token');
@@ -42,6 +43,16 @@ const Auth = () => {
     // Check for recovery session using multiple indicators
     if (type === 'recovery' || (accessToken && refreshToken && window.location.search.includes('type=recovery'))) {
       console.log('Setting recovery session to true');
+      setIsRecoverySession(true);
+    }
+
+    // Also check hash parameters (sometimes Supabase puts params in hash)
+    const hashParams = new URLSearchParams(window.location.hash.substring(1));
+    const hashType = hashParams.get('type');
+    const hashAccessToken = hashParams.get('access_token');
+    
+    if (hashType === 'recovery' || (hashAccessToken && hashType)) {
+      console.log('Found recovery session in hash parameters');
       setIsRecoverySession(true);
     }
   }, []);
