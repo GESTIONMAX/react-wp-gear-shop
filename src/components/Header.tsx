@@ -4,7 +4,7 @@ import { Search, ShoppingCart, Menu, X, User, Heart, LogOut } from 'lucide-react
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle, SheetDescription } from '@/components/ui/sheet';
 import { useCart } from '@/contexts/CartContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { MiniCart } from '@/components/MiniCart';
@@ -134,6 +134,12 @@ const Header = () => {
                 </Button>
               </SheetTrigger>
               <SheetContent side="right" className="w-full sm:w-96">
+                <SheetHeader>
+                  <SheetTitle>Mon panier</SheetTitle>
+                  <SheetDescription>
+                    Articles sélectionnés pour votre commande
+                  </SheetDescription>
+                </SheetHeader>
                 <MiniCart onClose={() => setIsCartOpen(false)} />
               </SheetContent>
             </Sheet>

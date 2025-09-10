@@ -130,7 +130,13 @@ export const MiniCart: React.FC<MiniCartProps> = ({ onClose }) => {
           <span>{formatPrice(totalPrice)}</span>
         </div>
         <div className="space-y-2">
-          <Button className="w-full gradient-primary text-primary-foreground">
+          <Button 
+            className="w-full gradient-primary text-primary-foreground"
+            onClick={() => {
+              onClose();
+              window.location.href = '/checkout';
+            }}
+          >
             Passer commande
           </Button>
           <Button variant="outline" className="w-full" onClick={onClose}>
