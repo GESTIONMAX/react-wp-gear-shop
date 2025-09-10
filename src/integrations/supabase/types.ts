@@ -465,65 +465,35 @@ export type Database = {
       }
       profiles: {
         Row: {
-          address: string | null
-          address_complement: string | null
           avatar_url: string | null
-          city: string | null
-          country: string | null
           created_at: string
           email: string | null
           first_name: string | null
           id: string
           last_name: string | null
-          marketing_consent: boolean | null
-          marketing_phone: string | null
-          notes: string | null
           phone: string | null
-          postal_code: string | null
-          preferred_billing_address: Json | null
-          preferred_shipping_address: Json | null
           updated_at: string
           user_id: string
         }
         Insert: {
-          address?: string | null
-          address_complement?: string | null
           avatar_url?: string | null
-          city?: string | null
-          country?: string | null
           created_at?: string
           email?: string | null
           first_name?: string | null
           id?: string
           last_name?: string | null
-          marketing_consent?: boolean | null
-          marketing_phone?: string | null
-          notes?: string | null
           phone?: string | null
-          postal_code?: string | null
-          preferred_billing_address?: Json | null
-          preferred_shipping_address?: Json | null
           updated_at?: string
           user_id: string
         }
         Update: {
-          address?: string | null
-          address_complement?: string | null
           avatar_url?: string | null
-          city?: string | null
-          country?: string | null
           created_at?: string
           email?: string | null
           first_name?: string | null
           id?: string
           last_name?: string | null
-          marketing_consent?: boolean | null
-          marketing_phone?: string | null
-          notes?: string | null
           phone?: string | null
-          postal_code?: string | null
-          preferred_billing_address?: Json | null
-          preferred_shipping_address?: Json | null
           updated_at?: string
           user_id?: string
         }

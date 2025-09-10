@@ -10,16 +10,6 @@ export interface Profile {
   last_name: string | null;
   avatar_url: string | null;
   phone: string | null;
-  address: string | null;
-  address_complement: string | null;
-  city: string | null;
-  postal_code: string | null;
-  country: string | null;
-  marketing_phone: string | null;
-  marketing_consent: boolean;
-  notes: string | null;
-  preferred_shipping_address: any | null;
-  preferred_billing_address: any | null;
   created_at: string;
   updated_at: string;
 }

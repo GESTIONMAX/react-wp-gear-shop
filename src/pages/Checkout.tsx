@@ -60,39 +60,47 @@ const Checkout = () => {
     notes: '',
   });
 
-  // Charger le profil utilisateur et pré-remplir le formulaire
+  // Charger les données utilisateur et client, et pré-remplir le formulaire
   useEffect(() => {
-    const loadUserProfile = async () => {
+    const loadUserData = async () => {
       if (user) {
         try {
-          const { data: profile, error } = await supabase
+          // Récupérer les données de profil (nom, email, phone)
+          const { data: profile, error: profileError } = await supabase
             .from('profiles')
             .select('*')
             .eq('user_id', user.id)
-            .single();
+            .maybeSingle();
 
-          if (profile && !error) {
-            // Pré-remplir avec les informations disponibles du profil
+          // Récupérer les données client (adresses)
+          const { data: clientData, error: clientError } = await supabase
+            .from('clients')
+            .select('*')
+            .eq('user_id', user.id)
+            .maybeSingle();
+
+          if (profile && !profileError) {
+            // Pré-remplir avec les informations de profil et client
             setFormData(prev => ({
               ...prev,
               shippingAddress: {
                 firstName: profile.first_name || user.user_metadata?.first_name || '',
                 lastName: profile.last_name || user.user_metadata?.last_name || '',
-                address: profile.address || '',
-                addressComplement: profile.address_complement || '',
-                city: profile.city || '',
-                postalCode: profile.postal_code || '',
-                country: profile.country || 'France',
+                address: clientData?.address || '',
+                addressComplement: clientData?.address_complement || '',
+                city: clientData?.city || '',
+                postalCode: clientData?.postal_code || '',
+                country: clientData?.country || 'France',
                 phone: profile.phone || '',
               },
               billingAddress: {
                 firstName: profile.first_name || user.user_metadata?.first_name || '',
                 lastName: profile.last_name || user.user_metadata?.last_name || '',
-                address: profile.address || '',
-                addressComplement: profile.address_complement || '',
-                city: profile.city || '',
-                postalCode: profile.postal_code || '',
-                country: profile.country || 'France',
+                address: clientData?.address || '',
+                addressComplement: clientData?.address_complement || '',
+                city: clientData?.city || '',
+                postalCode: clientData?.postal_code || '',
+                country: clientData?.country || 'France',
                 phone: profile.phone || '',
               }
             }));
@@ -119,7 +127,7 @@ const Checkout = () => {
       }
     };
 
-    loadUserProfile();
+    loadUserData();
   }, [user]);
 
   const formatPrice = (price: number) => {
