@@ -54,12 +54,22 @@ const Account = () => {
     phone: '',
     marketing_phone: '',
     marketing_consent: false,
-    notes: ''
+    notes: '',
+    preferred_shipping_address: {
+      address: '',
+      address_complement: '',
+      city: '',
+      postal_code: '',
+      country: 'France',
+      first_name: '',
+      last_name: ''
+    }
   });
 
   // Initialiser le formulaire quand le profil est chargé
   React.useEffect(() => {
     if (profile && !editingProfile) {
+      const shippingAddr = profile.preferred_shipping_address || {};
       setProfileForm({
         first_name: profile.first_name || '',
         last_name: profile.last_name || '',
@@ -71,7 +81,16 @@ const Account = () => {
         phone: profile.phone || '',
         marketing_phone: profile.marketing_phone || '',
         marketing_consent: profile.marketing_consent || false,
-        notes: profile.notes || ''
+        notes: profile.notes || '',
+        preferred_shipping_address: {
+          address: shippingAddr.address || '',
+          address_complement: shippingAddr.address_complement || '',
+          city: shippingAddr.city || '',
+          postal_code: shippingAddr.postal_code || '',
+          country: shippingAddr.country || 'France',
+          first_name: shippingAddr.first_name || '',
+          last_name: shippingAddr.last_name || ''
+        }
       });
     }
   }, [profile, editingProfile]);
@@ -114,6 +133,7 @@ const Account = () => {
 
   const handleEditProfile = () => {
     if (profile) {
+      const shippingAddr = profile.preferred_shipping_address || {};
       setProfileForm({
         first_name: profile.first_name || '',
         last_name: profile.last_name || '',
@@ -125,7 +145,16 @@ const Account = () => {
         phone: profile.phone || '',
         marketing_phone: profile.marketing_phone || '',
         marketing_consent: profile.marketing_consent || false,
-        notes: profile.notes || ''
+        notes: profile.notes || '',
+        preferred_shipping_address: {
+          address: shippingAddr.address || '',
+          address_complement: shippingAddr.address_complement || '',
+          city: shippingAddr.city || '',
+          postal_code: shippingAddr.postal_code || '',
+          country: shippingAddr.country || 'France',
+          first_name: shippingAddr.first_name || '',
+          last_name: shippingAddr.last_name || ''
+        }
       });
       setEditingProfile(true);
     }
@@ -148,6 +177,7 @@ const Account = () => {
   const handleCancelEdit = () => {
     setEditingProfile(false);
     if (profile) {
+      const shippingAddr = profile.preferred_shipping_address || {};
       setProfileForm({
         first_name: profile.first_name || '',
         last_name: profile.last_name || '',
@@ -159,7 +189,16 @@ const Account = () => {
         phone: profile.phone || '',
         marketing_phone: profile.marketing_phone || '',
         marketing_consent: profile.marketing_consent || false,
-        notes: profile.notes || ''
+        notes: profile.notes || '',
+        preferred_shipping_address: {
+          address: shippingAddr.address || '',
+          address_complement: shippingAddr.address_complement || '',
+          city: shippingAddr.city || '',
+          postal_code: shippingAddr.postal_code || '',
+          country: shippingAddr.country || 'France',
+          first_name: shippingAddr.first_name || '',
+          last_name: shippingAddr.last_name || ''
+        }
       });
     }
   };
@@ -619,6 +658,34 @@ const Account = () => {
                           <Separator />
 
                           <div>
+                            <h4 className="font-medium text-lg mb-4 flex items-center gap-2">
+                              <Package className="h-5 w-5" />
+                              Adresse de livraison préférée
+                            </h4>
+                            {profile?.preferred_shipping_address && profile.preferred_shipping_address.address ? (
+                              <div className="space-y-2 p-4 bg-muted/50 rounded-lg">
+                                <p className="text-sm font-medium">
+                                  {profile.preferred_shipping_address.first_name} {profile.preferred_shipping_address.last_name}
+                                </p>
+                                <div className="text-sm text-muted-foreground space-y-1">
+                                  <p>{profile.preferred_shipping_address.address}</p>
+                                  {profile.preferred_shipping_address.address_complement && (
+                                    <p>{profile.preferred_shipping_address.address_complement}</p>
+                                  )}
+                                  <p>{profile.preferred_shipping_address.postal_code} {profile.preferred_shipping_address.city}</p>
+                                  <p>{profile.preferred_shipping_address.country}</p>
+                                </div>
+                              </div>
+                            ) : (
+                              <p className="text-sm text-muted-foreground italic">
+                                Aucune adresse de livraison définie (l'adresse principale sera utilisée)
+                              </p>
+                            )}
+                          </div>
+
+                          <Separator />
+
+                          <div>
                             <h4 className="font-medium text-lg mb-4">Préférences marketing</h4>
                             <div className="space-y-3">
                               <div className="flex justify-between items-center">
@@ -725,6 +792,126 @@ const Account = () => {
                                     id="country"
                                     value={profileForm.country}
                                     onChange={(e) => setProfileForm(prev => ({ ...prev, country: e.target.value }))}
+                                    placeholder="France"
+                                  />
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+
+                          <Separator />
+
+                          <div>
+                            <h4 className="font-medium text-lg mb-4">Adresse de livraison préférée</h4>
+                            <p className="text-sm text-muted-foreground mb-4">
+                              Si différente de l'adresse principale. Laisser vide pour utiliser l'adresse principale.
+                            </p>
+                            <div className="space-y-4">
+                              <div className="grid gap-4 md:grid-cols-2">
+                                <div className="space-y-2">
+                                  <Label htmlFor="shipping_first_name">Prénom (livraison)</Label>
+                                  <Input
+                                    id="shipping_first_name"
+                                    value={profileForm.preferred_shipping_address.first_name}
+                                    onChange={(e) => setProfileForm(prev => ({
+                                      ...prev,
+                                      preferred_shipping_address: {
+                                        ...prev.preferred_shipping_address,
+                                        first_name: e.target.value
+                                      }
+                                    }))}
+                                    placeholder="Prénom pour la livraison"
+                                  />
+                                </div>
+                                <div className="space-y-2">
+                                  <Label htmlFor="shipping_last_name">Nom (livraison)</Label>
+                                  <Input
+                                    id="shipping_last_name"
+                                    value={profileForm.preferred_shipping_address.last_name}
+                                    onChange={(e) => setProfileForm(prev => ({
+                                      ...prev,
+                                      preferred_shipping_address: {
+                                        ...prev.preferred_shipping_address,
+                                        last_name: e.target.value
+                                      }
+                                    }))}
+                                    placeholder="Nom pour la livraison"
+                                  />
+                                </div>
+                              </div>
+                              <div className="space-y-2">
+                                <Label htmlFor="shipping_address">Adresse de livraison</Label>
+                                <Input
+                                  id="shipping_address"
+                                  value={profileForm.preferred_shipping_address.address}
+                                  onChange={(e) => setProfileForm(prev => ({
+                                    ...prev,
+                                    preferred_shipping_address: {
+                                      ...prev.preferred_shipping_address,
+                                      address: e.target.value
+                                    }
+                                  }))}
+                                  placeholder="123 Rue de la Livraison"
+                                />
+                              </div>
+                              <div className="space-y-2">
+                                <Label htmlFor="shipping_address_complement">Complément d'adresse (livraison)</Label>
+                                <Input
+                                  id="shipping_address_complement"
+                                  value={profileForm.preferred_shipping_address.address_complement}
+                                  onChange={(e) => setProfileForm(prev => ({
+                                    ...prev,
+                                    preferred_shipping_address: {
+                                      ...prev.preferred_shipping_address,
+                                      address_complement: e.target.value
+                                    }
+                                  }))}
+                                  placeholder="Appartement, bâtiment, etc."
+                                />
+                              </div>
+                              <div className="grid gap-4 md:grid-cols-3">
+                                <div className="space-y-2">
+                                  <Label htmlFor="shipping_postal_code">Code postal</Label>
+                                  <Input
+                                    id="shipping_postal_code"
+                                    value={profileForm.preferred_shipping_address.postal_code}
+                                    onChange={(e) => setProfileForm(prev => ({
+                                      ...prev,
+                                      preferred_shipping_address: {
+                                        ...prev.preferred_shipping_address,
+                                        postal_code: e.target.value
+                                      }
+                                    }))}
+                                    placeholder="75001"
+                                  />
+                                </div>
+                                <div className="space-y-2">
+                                  <Label htmlFor="shipping_city">Ville</Label>
+                                  <Input
+                                    id="shipping_city"
+                                    value={profileForm.preferred_shipping_address.city}
+                                    onChange={(e) => setProfileForm(prev => ({
+                                      ...prev,
+                                      preferred_shipping_address: {
+                                        ...prev.preferred_shipping_address,
+                                        city: e.target.value
+                                      }
+                                    }))}
+                                    placeholder="Paris"
+                                  />
+                                </div>
+                                <div className="space-y-2">
+                                  <Label htmlFor="shipping_country">Pays</Label>
+                                  <Input
+                                    id="shipping_country"
+                                    value={profileForm.preferred_shipping_address.country}
+                                    onChange={(e) => setProfileForm(prev => ({
+                                      ...prev,
+                                      preferred_shipping_address: {
+                                        ...prev.preferred_shipping_address,
+                                        country: e.target.value
+                                      }
+                                    }))}
                                     placeholder="France"
                                   />
                                 </div>
