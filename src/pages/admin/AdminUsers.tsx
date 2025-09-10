@@ -405,6 +405,15 @@ const ClientDetailDialog = ({
                              placeholder="123 Rue de la Paix"
                            />
                          </div>
+                         <div>
+                           <Label htmlFor="address_complement">Complément d'adresse</Label>
+                           <Input
+                             id="address_complement"
+                             value={profileForm.address_complement}
+                             onChange={(e) => setProfileForm(prev => ({ ...prev, address_complement: e.target.value }))}
+                             placeholder="Bâtiment A, Étage 2, etc."
+                           />
+                         </div>
                         <div className="grid grid-cols-3 gap-4">
                           <div>
                             <Label htmlFor="postal_code">Code postal</Label>
