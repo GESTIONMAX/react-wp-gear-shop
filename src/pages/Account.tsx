@@ -156,32 +156,30 @@ const Account = () => {
   };
 
   const handleEditProfile = () => {
-    if (profile) {
-      const shippingAddr = profile.preferred_shipping_address || {};
-      setProfileForm({
-        first_name: profile.first_name || '',
-        last_name: profile.last_name || '',
-        address: profile.address || '',
-        address_complement: profile.address_complement || '',
-        city: profile.city || '',
-        postal_code: profile.postal_code || '',
-        country: profile.country || 'France',
-        phone: profile.phone || '',
-        marketing_phone: profile.marketing_phone || '',
-        marketing_consent: profile.marketing_consent || false,
-        notes: profile.notes || '',
-        preferred_shipping_address: {
-          address: shippingAddr.address || '',
-          address_complement: shippingAddr.address_complement || '',
-          city: shippingAddr.city || '',
-          postal_code: shippingAddr.postal_code || '',
-          country: shippingAddr.country || 'France',
-          first_name: shippingAddr.first_name || '',
-          last_name: shippingAddr.last_name || ''
-        }
-      });
-      setEditingProfile(true);
-    }
+    const shippingAddr = profile?.preferred_shipping_address || {};
+    setProfileForm({
+      first_name: profile?.first_name || '',
+      last_name: profile?.last_name || '',
+      address: profile?.address || '',
+      address_complement: profile?.address_complement || '',
+      city: profile?.city || '',
+      postal_code: profile?.postal_code || '',
+      country: profile?.country || 'France',
+      phone: profile?.phone || '',
+      marketing_phone: profile?.marketing_phone || '',
+      marketing_consent: profile?.marketing_consent || false,
+      notes: profile?.notes || '',
+      preferred_shipping_address: {
+        address: shippingAddr.address || '',
+        address_complement: shippingAddr.address_complement || '',
+        city: shippingAddr.city || '',
+        postal_code: shippingAddr.postal_code || '',
+        country: shippingAddr.country || 'France',
+        first_name: shippingAddr.first_name || '',
+        last_name: shippingAddr.last_name || ''
+      }
+    });
+    setEditingProfile(true);
   };
 
   const handleSaveProfile = async () => {
@@ -206,31 +204,29 @@ const Account = () => {
 
   const handleCancelEdit = () => {
     setEditingProfile(false);
-    if (profile) {
-      const shippingAddr = profile.preferred_shipping_address || {};
-      setProfileForm({
-        first_name: profile.first_name || '',
-        last_name: profile.last_name || '',
-        address: profile.address || '',
-        address_complement: profile.address_complement || '',
-        city: profile.city || '',
-        postal_code: profile.postal_code || '',
-        country: profile.country || 'France',
-        phone: profile.phone || '',
-        marketing_phone: profile.marketing_phone || '',
-        marketing_consent: profile.marketing_consent || false,
-        notes: profile.notes || '',
-        preferred_shipping_address: {
-          address: shippingAddr.address || '',
-          address_complement: shippingAddr.address_complement || '',
-          city: shippingAddr.city || '',
-          postal_code: shippingAddr.postal_code || '',
-          country: shippingAddr.country || 'France',
-          first_name: shippingAddr.first_name || '',
-          last_name: shippingAddr.last_name || ''
-        }
-      });
-    }
+    const shippingAddr = profile?.preferred_shipping_address || {};
+    setProfileForm({
+      first_name: profile?.first_name || '',
+      last_name: profile?.last_name || '',
+      address: profile?.address || '',
+      address_complement: profile?.address_complement || '',
+      city: profile?.city || '',
+      postal_code: profile?.postal_code || '',
+      country: profile?.country || 'France',
+      phone: profile?.phone || '',
+      marketing_phone: profile?.marketing_phone || '',
+      marketing_consent: profile?.marketing_consent || false,
+      notes: profile?.notes || '',
+      preferred_shipping_address: {
+        address: shippingAddr.address || '',
+        address_complement: shippingAddr.address_complement || '',
+        city: shippingAddr.city || '',
+        postal_code: shippingAddr.postal_code || '',
+        country: shippingAddr.country || 'France',
+        first_name: shippingAddr.first_name || '',
+        last_name: shippingAddr.last_name || ''
+      }
+    });
   };
 
   const getStatusBadge = (status: string) => {
