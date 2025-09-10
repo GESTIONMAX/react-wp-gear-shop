@@ -23,6 +23,10 @@ export interface ClientData {
   updated_at: string;
 }
 
+export interface ClientWithRole extends ClientData {
+  role?: string;
+}
+
 // Hook pour récupérer les données client par user_id
 export const useClientData = (userId: string) => {
   return useQuery({
@@ -41,18 +45,38 @@ export const useClientData = (userId: string) => {
   });
 };
 
-// Hook pour récupérer tous les clients (pour les admins)
+// Hook pour récupérer tous les clients avec leurs rôles (pour les admins)
 export const useAllClients = () => {
   return useQuery({
     queryKey: ['allClients'],
     queryFn: async () => {
-      const { data, error } = await supabase
+      // Récupérer les données clients
+      const { data: clients, error: clientsError } = await supabase
         .from('clients')
         .select('*')
         .order('created_at', { ascending: false });
 
-      if (error) throw error;
-      return data as ClientData[];
+      if (clientsError) throw clientsError;
+
+      // Récupérer les rôles des utilisateurs
+      const { data: roles, error: rolesError } = await supabase
+        .from('user_roles')
+        .select('user_id, role');
+
+      if (rolesError) throw rolesError;
+
+      // Combiner les données et filtrer uniquement les clients (non-admins)
+      const clientsWithRoles: ClientWithRole[] = clients
+        .map(client => {
+          const userRole = roles.find(role => role.user_id === client.user_id);
+          return {
+            ...client,
+            role: userRole?.role || 'user'
+          };
+        })
+        .filter(client => client.role !== 'admin'); // Exclure les admins
+
+      return clientsWithRoles;
     },
   });
 };
@@ -124,6 +148,40 @@ export const useCreateClient = () => {
       toast({
         title: "Erreur",
         description: "Impossible de créer le client.",
+        variant: "destructive",
+      });
+    },
+  });
+};
+
+// Hook pour mettre à jour le rôle d'un client
+export const useUpdateClientRole = () => {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: async ({ userId, role }: { userId: string; role: 'admin' | 'user' }) => {
+      const { error } = await supabase
+        .from('user_roles')
+        .upsert({
+          user_id: userId,
+          role: role
+        });
+
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['allClients'] });
+      queryClient.invalidateQueries({ queryKey: ['clients'] });
+      queryClient.invalidateQueries({ queryKey: ['userRole'] });
+      toast({
+        title: "Rôle mis à jour",
+        description: "Le rôle du client a été modifié avec succès.",
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Erreur",
+        description: "Impossible de mettre à jour le rôle client.",
         variant: "destructive",
       });
     },

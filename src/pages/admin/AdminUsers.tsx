@@ -38,10 +38,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Textarea } from '@/components/ui/textarea';
-import { useClients, useUpdateClientRole } from '@/hooks/useClients';
+import { useAllClients, useUpdateClientData, useClientData, useUpdateClientRole, ClientWithRole } from '@/hooks/useClientData';
 import { useAdminOrders } from '@/hooks/useOrders';
 import { useInvoices } from '@/hooks/useInvoices';
-import { useClientData, useUpdateClientData } from '@/hooks/useClientData';
 import { toast } from '@/hooks/use-toast';
 import { formatDistanceToNow } from 'date-fns';
 import { fr } from 'date-fns/locale';
@@ -66,18 +65,10 @@ const AdminUsers = () => {
     preferred_billing_address: null as any
   });
   
-  const { data: clients = [], isLoading, error } = useClients();
+  const { data: clients = [], isLoading, error } = useAllClients() as { data: ClientWithRole[], isLoading: boolean, error: any };
   const { data: orders = [] } = useAdminOrders();
   const { data: invoices = [] } = useInvoices();
   const updateClientRole = useUpdateClientRole();
-
-  // Debug: monitorer les changements d'editingProfile
-  React.useEffect(() => {
-    console.log('=== CHANGEMENT editingProfile ===');
-    console.log('editingProfile:', editingProfile);
-    console.log('Stack trace:', new Error().stack);
-    console.log('=== FIN CHANGEMENT editingProfile ===');
-  }, [editingProfile]);
 // Composant séparé pour éviter les re-créations
 const ClientDetailDialog = ({ 
   user, 
@@ -378,19 +369,7 @@ const ClientDetailDialog = ({
                            <Input
                              id="first_name"
                              value={profileForm.first_name}
-                             onChange={(e) => {
-                               console.log('=== CHANGEMENT first_name ===');
-                               console.log('editingProfile avant:', editingProfile);
-                               console.log('nouvelle valeur:', e.target.value);
-                               setProfileForm(prev => {
-                                 console.log('prev form:', prev);
-                                 const newForm = { ...prev, first_name: e.target.value };
-                                 console.log('nouveau form:', newForm);
-                                 return newForm;
-                               });
-                               console.log('editingProfile après:', editingProfile);
-                               console.log('=== FIN CHANGEMENT first_name ===');
-                             }}
+                             onChange={(e) => setProfileForm(prev => ({ ...prev, first_name: e.target.value }))}
                            />
                       </div>
                       <div>
