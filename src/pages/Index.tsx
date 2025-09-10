@@ -9,11 +9,14 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { useProducts } from '@/hooks/useProducts';
 import { useAuth } from '@/contexts/AuthContext';
-import { TrendingUp, Sparkles, Clock, User, Loader2 } from 'lucide-react';
+import { useAssignAdminRole, useIsAdmin } from '@/hooks/useAdmin';
+import { TrendingUp, Sparkles, Clock, User, Loader2, Shield } from 'lucide-react';
 
 const Index = () => {
   const { user } = useAuth();
   const { data: products = [], isLoading, error } = useProducts();
+  const { data: isAdmin, isLoading: isAdminLoading } = useIsAdmin();
+  const assignAdminRole = useAssignAdminRole();
   const [searchParams] = useSearchParams();
   const categoryFilter = searchParams.get('category');
   
@@ -69,6 +72,36 @@ const Index = () => {
                 <Link to="/auth">
                   Se connecter
                 </Link>
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Admin Banner for authenticated users without admin role */}
+      {user && !isAdminLoading && !isAdmin && !categoryFilter && (
+        <div className="bg-accent text-accent-foreground py-3 border-b">
+          <div className="container mx-auto px-4 text-center">
+            <div className="flex items-center justify-center space-x-4">
+              <Shield className="h-5 w-5" />
+              <span className="text-sm">
+                Obtenez l'accès administrateur pour gérer le site
+              </span>
+              <Button 
+                variant="secondary" 
+                size="sm" 
+                onClick={() => assignAdminRole.mutate()}
+                disabled={assignAdminRole.isPending}
+                className="bg-accent-foreground text-accent hover:bg-accent-foreground/90"
+              >
+                {assignAdminRole.isPending ? (
+                  <>
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    Attribution...
+                  </>
+                ) : (
+                  'Devenir Admin'
+                )}
               </Button>
             </div>
           </div>
