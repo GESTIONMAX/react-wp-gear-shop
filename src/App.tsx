@@ -11,6 +11,7 @@ import Index from "./pages/Index";
 import ProductDetail from "./pages/ProductDetail";
 import Auth from "./pages/Auth";
 import Account from "./pages/Account";
+import Blog from "./pages/Blog";
 import Checkout from "./pages/Checkout";
 import OrderSuccess from "./pages/OrderSuccess";
 import NotFound from "./pages/NotFound";
@@ -29,6 +30,7 @@ const App = () => (
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/product/:slug" element={<ProductDetail />} />
+              <Route path="/blog" element={<Blog />} />
               <Route path="/auth" element={<Auth />} />
               <Route path="/account" element={<Account />} />
               <Route path="/checkout" element={<Checkout />} />
