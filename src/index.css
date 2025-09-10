@@ -1,42 +1,68 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Merriweather:wght@300;400;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
-
+/* MyTechGear.eu Design System - Modern E-commerce */
 @layer base {
   :root {
+    /* Core brand colors - Blue/Purple palette */
+    --primary: 220 90% 25%;          /* Deep tech blue */
+    --primary-light: 220 85% 35%;    /* Lighter blue */
+    --primary-foreground: 0 0% 98%;
+    
+    --secondary: 260 85% 55%;        /* Purple accent */
+    --secondary-light: 260 75% 65%;  /* Light purple */
+    --secondary-foreground: 0 0% 98%;
+    
+    --accent: 200 100% 60%;          /* Cyan highlight */
+    --accent-light: 200 90% 70%;     /* Light cyan */
+    --accent-foreground: 220 90% 25%;
+    
+    /* Neutral grays */
     --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
-
+    --foreground: 220 25% 15%;
+    
+    --muted: 220 15% 96%;
+    --muted-foreground: 220 10% 45%;
+    
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
-
+    --card-foreground: 220 25% 15%;
+    
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
-
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
-
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
-
-    --radius: 0.5rem;
+    --popover-foreground: 220 25% 15%;
+    
+    /* Utility colors */
+    --destructive: 0 75% 55%;
+    --destructive-foreground: 0 0% 98%;
+    
+    --success: 142 75% 45%;
+    --success-foreground: 0 0% 98%;
+    
+    --warning: 45 95% 55%;
+    --warning-foreground: 45 90% 15%;
+    
+    --border: 220 15% 90%;
+    --input: 220 15% 90%;
+    --ring: 220 90% 25%;
+    
+    /* Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--secondary)));
+    --gradient-accent: linear-gradient(135deg, hsl(var(--accent)), hsl(var(--secondary-light)));
+    --gradient-subtle: linear-gradient(180deg, hsl(var(--background)), hsl(var(--muted)));
+    
+    /* Shadows */
+    --shadow-sm: 0 2px 4px -1px hsl(var(--primary) / 0.1);
+    --shadow-md: 0 4px 8px -2px hsl(var(--primary) / 0.15);
+    --shadow-lg: 0 10px 25px -5px hsl(var(--primary) / 0.2);
+    --shadow-glow: 0 0 20px hsl(var(--accent) / 0.3);
+    
+    /* Animations */
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-bounce: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    
+    --radius: 0.75rem;
 
     --sidebar-background: 0 0% 98%;
 
@@ -100,6 +126,50 @@ All colors MUST be HSL.
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-inter;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-merriweather font-bold;
+  }
+  
+  .font-inter {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+  
+  .font-merriweather {
+    font-family: 'Merriweather', Georgia, serif;
+  }
+}
+
+@layer components {
+  .gradient-primary {
+    background: var(--gradient-primary);
+  }
+  
+  .gradient-accent {
+    background: var(--gradient-accent);
+  }
+  
+  .shadow-elegant {
+    box-shadow: var(--shadow-lg);
+  }
+  
+  .shadow-glow {
+    box-shadow: var(--shadow-glow);
+  }
+  
+  .transition-smooth {
+    transition: var(--transition-smooth);
+  }
+  
+  .transition-bounce {
+    transition: var(--transition-bounce);
+  }
+  
+  .glass-effect {
+    backdrop-filter: blur(10px);
+    background: hsl(var(--background) / 0.8);
+    border: 1px solid hsl(var(--border) / 0.5);
   }
 }
