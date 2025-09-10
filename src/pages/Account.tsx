@@ -114,38 +114,38 @@ const Account = () => {
         </div>
       </div>
 
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 py-12">
         <div className="max-w-6xl mx-auto">
-          <div className="mb-8">
-            <h1 className="font-merriweather text-3xl font-bold text-primary mb-2">
+          <div className="mb-12">
+            <h1 className="font-merriweather text-3xl font-bold text-primary mb-4">
               Mon Espace Client
             </h1>
-            <p className="text-muted-foreground">
+            <p className="text-muted-foreground text-lg">
               Gérez votre profil, vos commandes et vos préférences
             </p>
           </div>
 
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-            <TabsList className="grid grid-cols-4 lg:w-[400px]">
-              <TabsTrigger value="dashboard" className="flex items-center gap-2">
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-8">
+            <TabsList className="grid grid-cols-4 lg:w-[400px] mb-2">
+              <TabsTrigger value="dashboard" className="flex items-center gap-2 py-3">
                 <User className="h-4 w-4" />
                 <span className="hidden sm:inline">Tableau de bord</span>
               </TabsTrigger>
-              <TabsTrigger value="orders" className="flex items-center gap-2">
+              <TabsTrigger value="orders" className="flex items-center gap-2 py-3">
                 <Package className="h-4 w-4" />
                 <span className="hidden sm:inline">Commandes</span>
               </TabsTrigger>
-              <TabsTrigger value="profile" className="flex items-center gap-2">
+              <TabsTrigger value="profile" className="flex items-center gap-2 py-3">
                 <Settings className="h-4 w-4" />
                 <span className="hidden sm:inline">Profil</span>
               </TabsTrigger>
-              <TabsTrigger value="billing" className="flex items-center gap-2">
+              <TabsTrigger value="billing" className="flex items-center gap-2 py-3">
                 <CreditCard className="h-4 w-4" />
                 <span className="hidden sm:inline">Facturation</span>
               </TabsTrigger>
             </TabsList>
 
-            <TabsContent value="dashboard" className="space-y-6">
+            <TabsContent value="dashboard" className="space-y-8 mt-8">
               <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                 <Card>
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -241,7 +241,7 @@ const Account = () => {
               </Card>
             </TabsContent>
 
-            <TabsContent value="orders" className="space-y-6">
+            <TabsContent value="orders" className="space-y-8 mt-8">
               <Card>
                 <CardHeader>
                   <CardTitle>Mes Commandes</CardTitle>
@@ -302,7 +302,7 @@ const Account = () => {
               </Card>
             </TabsContent>
 
-            <TabsContent value="profile" className="space-y-6">
+            <TabsContent value="profile" className="space-y-8 mt-8">
               <Card>
                 <CardHeader>
                   <CardTitle>Informations personnelles</CardTitle>
@@ -371,7 +371,7 @@ const Account = () => {
               </Card>
             </TabsContent>
 
-            <TabsContent value="billing" className="space-y-6">
+            <TabsContent value="billing" className="space-y-8 mt-8">
               <Card>
                 <CardHeader>
                   <CardTitle>Informations de facturation</CardTitle>
