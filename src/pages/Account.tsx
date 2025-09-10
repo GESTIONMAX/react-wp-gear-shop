@@ -140,7 +140,7 @@ const Account = () => {
           </div>
 
           <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-8">
-            <TabsList className="grid grid-cols-5 lg:w-[600px] mb-2 gap-2">
+            <TabsList className="grid grid-cols-4 lg:w-[480px] mb-2 gap-2">
               <TabsTrigger value="dashboard" className="flex items-center gap-2 py-3 px-3">
                 <User className="h-4 w-4" />
                 <span className="hidden sm:inline">Tableau de bord</span>
@@ -156,10 +156,6 @@ const Account = () => {
               <TabsTrigger value="profile" className="flex items-center gap-2 py-3 px-3">
                 <Settings className="h-4 w-4" />
                 <span className="hidden sm:inline">Profil</span>
-              </TabsTrigger>
-              <TabsTrigger value="billing" className="flex items-center gap-2 py-3 px-3">
-                <CreditCard className="h-4 w-4" />
-                <span className="hidden sm:inline">Facturation</span>
               </TabsTrigger>
             </TabsList>
 
@@ -441,28 +437,6 @@ const Account = () => {
                       <strong>Note :</strong> Pour modifier vos informations personnelles, 
                       veuillez nous contacter directement.
                     </p>
-                  </div>
-                </CardContent>
-              </Card>
-            </TabsContent>
-
-            <TabsContent value="billing" className="space-y-8 mt-8">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Informations de facturation</CardTitle>
-                  <CardDescription>
-                    Gérez vos informations de paiement et facturation
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-center py-8">
-                    <FileText className="h-12 w-12 text-muted-foreground mx-auto mb-2" />
-                    <p className="text-sm text-muted-foreground mb-4">
-                      Les factures sont automatiquement envoyées par email après chaque commande
-                    </p>
-                    <Button variant="outline">
-                      Contacter le support pour les factures
-                    </Button>
                   </div>
                 </CardContent>
               </Card>
