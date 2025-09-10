@@ -21,7 +21,10 @@ import {
   ShoppingBag,
   Euro,
   FileText,
-  Truck
+  Truck,
+  Edit,
+  Save,
+  X
 } from 'lucide-react';
 import {
   Dialog,
@@ -32,9 +35,13 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Label } from '@/components/ui/label';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Textarea } from '@/components/ui/textarea';
 import { useUsers, useUpdateUserRole } from '@/hooks/useUsers';
 import { useAdminOrders } from '@/hooks/useOrders';
 import { useInvoices } from '@/hooks/useInvoices';
+import { useProfile, useUpdateProfile } from '@/hooks/useProfile';
 import { toast } from '@/hooks/use-toast';
 import { formatDistanceToNow } from 'date-fns';
 import { fr } from 'date-fns/locale';
@@ -43,13 +50,72 @@ const AdminUsers = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [roleFilter, setRoleFilter] = useState<string>('all');
   const [selectedUser, setSelectedUser] = useState<any>(null);
+  const [editingProfile, setEditingProfile] = useState(false);
+  const [profileForm, setProfileForm] = useState({
+    first_name: '',
+    last_name: '',
+    address: '',
+    city: '',
+    postal_code: '',
+    country: 'France',
+    marketing_phone: '',
+    marketing_consent: false,
+    notes: ''
+  });
   
   const { data: users = [], isLoading, error } = useUsers();
   const { data: orders = [] } = useAdminOrders();
   const { data: invoices = [] } = useInvoices();
+  const { data: profile } = useProfile(selectedUser?.user_id);
   const updateUserRole = useUpdateUserRole();
+  const updateProfile = useUpdateProfile();
 
-  // Composant pour les détails d'un client
+  // Gestion de l'édition de profil
+  const handleEditProfile = () => {
+    if (profile) {
+      setProfileForm({
+        first_name: profile.first_name || '',
+        last_name: profile.last_name || '',
+        address: profile.address || '',
+        city: profile.city || '',
+        postal_code: profile.postal_code || '',
+        country: profile.country || 'France',
+        marketing_phone: profile.marketing_phone || '',
+        marketing_consent: profile.marketing_consent || false,
+        notes: profile.notes || ''
+      });
+      setEditingProfile(true);
+    }
+  };
+
+  const handleSaveProfile = async () => {
+    if (!selectedUser) return;
+    
+    try {
+      await updateProfile.mutateAsync({
+        userId: selectedUser.user_id,
+        updates: profileForm
+      });
+      setEditingProfile(false);
+    } catch (error) {
+      console.error('Erreur lors de la sauvegarde:', error);
+    }
+  };
+
+  const handleCancelEdit = () => {
+    setEditingProfile(false);
+    setProfileForm({
+      first_name: '',
+      last_name: '',
+      address: '',
+      city: '',
+      postal_code: '',
+      country: 'France',
+      marketing_phone: '',
+      marketing_consent: false,
+      notes: ''
+    });
+  };
   const ClientDetailDialog = ({ user }: { user: any }) => {
     if (!user) return null;
 
@@ -155,113 +221,259 @@ const AdminUsers = () => {
           </TabsContent>
 
           <TabsContent value="addresses" className="space-y-4">
-            {userOrders.length > 0 ? (
+            <div className="flex justify-between items-center mb-4">
+              <div>
+                <h3 className="text-lg font-semibold">Informations du client</h3>
+                <p className="text-sm text-muted-foreground">
+                  Adresse par défaut et informations de contact marketing
+                </p>
+              </div>
+              {!editingProfile ? (
+                <Button onClick={handleEditProfile} variant="outline" size="sm">
+                  <Edit className="h-4 w-4 mr-2" />
+                  Modifier
+                </Button>
+              ) : (
+                <div className="flex gap-2">
+                  <Button 
+                    onClick={handleSaveProfile} 
+                    size="sm"
+                    disabled={updateProfile.isPending}
+                  >
+                    <Save className="h-4 w-4 mr-2" />
+                    {updateProfile.isPending ? 'Sauvegarde...' : 'Sauvegarder'}
+                  </Button>
+                  <Button onClick={handleCancelEdit} variant="outline" size="sm">
+                    <X className="h-4 w-4 mr-2" />
+                    Annuler
+                  </Button>
+                </div>
+              )}
+            </div>
+
+            {!editingProfile ? (
+              // Mode affichage
               <div className="space-y-4">
-                {/* Adresses de livraison uniques */}
                 <Card>
                   <CardHeader>
                     <CardTitle className="text-lg flex items-center gap-2">
                       <Truck className="h-5 w-5" />
-                      Adresses de livraison
+                      Adresse par défaut
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="space-y-4">
-                      {Array.from(new Set(userOrders
-                        .filter(order => order.shipping_address)
-                        .map(order => JSON.stringify(order.shipping_address))))
-                        .map((addressStr, index) => {
-                          const address = JSON.parse(addressStr);
-                          const ordersWithThisAddress = userOrders.filter(
-                            order => JSON.stringify(order.shipping_address) === addressStr
-                          );
-                          
-                          return (
-                            <div key={index} className="border rounded-lg p-4 bg-background">
-                              <div className="flex justify-between items-start mb-2">
-                                <div className="font-medium">
-                                  {address.firstName} {address.lastName}
-                                </div>
-                                <Badge variant="outline">
-                                  {ordersWithThisAddress.length} commande{ordersWithThisAddress.length > 1 ? 's' : ''}
-                                </Badge>
-                              </div>
-                              <div className="text-sm text-muted-foreground space-y-1">
-                                <div>{address.address}</div>
-                                <div>{address.postalCode} {address.city}</div>
-                                <div>{address.country}</div>
-                                {address.phone && <div>Tél: {address.phone}</div>}
-                              </div>
-                              <div className="mt-2 text-xs text-muted-foreground">
-                                Dernière utilisation: {new Date(ordersWithThisAddress[0].created_at).toLocaleDateString('fr-FR')}
-                              </div>
-                            </div>
-                          );
-                        })}
+                    <div className="space-y-2">
+                      <div className="font-medium">
+                        {profile?.first_name} {profile?.last_name}
+                      </div>
+                      {profile?.address && (
+                        <div className="text-sm text-muted-foreground space-y-1">
+                          <div>{profile.address}</div>
+                          <div>{profile.postal_code} {profile.city}</div>
+                          <div>{profile.country}</div>
+                        </div>
+                      )}
+                      {!profile?.address && (
+                        <div className="text-sm text-muted-foreground italic">
+                          Aucune adresse par défaut définie
+                        </div>
+                      )}
                     </div>
                   </CardContent>
                 </Card>
 
-                {/* Adresses de facturation uniques */}
                 <Card>
                   <CardHeader>
                     <CardTitle className="text-lg flex items-center gap-2">
-                      <FileText className="h-5 w-5" />
-                      Adresses de facturation
+                      <Phone className="h-5 w-5" />
+                      Contact Marketing
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="space-y-4">
-                      {Array.from(new Set(userOrders
-                        .filter(order => order.billing_address)
-                        .map(order => JSON.stringify(order.billing_address))))
-                        .map((addressStr, index) => {
-                          const address = JSON.parse(addressStr);
-                          const ordersWithThisAddress = userOrders.filter(
-                            order => JSON.stringify(order.billing_address) === addressStr
-                          );
-                          
-                          return (
-                            <div key={index} className="border rounded-lg p-4 bg-background">
-                              <div className="flex justify-between items-start mb-2">
-                                <div className="font-medium">
-                                  {address.firstName} {address.lastName}
-                                </div>
-                                <Badge variant="outline">
-                                  {ordersWithThisAddress.length} commande{ordersWithThisAddress.length > 1 ? 's' : ''}
-                                </Badge>
-                              </div>
-                              <div className="text-sm text-muted-foreground space-y-1">
-                                <div>{address.address}</div>
-                                <div>{address.postalCode} {address.city}</div>
-                                <div>{address.country}</div>
-                                {address.phone && <div>Tél: {address.phone}</div>}
-                              </div>
-                              <div className="mt-2 text-xs text-muted-foreground">
-                                Dernière utilisation: {new Date(ordersWithThisAddress[0].created_at).toLocaleDateString('fr-FR')}
-                              </div>
-                            </div>
-                          );
-                        })}
+                    <div className="space-y-2">
+                      <div className="flex justify-between">
+                        <span className="text-sm font-medium">Téléphone SMS:</span>
+                        <span className="text-sm">
+                          {profile?.marketing_phone || 'Non renseigné'}
+                        </span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-sm font-medium">Consentement SMS:</span>
+                        <Badge variant={profile?.marketing_consent ? 'default' : 'secondary'}>
+                          {profile?.marketing_consent ? 'Accepté' : 'Refusé'}
+                        </Badge>
+                      </div>
+                      {profile?.notes && (
+                        <div className="mt-4">
+                          <span className="text-sm font-medium">Notes internes:</span>
+                          <div className="text-sm text-muted-foreground mt-1 p-2 bg-muted rounded">
+                            {profile.notes}
+                          </div>
+                        </div>
+                      )}
                     </div>
                   </CardContent>
                 </Card>
               </div>
             ) : (
-              <Card>
-                <CardContent className="text-center py-8">
-                  <div className="space-y-4">
-                    <div className="flex justify-center space-x-4">
-                      <Truck className="h-12 w-12 text-muted-foreground/50" />
-                      <FileText className="h-12 w-12 text-muted-foreground/50" />
+              // Mode édition
+              <div className="space-y-4">
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-lg">Informations personnelles</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <Label htmlFor="first_name">Prénom</Label>
+                        <Input
+                          id="first_name"
+                          value={profileForm.first_name}
+                          onChange={(e) => setProfileForm(prev => ({ ...prev, first_name: e.target.value }))}
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="last_name">Nom</Label>
+                        <Input
+                          id="last_name"
+                          value={profileForm.last_name}
+                          onChange={(e) => setProfileForm(prev => ({ ...prev, last_name: e.target.value }))}
+                        />
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-lg">Adresse par défaut</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div>
+                      <Label htmlFor="address">Adresse</Label>
+                      <Input
+                        id="address"
+                        value={profileForm.address}
+                        onChange={(e) => setProfileForm(prev => ({ ...prev, address: e.target.value }))}
+                        placeholder="123 Rue de la Paix"
+                      />
+                    </div>
+                    <div className="grid grid-cols-3 gap-4">
+                      <div>
+                        <Label htmlFor="postal_code">Code postal</Label>
+                        <Input
+                          id="postal_code"
+                          value={profileForm.postal_code}
+                          onChange={(e) => setProfileForm(prev => ({ ...prev, postal_code: e.target.value }))}
+                          placeholder="75001"
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="city">Ville</Label>
+                        <Input
+                          id="city"
+                          value={profileForm.city}
+                          onChange={(e) => setProfileForm(prev => ({ ...prev, city: e.target.value }))}
+                          placeholder="Paris"
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="country">Pays</Label>
+                        <Input
+                          id="country"
+                          value={profileForm.country}
+                          onChange={(e) => setProfileForm(prev => ({ ...prev, country: e.target.value }))}
+                        />
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-lg">Contact Marketing</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div>
+                      <Label htmlFor="marketing_phone">Téléphone pour SMS marketing</Label>
+                      <Input
+                        id="marketing_phone"
+                        value={profileForm.marketing_phone}
+                        onChange={(e) => setProfileForm(prev => ({ ...prev, marketing_phone: e.target.value }))}
+                        placeholder="+33 6 12 34 56 78"
+                      />
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <Checkbox
+                        id="marketing_consent"
+                        checked={profileForm.marketing_consent}
+                        onCheckedChange={(checked) => 
+                          setProfileForm(prev => ({ ...prev, marketing_consent: checked as boolean }))
+                        }
+                      />
+                      <Label htmlFor="marketing_consent">
+                        Consentement pour recevoir des SMS marketing
+                      </Label>
                     </div>
                     <div>
-                      <p className="text-muted-foreground">Aucune adresse enregistrée</p>
-                      <p className="text-sm text-muted-foreground">Les adresses apparaîtront après la première commande</p>
+                      <Label htmlFor="notes">Notes internes</Label>
+                      <Textarea
+                        id="notes"
+                        value={profileForm.notes}
+                        onChange={(e) => setProfileForm(prev => ({ ...prev, notes: e.target.value }))}
+                        placeholder="Notes sur ce client..."
+                        rows={3}
+                      />
                     </div>
-                  </div>
-                </CardContent>
-              </Card>
+                  </CardContent>
+                </Card>
+              </div>
+            )}
+
+            {/* Historique des adresses utilisées */}
+            {userOrders.length > 0 && (
+              <div className="mt-8">
+                <h4 className="text-lg font-semibold mb-4">Historique des adresses</h4>
+                <div className="space-y-4">
+                  {/* Adresses de livraison historiques */}
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="text-base">Adresses de livraison utilisées</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-3">
+                        {Array.from(new Set(userOrders
+                          .filter(order => order.shipping_address)
+                          .map(order => JSON.stringify(order.shipping_address))))
+                          .map((addressStr, index) => {
+                            const address = JSON.parse(addressStr);
+                            const ordersWithThisAddress = userOrders.filter(
+                              order => JSON.stringify(order.shipping_address) === addressStr
+                            );
+                            
+                            return (
+                              <div key={index} className="border rounded-lg p-3 bg-muted/50">
+                                <div className="flex justify-between items-start mb-1">
+                                  <div className="text-sm font-medium">
+                                    {address.firstName} {address.lastName}
+                                  </div>
+                                  <Badge variant="outline" className="text-xs">
+                                    {ordersWithThisAddress.length} fois
+                                  </Badge>
+                                </div>
+                                <div className="text-xs text-muted-foreground space-y-0.5">
+                                  <div>{address.address}</div>
+                                  <div>{address.postalCode} {address.city}</div>
+                                  {address.phone && <div>Tél: {address.phone}</div>}
+                                </div>
+                              </div>
+                            );
+                          })}
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+              </div>
             )}
           </TabsContent>
 
