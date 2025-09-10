@@ -126,20 +126,20 @@ const Account = () => {
           </div>
 
           <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-8">
-            <TabsList className="grid grid-cols-4 lg:w-[400px] mb-2">
-              <TabsTrigger value="dashboard" className="flex items-center gap-2 py-3">
+            <TabsList className="grid grid-cols-4 lg:w-[400px] mb-2 gap-1">
+              <TabsTrigger value="dashboard" className="flex items-center gap-2 py-3 px-4">
                 <User className="h-4 w-4" />
                 <span className="hidden sm:inline">Tableau de bord</span>
               </TabsTrigger>
-              <TabsTrigger value="orders" className="flex items-center gap-2 py-3">
+              <TabsTrigger value="orders" className="flex items-center gap-2 py-3 px-4">
                 <Package className="h-4 w-4" />
                 <span className="hidden sm:inline">Commandes</span>
               </TabsTrigger>
-              <TabsTrigger value="profile" className="flex items-center gap-2 py-3">
+              <TabsTrigger value="profile" className="flex items-center gap-2 py-3 px-4">
                 <Settings className="h-4 w-4" />
                 <span className="hidden sm:inline">Profil</span>
               </TabsTrigger>
-              <TabsTrigger value="billing" className="flex items-center gap-2 py-3">
+              <TabsTrigger value="billing" className="flex items-center gap-2 py-3 px-4">
                 <CreditCard className="h-4 w-4" />
                 <span className="hidden sm:inline">Facturation</span>
               </TabsTrigger>
