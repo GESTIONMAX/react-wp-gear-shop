@@ -434,24 +434,28 @@ const ClientDetailDialog = ({
                         <CardTitle className="text-lg">Adresse principale</CardTitle>
                       </CardHeader>
                       <CardContent className="space-y-4">
-                         <div>
-                           <Label htmlFor="address">Adresse</Label>
-                           <Input
-                             id="address"
-                             value={profileForm.address}
-                             onChange={(e) => setProfileForm(prev => ({ ...prev, address: e.target.value }))}
-                             placeholder="123 Rue de la Paix"
-                           />
-                         </div>
-                         <div>
-                           <Label htmlFor="address_complement">Complément d'adresse</Label>
-                           <Input
-                             id="address_complement"
-                             value={profileForm.address_complement}
-                             onChange={(e) => setProfileForm(prev => ({ ...prev, address_complement: e.target.value }))}
-                             placeholder="Bâtiment A, Étage 2, etc."
-                           />
-                         </div>
+                          <div>
+                            <Label htmlFor="address">Adresse</Label>
+                            <input
+                              type="text"
+                              id="address"
+                              className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
+                              value={profileForm.address}
+                              onChange={(e) => setProfileForm(prev => ({ ...prev, address: e.target.value }))}
+                              placeholder="123 Rue de la Paix"
+                            />
+                          </div>
+                          <div>
+                            <Label htmlFor="address_complement">Complément d'adresse</Label>
+                            <input
+                              type="text"
+                              id="address_complement"
+                              className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
+                              value={profileForm.address_complement}
+                              onChange={(e) => setProfileForm(prev => ({ ...prev, address_complement: e.target.value }))}
+                              placeholder="Bâtiment A, Étage 2, etc."
+                            />
+                          </div>
                         <div className="grid grid-cols-3 gap-4">
                           <div>
                             <Label htmlFor="postal_code">Code postal</Label>
