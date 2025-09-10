@@ -69,9 +69,7 @@ const AdminUsers = () => {
   const { data: users = [], isLoading, error } = useUsers();
   const { data: orders = [] } = useAdminOrders();
   const { data: invoices = [] } = useInvoices();
-  const { data: profile } = useProfile(selectedUser?.user_id);
   const updateUserRole = useUpdateUserRole();
-  const updateProfile = useUpdateProfile();
 
   // Debug: monitorer les changements d'editingProfile
   React.useEffect(() => {
@@ -84,24 +82,23 @@ const AdminUsers = () => {
 const ClientDetailDialog = ({ 
   user, 
   orders, 
-  invoices, 
-  profile,
+  invoices,
   editingProfile,
   setEditingProfile,
   profileForm,
-  setProfileForm,
-  updateProfile
+  setProfileForm
 }: { 
   user: any;
   orders: any[];
   invoices: any[];
-  profile: any;
   editingProfile: boolean;
   setEditingProfile: (editing: boolean) => void;
   profileForm: any;
   setProfileForm: (form: any) => void;
-  updateProfile: any;
 }) => {
+  const { data: profile } = useProfile(user?.user_id);
+  const updateProfile = useUpdateProfile();
+  
   if (!user) return null;
 
   const userOrders = orders.filter(order => order.user_id === user.user_id);
@@ -998,17 +995,15 @@ const ClientDetailDialog = ({
                                   Voir
                                 </Button>
                               </DialogTrigger>
-                              <ClientDetailDialog 
-                                user={selectedUser} 
-                                orders={orders}
-                                invoices={invoices}
-                                profile={profile}
-                                editingProfile={editingProfile}
-                                setEditingProfile={setEditingProfile}
-                                profileForm={profileForm}
-                                setProfileForm={setProfileForm}
-                                updateProfile={updateProfile}
-                              />
+              <ClientDetailDialog
+                user={selectedUser}
+                orders={orders}
+                invoices={invoices}
+                editingProfile={editingProfile}
+                setEditingProfile={setEditingProfile}
+                profileForm={profileForm}
+                setProfileForm={setProfileForm}
+              />
                             </Dialog>
                             
                             <Select
