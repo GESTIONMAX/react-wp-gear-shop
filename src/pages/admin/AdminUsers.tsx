@@ -93,14 +93,20 @@ const AdminUsers = () => {
   const handleSaveProfile = async () => {
     if (!selectedUser) return;
     
+    console.log('🔧 Tentative de sauvegarde du profil:', {
+      userId: selectedUser.user_id,
+      formData: profileForm
+    });
+    
     try {
       await updateProfile.mutateAsync({
         userId: selectedUser.user_id,
         updates: profileForm
       });
+      console.log('✅ Profil sauvegardé avec succès');
       setEditingProfile(false);
     } catch (error) {
-      console.error('Erreur lors de la sauvegarde:', error);
+      console.error('❌ Erreur lors de la sauvegarde:', error);
     }
   };
 
