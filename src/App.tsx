@@ -14,6 +14,7 @@ import Account from "./pages/Account";
 import Blog from "./pages/Blog";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminUsers from "./pages/admin/AdminUsers";
+import AdminSystemUsers from "./pages/admin/AdminSystemUsers";
 import AdminSuppliers from "./pages/admin/AdminSuppliers";
 import AdminProducts from "./pages/admin/AdminProducts";
 import AdminCollections from "./pages/admin/AdminCollections";
@@ -51,6 +52,11 @@ const App = () => (
               <Route path="/admin/users" element={
                 <ProtectedRoute>
                   <AdminUsers />
+                </ProtectedRoute>
+              } />
+              <Route path="/admin/system-users" element={
+                <ProtectedRoute>
+                  <AdminSystemUsers />
                 </ProtectedRoute>
               } />
               <Route path="/admin/suppliers" element={

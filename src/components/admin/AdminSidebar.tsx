@@ -9,6 +9,7 @@ import {
   Settings,
   Users,
   UserCheck,
+  Shield,
   ShoppingCart,
   Receipt,
   Layers3,
@@ -63,6 +64,12 @@ const navigationItems = [
     href: '/admin/users',
     icon: Users,
     description: 'Gestion des clients'
+  },
+  {
+    title: 'Utilisateurs',
+    href: '/admin/system-users',
+    icon: Shield,
+    description: 'Gestion des utilisateurs système'
   },
   {
     title: 'Fournisseurs',
