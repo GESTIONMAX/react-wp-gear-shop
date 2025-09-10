@@ -39,6 +39,7 @@ const Checkout = () => {
       firstName: '',
       lastName: '',
       address: '',
+      addressComplement: '',
       city: '',
       postalCode: '',
       country: 'France',
@@ -48,6 +49,7 @@ const Checkout = () => {
       firstName: '',
       lastName: '',
       address: '',
+      addressComplement: '',
       city: '',
       postalCode: '',
       country: 'France',
@@ -76,19 +78,21 @@ const Checkout = () => {
               shippingAddress: {
                 firstName: profile.first_name || user.user_metadata?.first_name || '',
                 lastName: profile.last_name || user.user_metadata?.last_name || '',
-                address: '', // Champ à remplir par l'utilisateur
-                city: '', // Champ à remplir par l'utilisateur  
-                postalCode: '', // Champ à remplir par l'utilisateur
-                country: 'France',
+                address: profile.address || '',
+                addressComplement: profile.address_complement || '',
+                city: profile.city || '',
+                postalCode: profile.postal_code || '',
+                country: profile.country || 'France',
                 phone: profile.phone || '',
               },
               billingAddress: {
                 firstName: profile.first_name || user.user_metadata?.first_name || '',
                 lastName: profile.last_name || user.user_metadata?.last_name || '',
-                address: '', // Champ à remplir par l'utilisateur
-                city: '', // Champ à remplir par l'utilisateur
-                postalCode: '', // Champ à remplir par l'utilisateur
-                country: 'France',
+                address: profile.address || '',
+                addressComplement: profile.address_complement || '',
+                city: profile.city || '',
+                postalCode: profile.postal_code || '',
+                country: profile.country || 'France',
                 phone: profile.phone || '',
               }
             }));
@@ -503,6 +507,15 @@ const Checkout = () => {
                       required
                     />
                   </div>
+                  <div>
+                    <Label htmlFor="addressComplement">Complément d'adresse</Label>
+                    <Input
+                      id="addressComplement"
+                      value={formData.shippingAddress.addressComplement || ''}
+                      onChange={(e) => handleShippingAddressChange('addressComplement', e.target.value)}
+                      placeholder="Bâtiment, étage, appartement..."
+                    />
+                  </div>
                   <div className="grid md:grid-cols-2 gap-4">
                     <div>
                       <Label htmlFor="city">Ville *</Label>
@@ -581,6 +594,15 @@ const Checkout = () => {
                           value={formData.billingAddress?.address || ''}
                           onChange={(e) => handleBillingAddressChange('address', e.target.value)}
                           required
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="billingAddressComplement">Complément d'adresse</Label>
+                        <Input
+                          id="billingAddressComplement"
+                          value={formData.billingAddress?.addressComplement || ''}
+                          onChange={(e) => handleBillingAddressChange('addressComplement', e.target.value)}
+                          placeholder="Bâtiment, étage, appartement..."
                         />
                       </div>
                       <div className="grid md:grid-cols-2 gap-4">

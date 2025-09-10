@@ -3,6 +3,7 @@ export interface ShippingAddress {
   firstName: string;
   lastName: string;
   address: string;
+  addressComplement?: string; // Complément d'adresse ajouté
   city: string;
   postalCode: string;
   country: string;
