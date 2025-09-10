@@ -46,7 +46,11 @@ export const products: Product[] = [
         price: 299,
         salePrice: 269,
         inStock: true,
-        attributes: { color: 'Noir Mat', lenses: 'Smoke Lenses', audio: 'Oui' }
+        attributes: { color: 'Noir Mat', lenses: 'Smoke Lenses', audio: 'Oui' },
+        images: [
+          'https://images.unsplash.com/photo-1508296695146-257a814070b4?w=600&h=600&fit=crop&crop=center',
+          'https://images.unsplash.com/photo-1572635196237-14b3f281503f?w=600&h=600&fit=crop&crop=center'
+        ]
       },
       {
         id: '1-2',
@@ -54,7 +58,11 @@ export const products: Product[] = [
         price: 299,
         salePrice: 269,
         inStock: true,
-        attributes: { color: 'Bleu', lenses: 'Fire', audio: 'Oui' }
+        attributes: { color: 'Bleu', lenses: 'Fire', audio: 'Oui' },
+        images: [
+          'https://images.unsplash.com/photo-1583394838336-acd977736f90?w=600&h=600&fit=crop&crop=center',
+          'https://images.unsplash.com/photo-1511499767150-a48a237f0083?w=600&h=600&fit=crop&crop=center'
+        ]
       },
       {
         id: '1-3',
@@ -62,7 +70,11 @@ export const products: Product[] = [
         price: 319,
         salePrice: 289,
         inStock: true,
-        attributes: { color: 'Neon', lenses: 'Alpha Purple', audio: 'Oui' }
+        attributes: { color: 'Neon', lenses: 'Alpha Purple', audio: 'Oui' },
+        images: [
+          'https://images.unsplash.com/photo-1473496169904-658ba7c44d8a?w=600&h=600&fit=crop&crop=center',
+          'https://images.unsplash.com/photo-1556306535-38b7b5077bb8?w=600&h=600&fit=crop&crop=center'
+        ]
       }
     ],
     features: [
@@ -150,7 +162,11 @@ export const products: Product[] = [
         price: 329,
         salePrice: 299,
         inStock: true,
-        attributes: { color: 'Noir Mat', lenses: 'Smoke', audio: 'Oui' }
+        attributes: { color: 'Noir Mat', lenses: 'Smoke', audio: 'Oui' },
+        images: [
+          'https://images.unsplash.com/photo-1584464491033-06628f3a6b7b?w=600&h=600&fit=crop&crop=center',
+          'https://images.unsplash.com/photo-1556306535-38b7b5077bb8?w=600&h=600&fit=crop&crop=center'
+        ]
       },
       {
         id: '3-2',
@@ -158,7 +174,11 @@ export const products: Product[] = [
         price: 279,
         salePrice: 249,
         inStock: true,
-        attributes: { color: 'Gold', lenses: 'Fire', audio: 'Non' }
+        attributes: { color: 'Gold', lenses: 'Fire', audio: 'Non' },
+        images: [
+          'https://images.unsplash.com/photo-1574258495973-f010dfbb5371?w=600&h=600&fit=crop&crop=center',
+          'https://images.unsplash.com/photo-1556306535-0f09a537f0a3?w=600&h=600&fit=crop&crop=center'
+        ]
       }
     ],
     features: [

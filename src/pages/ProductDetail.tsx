@@ -19,6 +19,18 @@ const ProductDetail = () => {
 
   const { data: product, isLoading, error } = useProductBySlug(slug || '');
 
+  // Get current variant and its images
+  const currentVariant = selectedVariant 
+    ? product?.variants?.find(v => v.id === selectedVariant)
+    : null;
+  
+  const currentImages = currentVariant?.images || product?.images || [];
+
+  // Reset image index when variant changes
+  React.useEffect(() => {
+    setSelectedImageIndex(0);
+  }, [selectedVariant]);
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
@@ -79,8 +91,8 @@ const ProductDetail = () => {
             <Card className="overflow-hidden">
               <CardContent className="p-0 relative group">
                 <img
-                  src={product.images[selectedImageIndex] || 'https://images.unsplash.com/photo-1572635196237-14b3f281503f?w=600&h=600&fit=crop&crop=center'}
-                  alt={product.name}
+                  src={currentImages[selectedImageIndex] || 'https://images.unsplash.com/photo-1572635196237-14b3f281503f?w=600&h=600&fit=crop&crop=center'}
+                  alt={currentVariant ? `${product.name} - ${currentVariant.name}` : product.name}
                   className="w-full h-96 lg:h-[500px] object-cover transition-transform duration-300 group-hover:scale-105"
                 />
                 {product.salePrice && (
@@ -92,9 +104,9 @@ const ProductDetail = () => {
             </Card>
 
             {/* Thumbnail Images */}
-            {product.images && product.images.length > 1 && (
+            {currentImages && currentImages.length > 1 && (
               <div className="grid grid-cols-4 gap-2">
-                {product.images.map((image, index) => (
+                {currentImages.map((image, index) => (
                   <Card
                     key={index}
                     className={`cursor-pointer overflow-hidden transition-all ${
@@ -105,7 +117,7 @@ const ProductDetail = () => {
                     <CardContent className="p-0">
                       <img
                         src={image}
-                        alt={`${product.name} ${index + 1}`}
+                        alt={`${currentVariant ? currentVariant.name : product.name} ${index + 1}`}
                         className="w-full h-20 object-cover"
                       />
                     </CardContent>
@@ -170,15 +182,15 @@ const ProductDetail = () => {
                 <h3 className="text-lg font-semibold">Variantes disponibles</h3>
                 <div className="grid gap-2">
                   {product.variants.map((variant) => (
-                    <Card
-                      key={variant.id}
-                      className={`cursor-pointer transition-all ${
-                        selectedVariant === variant.id
-                          ? 'ring-2 ring-primary bg-primary/5'
-                          : 'hover:bg-muted/50'
-                      }`}
-                      onClick={() => setSelectedVariant(variant.id)}
-                    >
+                  <Card
+                    key={variant.id}
+                    className={`cursor-pointer transition-all ${
+                      selectedVariant === variant.id
+                        ? 'ring-2 ring-primary bg-primary/5'
+                        : 'hover:bg-muted/50'
+                    } ${!variant.inStock ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    onClick={() => variant.inStock && setSelectedVariant(variant.id)}
+                  >
                       <CardContent className="p-4">
                         <div className="flex items-center justify-between">
                           <div>
@@ -189,16 +201,21 @@ const ProductDetail = () => {
                               ))}
                             </div>
                           </div>
-                          <div className="text-right">
-                            <p className="font-semibold">
-                              {variant.salePrice || variant.price}€
-                            </p>
-                            {variant.salePrice && (
-                              <p className="text-sm text-muted-foreground line-through">
-                                {variant.price}€
+                            <div className="text-right">
+                              <p className="font-semibold">
+                                {variant.salePrice || variant.price}€
                               </p>
-                            )}
-                          </div>
+                              {variant.salePrice && (
+                                <p className="text-sm text-muted-foreground line-through">
+                                  {variant.price}€
+                                </p>
+                              )}
+                              {!variant.inStock && (
+                                <Badge variant="destructive" className="text-xs mt-1">
+                                  Rupture
+                                </Badge>
+                              )}
+                            </div>
                         </div>
                       </CardContent>
                     </Card>
@@ -236,9 +253,11 @@ const ProductDetail = () => {
                 onClick={handleAddToCart}
                 className="w-full gradient-primary text-primary-foreground shadow-glow transition-bounce hover:scale-105"
                 size="lg"
-                disabled={!product.inStock}
+                disabled={!product.inStock || (selectedVariant && !currentVariant?.inStock)}
               >
-                {!product.inStock ? 'Rupture de stock' : 'Ajouter au panier'}
+                {(!product.inStock || (selectedVariant && !currentVariant?.inStock)) 
+                  ? 'Rupture de stock' 
+                  : 'Ajouter au panier'}
               </Button>
               <Button variant="outline" className="w-full" size="lg">
                 Acheter maintenant

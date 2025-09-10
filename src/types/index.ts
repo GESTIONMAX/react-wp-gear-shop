@@ -24,6 +24,7 @@ export interface ProductVariant {
   salePrice?: number;
   inStock: boolean;
   attributes: Record<string, string>; // e.g., { color: "blue", size: "M" }
+  images?: string[]; // Images spécifiques à cette variante
 }
 
 export interface CartItem {
