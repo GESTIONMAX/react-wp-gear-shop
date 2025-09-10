@@ -99,6 +99,17 @@ const Header = () => {
                   <Button 
                     variant="ghost" 
                     size="icon" 
+                    asChild
+                    className="hidden sm:flex"
+                    title="Mon espace client"
+                  >
+                    <Link to="/account">
+                      <User className="h-5 w-5" />
+                    </Link>
+                  </Button>
+                  <Button 
+                    variant="ghost" 
+                    size="icon" 
                     onClick={signOut}
                     className="hidden sm:flex"
                     title="Se déconnecter"

@@ -10,6 +10,7 @@ import Footer from "@/components/Footer";
 import Index from "./pages/Index";
 import ProductDetail from "./pages/ProductDetail";
 import Auth from "./pages/Auth";
+import Account from "./pages/Account";
 import Checkout from "./pages/Checkout";
 import OrderSuccess from "./pages/OrderSuccess";
 import NotFound from "./pages/NotFound";
@@ -29,6 +30,7 @@ const App = () => (
               <Route path="/" element={<Index />} />
               <Route path="/product/:slug" element={<ProductDetail />} />
               <Route path="/auth" element={<Auth />} />
+              <Route path="/account" element={<Account />} />
               <Route path="/checkout" element={<Checkout />} />
               <Route path="/order-success/:orderId" element={<OrderSuccess />} />
               <Route path="*" element={<NotFound />} />
