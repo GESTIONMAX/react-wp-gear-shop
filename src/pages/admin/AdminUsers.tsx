@@ -307,7 +307,30 @@ const AdminUsers = () => {
             <div className="mb-4 p-2 bg-blue-50 rounded text-sm text-blue-700">
               Mode édition: {editingProfile ? 'ACTIVÉ' : 'DÉSACTIVÉ'} | 
               Profile ID: {profile?.id} | 
-              Selected User ID: {selectedUser?.user_id}
+              Selected User ID: {selectedUser?.user_id} |
+              updateProfile.isPending: {updateProfile.isPending ? 'OUI' : 'NON'}
+            </div>
+
+            <div className="mb-4 p-2 bg-yellow-50 rounded text-sm">
+              <button 
+                onClick={() => {
+                  console.log('🧪 TEST BUTTON CLICKED');
+                  alert('Test button fonctionne !');
+                }}
+                className="mr-2 px-2 py-1 bg-yellow-500 text-white rounded"
+              >
+                🧪 Test Click
+              </button>
+              
+              <button 
+                onClick={() => {
+                  console.log('🧪 FORCE SAVE TEST');
+                  handleSaveProfile();
+                }}
+                className="px-2 py-1 bg-green-500 text-white rounded"
+              >
+                🧪 Force Save
+              </button>
             </div>
 
             {!editingProfile ? (
