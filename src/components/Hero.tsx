@@ -18,12 +18,12 @@ const Hero = () => {
           <div className="space-y-8">
             <div className="space-y-4">
               <h1 className="font-merriweather text-4xl lg:text-6xl font-bold leading-tight">
-                L'innovation tech
-                <span className="gradient-primary bg-clip-text text-transparent"> à portée de main</span>
+                MyTechGear
+                <span className="gradient-primary bg-clip-text text-transparent"> Lunettes Connectées</span>
               </h1>
               <p className="text-lg text-muted-foreground max-w-md">
-                Découvrez notre sélection de produits technologiques dernière génération. 
-                Smartphones, ordinateurs, audio et gaming premium.
+                Découvrez nos collections de lunettes intelligentes et sportives. 
+                Innovation, style et performance réunis dans chaque modèle.
               </p>
             </div>
             
@@ -32,7 +32,7 @@ const Hero = () => {
                 size="lg" 
                 className="gradient-primary text-primary-foreground shadow-glow transition-bounce hover:scale-105"
               >
-                Découvrir nos produits
+                Découvrir nos collections
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
               <Button 
@@ -78,52 +78,40 @@ const Hero = () => {
           
           {/* Visual */}
           <div className="relative">
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
               <Card className="transition-smooth hover:shadow-elegant hover:-translate-y-2">
                 <CardContent className="p-6 text-center">
                   <img
-                    src="https://images.unsplash.com/photo-1695048133142-1a20484d2569?w=300&h=300&fit=crop&crop=center"
-                    alt="iPhone"
+                    src="https://images.unsplash.com/photo-1508296695146-257a814070b4?w=300&h=300&fit=crop&crop=center"
+                    alt="Collection SPORT"
                     className="w-full h-32 object-cover rounded-lg mb-4"
                   />
-                  <h3 className="font-semibold text-sm">Smartphones</h3>
-                  <p className="text-xs text-muted-foreground">Dernière génération</p>
+                  <h3 className="font-semibold text-sm">SPORT</h3>
+                  <p className="text-xs text-muted-foreground">Performance & cyclisme</p>
+                </CardContent>
+              </Card>
+              
+              <Card className="transition-smooth hover:shadow-elegant hover:-translate-y-2 mt-4">
+                <CardContent className="p-6 text-center">
+                  <img
+                    src="https://images.unsplash.com/photo-1574258495973-f010dfbb5371?w=300&h=300&fit=crop&crop=center"
+                    alt="Collection LIFESTYLE"
+                    className="w-full h-32 object-cover rounded-lg mb-4"
+                  />
+                  <h3 className="font-semibold text-sm">LIFESTYLE</h3>
+                  <p className="text-xs text-muted-foreground">Élégance connectée</p>
                 </CardContent>
               </Card>
               
               <Card className="transition-smooth hover:shadow-elegant hover:-translate-y-2 mt-8">
                 <CardContent className="p-6 text-center">
                   <img
-                    src="https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=300&h=300&fit=crop&crop=center"
-                    alt="MacBook"
+                    src="https://images.unsplash.com/photo-1473496169904-658ba7c44d8a?w=300&h=300&fit=crop&crop=center"
+                    alt="Collection PRISMATIC"
                     className="w-full h-32 object-cover rounded-lg mb-4"
                   />
-                  <h3 className="font-semibold text-sm">Ordinateurs</h3>
-                  <p className="text-xs text-muted-foreground">Performance ultime</p>
-                </CardContent>
-              </Card>
-              
-              <Card className="transition-smooth hover:shadow-elegant hover:-translate-y-2">
-                <CardContent className="p-6 text-center">
-                  <img
-                    src="https://images.unsplash.com/photo-1606220945770-b5b6c2c55bf1?w=300&h=300&fit=crop&crop=center"
-                    alt="AirPods"
-                    className="w-full h-32 object-cover rounded-lg mb-4"
-                  />
-                  <h3 className="font-semibold text-sm">Audio</h3>
-                  <p className="text-xs text-muted-foreground">Son premium</p>
-                </CardContent>
-              </Card>
-              
-              <Card className="transition-smooth hover:shadow-elegant hover:-translate-y-2 -mt-8">
-                <CardContent className="p-6 text-center">
-                  <img
-                    src="https://images.unsplash.com/photo-1606144042614-b2417e99c4e3?w=300&h=300&fit=crop&crop=center"
-                    alt="PlayStation"
-                    className="w-full h-32 object-cover rounded-lg mb-4"
-                  />
-                  <h3 className="font-semibold text-sm">Gaming</h3>
-                  <p className="text-xs text-muted-foreground">Expérience immersive</p>
+                  <h3 className="font-semibold text-sm">PRISMATIC</h3>
+                  <p className="text-xs text-muted-foreground">Couleurs réglables</p>
                 </CardContent>
               </Card>
             </div>
