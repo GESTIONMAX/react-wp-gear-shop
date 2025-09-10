@@ -9,7 +9,9 @@ import {
   Settings,
   Users,
   ShoppingCart,
-  Receipt
+  Receipt,
+  Layers3,
+  Tags
 } from 'lucide-react';
 
 const navigationItems = [
@@ -26,10 +28,22 @@ const navigationItems = [
     description: 'Gestion des produits'
   },
   {
+    title: 'Collections',
+    href: '/admin/collections',
+    icon: FolderOpen,
+    description: 'Gestion des collections'
+  },
+  {
+    title: 'Variantes',
+    href: '/admin/variants',
+    icon: Layers3,
+    description: 'Gestion des variantes'
+  },
+  {
     title: 'Catégories',
     href: '/admin/categories',
-    icon: FolderOpen,
-    description: 'Gestion des catégories'
+    icon: Tags,
+    description: 'Pour catégoriser (à venir)'
   },
   {
     title: 'Commandes',

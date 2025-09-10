@@ -269,10 +269,18 @@ const AdminDashboard: React.FC = () => {
               <Button 
                 className="w-full justify-start" 
                 variant="outline" 
-                onClick={() => window.location.href = '/admin/categories'}
+                onClick={() => window.location.href = '/admin/collections'}
               >
                 <FolderOpen className="h-4 w-4 mr-3" />
                 Gérer les collections
+              </Button>
+              <Button 
+                className="w-full justify-start" 
+                variant="outline" 
+                onClick={() => window.location.href = '/admin/variants'}
+              >
+                <Layers3 className="h-4 w-4 mr-3" />
+                Gérer les variantes
               </Button>
               <Button 
                 className="w-full justify-start" 
