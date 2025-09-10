@@ -36,8 +36,30 @@ const Account = () => {
   const [activeTab, setActiveTab] = useState('dashboard');
 
   if (!user) {
-    navigate('/auth');
-    return null;
+    // Afficher l'interface d'authentification au lieu de rediriger
+    return (
+      <div className="min-h-screen bg-background">
+        <div className="container mx-auto px-4 py-8">
+          <h1 className="font-merriweather text-3xl font-bold mb-8">Mon Compte</h1>
+          <Card className="max-w-md mx-auto">
+            <CardHeader>
+              <CardTitle>Connexion requise</CardTitle>
+              <CardDescription>
+                Vous devez être connecté pour accéder à votre compte.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Button 
+                onClick={() => navigate('/')}
+                className="w-full"
+              >
+                Retour à l'accueil
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    );
   }
 
   const handleSignOut = async () => {
