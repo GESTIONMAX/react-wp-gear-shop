@@ -92,8 +92,32 @@ const Account = () => {
           last_name: shippingAddr.last_name || ''
         }
       });
+    } else if (!profile && !profileLoading && !editingProfile) {
+      // Profil vide si aucun profil n'existe
+      setProfileForm({
+        first_name: '',
+        last_name: '',
+        address: '',
+        address_complement: '',
+        city: '',
+        postal_code: '',
+        country: 'France',
+        phone: '',
+        marketing_phone: '',
+        marketing_consent: false,
+        notes: '',
+        preferred_shipping_address: {
+          address: '',
+          address_complement: '',
+          city: '',
+          postal_code: '',
+          country: 'France',
+          first_name: '',
+          last_name: ''
+        }
+      });
     }
-  }, [profile, editingProfile]);
+  }, [profile, editingProfile, profileLoading]);
 
   if (!user) {
     // Afficher l'interface d'authentification au lieu de rediriger
@@ -166,7 +190,13 @@ const Account = () => {
     try {
       await updateProfile.mutateAsync({
         userId: user.id,
-        updates: profileForm
+        updates: {
+          ...profileForm,
+          // S'assurer que les champs vides sont null pour la base de données
+          preferred_shipping_address: profileForm.preferred_shipping_address.address 
+            ? profileForm.preferred_shipping_address 
+            : null
+        }
       });
       setEditingProfile(false);
     } catch (error) {

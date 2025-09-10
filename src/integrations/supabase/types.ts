@@ -417,6 +417,8 @@ export type Database = {
           notes: string | null
           phone: string | null
           postal_code: string | null
+          preferred_billing_address: Json | null
+          preferred_shipping_address: Json | null
           updated_at: string
           user_id: string
         }
@@ -436,6 +438,8 @@ export type Database = {
           notes?: string | null
           phone?: string | null
           postal_code?: string | null
+          preferred_billing_address?: Json | null
+          preferred_shipping_address?: Json | null
           updated_at?: string
           user_id: string
         }
@@ -455,6 +459,8 @@ export type Database = {
           notes?: string | null
           phone?: string | null
           postal_code?: string | null
+          preferred_billing_address?: Json | null
+          preferred_shipping_address?: Json | null
           updated_at?: string
           user_id?: string
         }
