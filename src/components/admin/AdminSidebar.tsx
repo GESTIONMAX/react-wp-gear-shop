@@ -58,10 +58,10 @@ const navigationItems = [
     description: 'Gestion des factures'
   },
   {
-    title: 'Utilisateurs',
+    title: 'Clients',
     href: '/admin/users',
     icon: Users,
-    description: 'Gestion des utilisateurs'
+    description: 'Gestion des clients'
   },
   {
     title: 'Statistiques',

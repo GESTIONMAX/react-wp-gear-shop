@@ -38,7 +38,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Textarea } from '@/components/ui/textarea';
-import { useUsers, useUpdateUserRole } from '@/hooks/useUsers';
+import { useClients, useUpdateClientRole } from '@/hooks/useClients';
 import { useAdminOrders } from '@/hooks/useOrders';
 import { useInvoices } from '@/hooks/useInvoices';
 import { useProfile, useUpdateProfile } from '@/hooks/useProfile';
@@ -66,10 +66,10 @@ const AdminUsers = () => {
     preferred_billing_address: null as any
   });
   
-  const { data: users = [], isLoading, error } = useUsers();
+  const { data: clients = [], isLoading, error } = useClients();
   const { data: orders = [] } = useAdminOrders();
   const { data: invoices = [] } = useInvoices();
-  const updateUserRole = useUpdateUserRole();
+  const updateClientRole = useUpdateClientRole();
 
   // Debug: monitorer les changements d'editingProfile
   React.useEffect(() => {
@@ -749,41 +749,41 @@ const ClientDetailDialog = ({
 
   const handleRoleChange = async (userId: string, newRole: 'admin' | 'user') => {
     try {
-      await updateUserRole.mutateAsync({ userId, role: newRole });
+      await updateClientRole.mutateAsync({ userId, role: newRole });
       toast({
-        title: "Rôle mis à jour",
-        description: `Le rôle utilisateur a été modifié avec succès.`,
+        title: "Rôle mis à jour", 
+        description: `Le rôle client a été modifié avec succès.`,
       });
     } catch (error) {
       toast({
         title: "Erreur",
-        description: "Impossible de modifier le rôle utilisateur.",
+        description: "Impossible de modifier le rôle client.",
         variant: "destructive",
       });
     }
   };
 
-  // Filter users based on search term and role filter
-  const filteredUsers = users.filter(user => {
-    const matchesSearch = user.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         user.first_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         user.last_name?.toLowerCase().includes(searchTerm.toLowerCase());
+  // Filter clients based on search term and role filter
+  const filteredClients = clients.filter(client => {
+    const matchesSearch = client.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         client.first_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         client.last_name?.toLowerCase().includes(searchTerm.toLowerCase());
     
     const matchesRole = roleFilter === 'all' || 
-                       (roleFilter === 'admin' && user.role === 'admin') ||
-                       (roleFilter === 'user' && (!user.role || user.role === 'user'));
+                       (roleFilter === 'admin' && client.role === 'admin') ||
+                       (roleFilter === 'user' && (!client.role || client.role === 'user'));
     
     return matchesSearch && matchesRole;
   });
 
   // Statistics enriched with order data
-  const userStats = {
-    total: users.length,
-    admins: users.filter(u => u.role === 'admin').length,
-    users: users.filter(u => !u.role || u.role === 'user').length,
-    activeClients: users.filter(u => {
-      const userOrders = orders.filter(order => order.profiles?.id === u.id);
-      return userOrders.length > 0;
+  const clientStats = {
+    total: clients.length,
+    admins: clients.filter(c => c.role === 'admin').length,
+    users: clients.filter(c => !c.role || c.role === 'user').length,
+    activeClients: clients.filter(c => {
+      const clientOrders = orders.filter(order => order.profiles?.id === c.id);
+      return clientOrders.length > 0;
     }).length,
   };
 
@@ -823,7 +823,7 @@ const ClientDetailDialog = ({
               <Users className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{userStats.total}</div>
+              <div className="text-2xl font-bold">{clientStats.total}</div>
               <p className="text-xs text-muted-foreground">
                 Tous les utilisateurs inscrits
               </p>
@@ -836,7 +836,7 @@ const ClientDetailDialog = ({
               <ShoppingBag className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-green-600">{userStats.activeClients}</div>
+              <div className="text-2xl font-bold text-green-600">{clientStats.activeClients}</div>
               <p className="text-xs text-muted-foreground">
                 Avec au moins une commande
               </p>
@@ -849,7 +849,7 @@ const ClientDetailDialog = ({
               <Crown className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-primary">{userStats.admins}</div>
+              <div className="text-2xl font-bold text-primary">{clientStats.admins}</div>
               <p className="text-xs text-muted-foreground">
                 Accès administration
               </p>
@@ -862,7 +862,7 @@ const ClientDetailDialog = ({
               <UserCheck className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-accent">{userStats.users}</div>
+              <div className="text-2xl font-bold text-accent">{clientStats.users}</div>
               <p className="text-xs text-muted-foreground">
                 Clients réguliers
               </p>
@@ -905,7 +905,7 @@ const ClientDetailDialog = ({
           <CardHeader>
             <CardTitle>Liste des clients</CardTitle>
             <CardDescription>
-              {filteredUsers.length} client{filteredUsers.length > 1 ? 's' : ''} trouvé{filteredUsers.length > 1 ? 's' : ''}
+              {filteredClients.length} client{filteredClients.length > 1 ? 's' : ''} trouvé{filteredClients.length > 1 ? 's' : ''}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -923,7 +923,7 @@ const ClientDetailDialog = ({
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {filteredUsers.map((user) => {
+                  {filteredClients.map((user) => {
                     const userOrders = orders.filter(order => order.profiles?.id === user.id);
                     const totalSpent = userOrders.reduce((sum, order) => sum + (order.total_amount || 0), 0);
                     
@@ -1011,7 +1011,7 @@ const ClientDetailDialog = ({
                               onValueChange={(newRole: 'admin' | 'user') => 
                                 handleRoleChange(user.user_id, newRole)
                               }
-                              disabled={updateUserRole.isPending}
+                              disabled={updateClientRole.isPending}
                             >
                               <SelectTrigger className="w-20">
                                 <SelectValue />
@@ -1029,7 +1029,7 @@ const ClientDetailDialog = ({
                 </TableBody>
               </Table>
               
-              {filteredUsers.length === 0 && (
+              {filteredClients.length === 0 && (
                 <div className="text-center py-8 text-muted-foreground">
                   <UserX className="h-12 w-12 mx-auto mb-4 opacity-50" />
                   <p>Aucun client trouvé</p>
