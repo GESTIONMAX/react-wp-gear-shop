@@ -73,8 +73,12 @@ const AdminUsers = () => {
 
   // Gestion de l'édition de profil
   const handleEditProfile = () => {
+    console.log('📝 handleEditProfile called');
+    console.log('👤 selectedUser:', selectedUser);
+    console.log('🗂️ profile:', profile);
+    
     if (profile) {
-      setProfileForm({
+      const newForm = {
         first_name: profile.first_name || '',
         last_name: profile.last_name || '',
         address: profile.address || '',
@@ -85,28 +89,48 @@ const AdminUsers = () => {
         marketing_phone: profile.marketing_phone || '',
         marketing_consent: profile.marketing_consent || false,
         notes: profile.notes || ''
-      });
+      };
+      console.log('📋 Formulaire pré-rempli:', newForm);
+      setProfileForm(newForm);
       setEditingProfile(true);
+    } else {
+      console.error('❌ Pas de profil disponible pour l\'édition');
     }
   };
 
   const handleSaveProfile = async () => {
-    if (!selectedUser) return;
+    console.log('🚀 handleSaveProfile called');
+    
+    if (!selectedUser) {
+      console.error('❌ Pas d\'utilisateur sélectionné');
+      return;
+    }
+    
+    if (!selectedUser.user_id) {
+      console.error('❌ Pas d\'user_id pour l\'utilisateur sélectionné:', selectedUser);
+      return;
+    }
     
     console.log('🔧 Tentative de sauvegarde du profil:', {
       userId: selectedUser.user_id,
-      formData: profileForm
+      formData: profileForm,
+      profileExists: !!profile
     });
     
     try {
-      await updateProfile.mutateAsync({
+      const result = await updateProfile.mutateAsync({
         userId: selectedUser.user_id,
         updates: profileForm
       });
-      console.log('✅ Profil sauvegardé avec succès');
+      console.log('✅ Profil sauvegardé avec succès:', result);
       setEditingProfile(false);
     } catch (error) {
       console.error('❌ Erreur lors de la sauvegarde:', error);
+      console.error('❌ Détails de l\'erreur:', {
+        message: error.message,
+        code: error.code,
+        details: error.details
+      });
     }
   };
 
