@@ -96,10 +96,43 @@ export const useCreateOrder = () => {
         if (itemsError) throw itemsError;
       }
 
+      // Mettre à jour ou créer l'entrée client avec les informations d'adresse
+      if (orderData.shipping_address) {
+        const shippingAddr = orderData.shipping_address;
+        
+        const clientData = {
+          user_id: orderData.user_id,
+          first_name: shippingAddr.firstName,
+          last_name: shippingAddr.lastName,
+          address: shippingAddr.address,
+          address_complement: shippingAddr.addressComplement,
+          city: shippingAddr.city,
+          postal_code: shippingAddr.postalCode,
+          country: shippingAddr.country,
+          phone: shippingAddr.phone,
+          preferred_shipping_address: orderData.shipping_address,
+          preferred_billing_address: orderData.billing_address,
+        };
+
+        // Upsert dans la table clients
+        const { error: clientError } = await supabase
+          .from('clients')
+          .upsert(clientData, {
+            onConflict: 'user_id',
+            ignoreDuplicates: false
+          });
+
+        if (clientError) {
+          console.error('Erreur lors de la mise à jour des données client:', clientError);
+        }
+      }
+
       return order;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['orders'] });
+      queryClient.invalidateQueries({ queryKey: ['allClients'] });
+      queryClient.invalidateQueries({ queryKey: ['clients'] });
       toast({
         title: "Commande créée",
         description: "Votre commande a été créée avec succès.",
