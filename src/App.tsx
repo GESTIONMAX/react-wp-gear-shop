@@ -18,6 +18,7 @@ import AdminProducts from "./pages/admin/AdminProducts";
 import AdminCollections from "./pages/admin/AdminCollections";
 import AdminVariants from "./pages/admin/AdminVariants";
 import AdminCategories from "./pages/admin/AdminCategories";
+import AdminOrders from "./pages/admin/AdminOrders";
 import ProtectedRoute from "./components/admin/ProtectedRoute";
 import Checkout from "./pages/Checkout";
 import OrderSuccess from "./pages/OrderSuccess";
@@ -68,6 +69,11 @@ const App = () => (
               <Route path="/admin/categories" element={
                 <ProtectedRoute>
                   <AdminCategories />
+                </ProtectedRoute>
+              } />
+              <Route path="/admin/orders" element={
+                <ProtectedRoute>
+                  <AdminOrders />
                 </ProtectedRoute>
               } />
               <Route path="/checkout" element={<Checkout />} />

@@ -1,45 +1,46 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { Order, ShippingAddress } from '@/types/order';
+import { useToast } from '@/hooks/use-toast';
 
-interface CreateOrderData {
-  totalAmount: number;
-  shippingAddress: ShippingAddress;
-  billingAddress?: ShippingAddress;
-  paymentMethod: string;
+// Types pour les commandes
+export interface Order {
+  id: string;
+  order_number: string;
+  user_id: string;
+  total_amount: number;
+  currency: string;
+  status: 'pending' | 'confirmed' | 'shipped' | 'delivered' | 'cancelled';
+  payment_status: 'pending' | 'paid' | 'failed' | 'refunded';
+  payment_method?: string;
+  stripe_session_id?: string;
+  billing_address?: Record<string, any>;
+  shipping_address?: Record<string, any>;
   notes?: string;
-  items: Array<{
-    productId: string;
-    productVariantId?: string;
-    productName: string;
-    variantName?: string;
-    quantity: number;
-    unitPrice: number;
-  }>;
+  created_at: string;
+  updated_at: string;
+  profiles?: {
+    id: string;
+    first_name?: string;
+    last_name?: string;
+    email?: string;
+  };
+  order_items?: OrderItem[];
 }
 
-// Hook pour récupérer une commande par ID
-export const useOrder = (orderId: string) => {
-  return useQuery({
-    queryKey: ['order', orderId],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('orders')
-        .select(`
-          *,
-          items:order_items(*)
-        `)
-        .eq('id', orderId)
-        .single();
+export interface OrderItem {
+  id: string;
+  order_id: string;
+  product_id: string;
+  product_variant_id?: string;
+  product_name: string;
+  variant_name?: string;
+  quantity: number;
+  unit_price: number;
+  total_price: number;
+  created_at: string;
+}
 
-      if (error) throw error;
-      return data as unknown as Order;
-    },
-    enabled: !!orderId,
-  });
-};
-
-// Hook pour récupérer les commandes de l'utilisateur
+// Hook pour récupérer les commandes d'un utilisateur
 export const useOrders = () => {
   return useQuery({
     queryKey: ['orders'],
@@ -48,78 +49,176 @@ export const useOrders = () => {
         .from('orders')
         .select(`
           *,
-          items:order_items(*)
+          order_items(
+            id,
+            product_id,
+            product_variant_id,
+            product_name,
+            variant_name,
+            quantity,
+            unit_price,
+            total_price,
+            created_at
+          )
         `)
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      return data as unknown as Order[];
+      return data as any[];
     },
+  });
+};
+
+// Hook pour récupérer une commande spécifique
+export const useOrder = (orderId: string) => {
+  return useQuery({
+    queryKey: ['order', orderId],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('orders')
+        .select(`
+          *,
+          order_items(
+            id,
+            product_id,
+            product_variant_id,
+            product_name,
+            variant_name,
+            quantity,
+            unit_price,
+            total_price,
+            created_at
+          )
+        `)
+        .eq('id', orderId)
+        .single();
+
+      if (error) throw error;
+      return data as any;
+    },
+    enabled: !!orderId,
   });
 };
 
 // Hook pour créer une commande
 export const useCreateOrder = () => {
   const queryClient = useQueryClient();
-
+  const { toast } = useToast();
+  
   return useMutation({
-    mutationFn: async (orderData: CreateOrderData) => {
-      // Récupérer l'utilisateur actuel
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error('Utilisateur non connecté');
-
-      // 1. Créer la commande
-      const { data: order, error: orderError } = await supabase
+    mutationFn: async (orderData: any) => {
+      const { data, error } = await supabase
         .from('orders')
-        .insert({
-          user_id: user.id,
-          total_amount: orderData.totalAmount,
-          shipping_address: orderData.shippingAddress,
-          billing_address: orderData.billingAddress,
-          payment_method: orderData.paymentMethod,
-          notes: orderData.notes,
-        } as any)
+        .insert(orderData)
         .select()
         .single();
 
-      if (orderError) throw orderError;
-
-      // 2. Créer les articles de commande
-      const orderItems = orderData.items.map(item => ({
-        order_id: order.id,
-        product_id: item.productId,
-        product_variant_id: item.productVariantId,
-        product_name: item.productName,
-        variant_name: item.variantName,
-        quantity: item.quantity,
-        unit_price: item.unitPrice,
-        total_price: item.unitPrice * item.quantity,
-      }));
-
-      const { error: itemsError } = await supabase
-        .from('order_items')
-        .insert(orderItems);
-
-      if (itemsError) throw itemsError;
-
-      return order as unknown as Order;
+      if (error) throw error;
+      return data;
     },
     onSuccess: () => {
-      // Invalider les requêtes de commandes pour forcer le rechargement
       queryClient.invalidateQueries({ queryKey: ['orders'] });
+      toast({
+        title: "Commande créée",
+        description: "Votre commande a été créée avec succès.",
+      });
     },
+    onError: (error) => {
+      toast({
+        title: "Erreur",
+        description: "Impossible de créer la commande.",
+        variant: "destructive",
+      });
+    },
+  });
+};
+
+// Hook pour récupérer toutes les commandes (admin)
+export const useAdminOrders = () => {
+  return useQuery({
+    queryKey: ['admin', 'orders'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('orders')
+        .select(`
+          *,
+          profiles!inner(
+            id,
+            first_name,
+            last_name,
+            email
+          ),
+          order_items(
+            id,
+            product_id,
+            product_variant_id,
+            product_name,
+            variant_name,
+            quantity,
+            unit_price,
+            total_price,
+            created_at
+          )
+        `)
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      return data as any[];
+    },
+  });
+};
+
+// Hook pour récupérer une commande spécifique (admin)
+export const useAdminOrder = (orderId: string) => {
+  return useQuery({
+    queryKey: ['admin', 'order', orderId],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('orders')
+        .select(`
+          *,
+          profiles!inner(
+            id,
+            first_name,
+            last_name,
+            email,
+            phone
+          ),
+          order_items(
+            id,
+            product_id,
+            product_variant_id,
+            product_name,
+            variant_name,
+            quantity,
+            unit_price,
+            total_price,
+            created_at
+          )
+        `)
+        .eq('id', orderId)
+        .single();
+
+      if (error) throw error;
+      return data as any;
+    },
+    enabled: !!orderId,
   });
 };
 
 // Hook pour mettre à jour le statut d'une commande
 export const useUpdateOrderStatus = () => {
   const queryClient = useQueryClient();
-
+  const { toast } = useToast();
+  
   return useMutation({
-    mutationFn: async ({ orderId, status }: { orderId: string; status: string }) => {
+    mutationFn: async ({ orderId, status }: { orderId: string; status: Order['status'] }) => {
       const { data, error } = await supabase
         .from('orders')
-        .update({ status })
+        .update({ 
+          status,
+          updated_at: new Date().toISOString()
+        })
         .eq('id', orderId)
         .select()
         .single();
@@ -128,9 +227,177 @@ export const useUpdateOrderStatus = () => {
       return data;
     },
     onSuccess: (data) => {
-      // Invalider les requêtes de commandes
-      queryClient.invalidateQueries({ queryKey: ['orders'] });
-      queryClient.invalidateQueries({ queryKey: ['order', data.id] });
+      queryClient.invalidateQueries({ queryKey: ['admin', 'orders'] });
+      queryClient.invalidateQueries({ queryKey: ['admin', 'order', data.id] });
+      queryClient.invalidateQueries({ queryKey: ['adminStats'] });
+      toast({
+        title: "Statut mis à jour",
+        description: "Le statut de la commande a été mis à jour avec succès.",
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Erreur",
+        description: "Impossible de mettre à jour le statut de la commande.",
+        variant: "destructive",
+      });
     },
   });
+};
+
+// Hook pour mettre à jour le statut de paiement
+export const useUpdatePaymentStatus = () => {
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
+  
+  return useMutation({
+    mutationFn: async ({ orderId, paymentStatus }: { orderId: string; paymentStatus: Order['payment_status'] }) => {
+      const { data, error } = await supabase
+        .from('orders')
+        .update({ 
+          payment_status: paymentStatus,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', orderId)
+        .select()
+        .single();
+
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ['admin', 'orders'] });
+      queryClient.invalidateQueries({ queryKey: ['admin', 'order', data.id] });
+      queryClient.invalidateQueries({ queryKey: ['adminStats'] });
+      toast({
+        title: "Paiement mis à jour",
+        description: "Le statut de paiement a été mis à jour avec succès.",
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Erreur",
+        description: "Impossible de mettre à jour le statut de paiement.",
+        variant: "destructive",
+      });
+    },
+  });
+};
+
+// Hook pour ajouter des notes à une commande
+export const useUpdateOrderNotes = () => {
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
+  
+  return useMutation({
+    mutationFn: async ({ orderId, notes }: { orderId: string; notes: string }) => {
+      const { data, error } = await supabase
+        .from('orders')
+        .update({ 
+          notes,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', orderId)
+        .select()
+        .single();
+
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ['admin', 'orders'] });
+      queryClient.invalidateQueries({ queryKey: ['admin', 'order', data.id] });
+      toast({
+        title: "Notes mises à jour",
+        description: "Les notes de la commande ont été mises à jour.",
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Erreur",
+        description: "Impossible de mettre à jour les notes.",
+        variant: "destructive",
+      });
+    },
+  });
+};
+
+// Hook pour supprimer une commande (admin uniquement)
+export const useDeleteOrder = () => {
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
+  
+  return useMutation({
+    mutationFn: async (orderId: string) => {
+      // Supprimer d'abord les items de la commande
+      const { error: itemsError } = await supabase
+        .from('order_items')
+        .delete()
+        .eq('order_id', orderId);
+
+      if (itemsError) throw itemsError;
+
+      // Puis supprimer la commande
+      const { error } = await supabase
+        .from('orders')
+        .delete()
+        .eq('id', orderId);
+
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin', 'orders'] });
+      queryClient.invalidateQueries({ queryKey: ['adminStats'] });
+      toast({
+        title: "Commande supprimée",
+        description: "La commande a été supprimée avec succès.",
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Erreur",
+        description: "Impossible de supprimer la commande.",
+        variant: "destructive",
+      });
+    },
+  });
+};
+
+// Fonction utilitaire pour formater le prix
+export const formatPrice = (price: number, currency: string = 'EUR') => {
+  return `${(price / 100).toFixed(2)} ${currency === 'EUR' ? '€' : currency}`;
+};
+
+// Fonction utilitaire pour obtenir la couleur du badge de statut
+export const getStatusColor = (status: Order['status']) => {
+  switch (status) {
+    case 'pending':
+      return 'bg-yellow-500 text-yellow-50';
+    case 'confirmed':
+      return 'bg-blue-500 text-blue-50';
+    case 'shipped':
+      return 'bg-purple-500 text-purple-50';
+    case 'delivered':
+      return 'bg-green-500 text-green-50';
+    case 'cancelled':
+      return 'bg-red-500 text-red-50';
+    default:
+      return 'bg-gray-500 text-gray-50';
+  }
+};
+
+// Fonction utilitaire pour obtenir la couleur du badge de paiement
+export const getPaymentStatusColor = (status: Order['payment_status']) => {
+  switch (status) {
+    case 'paid':
+      return 'bg-green-500 text-green-50';
+    case 'pending':
+      return 'bg-yellow-500 text-yellow-50';
+    case 'failed':
+      return 'bg-red-500 text-red-50';
+    case 'refunded':
+      return 'bg-orange-500 text-orange-50';
+    default:
+      return 'bg-gray-500 text-gray-50';
+  }
 };
