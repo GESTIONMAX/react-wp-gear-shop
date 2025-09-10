@@ -70,14 +70,33 @@ export const useCreateOrder = () => {
   
   return useMutation({
     mutationFn: async (orderData: any) => {
-      const { data, error } = await supabase
+      // Séparer les items de la commande
+      const { order_items, ...orderFields } = orderData;
+      
+      // Créer la commande d'abord
+      const { data: order, error: orderError } = await supabase
         .from('orders')
-        .insert(orderData)
+        .insert(orderFields)
         .select()
         .single();
 
-      if (error) throw error;
-      return data;
+      if (orderError) throw orderError;
+
+      // Créer les items de la commande
+      if (order_items && order_items.length > 0) {
+        const itemsWithOrderId = order_items.map((item: any) => ({
+          ...item,
+          order_id: order.id,
+        }));
+
+        const { error: itemsError } = await supabase
+          .from('order_items')
+          .insert(itemsWithOrderId);
+
+        if (itemsError) throw itemsError;
+      }
+
+      return order;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['orders'] });

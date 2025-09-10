@@ -96,20 +96,22 @@ const Checkout = () => {
     }
 
     const orderData = {
-      totalAmount: Math.round(totalPrice * 100), // Convertir en centimes
-      shippingAddress: formData.shippingAddress,
-      billingAddress: formData.useSameAddress ? formData.shippingAddress : formData.billingAddress!,
-      paymentMethod: formData.paymentMethod,
+      user_id: user.id,
+      total_amount: Math.round(totalPrice * 100), // Convertir en centimes
+      shipping_address: formData.shippingAddress,
+      billing_address: formData.useSameAddress ? formData.shippingAddress : formData.billingAddress!,
+      payment_method: formData.paymentMethod,
       notes: formData.notes || undefined,
-      items: items.map(item => {
+      order_items: items.map(item => {
         const price = item.variant?.salePrice || item.variant?.price || item.product.salePrice || item.product.price;
         return {
-          productId: item.productId,
-          productVariantId: item.variantId,
-          productName: item.product.name,
-          variantName: item.variant?.name,
+          product_id: item.productId,
+          product_variant_id: item.variantId,
+          product_name: item.product.name,
+          variant_name: item.variant?.name,
           quantity: item.quantity,
-          unitPrice: Math.round(price * 100), // Convertir en centimes
+          unit_price: Math.round(price * 100), // Convertir en centimes
+          total_price: Math.round(price * item.quantity * 100), // Convertir en centimes
         };
       }),
     };
