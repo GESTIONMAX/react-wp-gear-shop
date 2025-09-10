@@ -3,7 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { Order, OrderItem } from '@/types/order';
 
-// Hook pour récupérer les commandes d'un utilisateur
+// Hook pour récupérer les commandes d'un utilisateur - Fixed exports
 export const useOrders = () => {
   return useQuery({
     queryKey: ['orders'],
