@@ -61,8 +61,8 @@ const Auth = () => {
   useEffect(() => {
     console.log('Auth redirect check - user:', !!user, 'isRecoverySession:', isRecoverySession);
     if (user && !isRecoverySession) {
-      console.log('Redirecting to home');
-      navigate('/');
+      console.log('Redirecting to account');
+      navigate('/account');
     }
   }, [user, navigate, isRecoverySession]);
 
@@ -133,7 +133,7 @@ const Auth = () => {
           title: "Connexion réussie",
           description: "Bienvenue sur MyTechGear !",
         });
-        navigate('/');
+        navigate('/account');
       }
     } catch (error) {
       console.error('Erreur inattendue:', error);
