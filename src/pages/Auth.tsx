@@ -100,13 +100,32 @@ const Auth = () => {
     e.preventDefault();
     setIsLoading(true);
     
+    console.log('Tentative de connexion avec:', { email });
+    
     try {
       const { error } = await signIn(email, password);
       
+      console.log('Résultat de la connexion:', { error });
+      
       if (error) {
+        console.error('Erreur de connexion détaillée:', error);
+        
+        let errorMessage = error.message;
+        
+        // Messages d'erreur en français selon le type d'erreur
+        if (error.message === 'Invalid login credentials') {
+          errorMessage = 'Email ou mot de passe incorrect';
+        } else if (error.message === 'Email not confirmed') {
+          errorMessage = 'Veuillez confirmer votre email avant de vous connecter';
+        } else if (error.message === 'Too many requests') {
+          errorMessage = 'Trop de tentatives. Veuillez patienter quelques minutes';
+        } else if (error.message.includes('rate limit')) {
+          errorMessage = 'Limite de tentatives atteinte. Patientez 60 secondes';
+        }
+        
         toast({
           title: "Erreur de connexion",
-          description: error.message,
+          description: errorMessage,
           variant: "destructive",
         });
       } else {
@@ -117,6 +136,7 @@ const Auth = () => {
         navigate('/');
       }
     } catch (error) {
+      console.error('Erreur inattendue:', error);
       toast({
         title: "Erreur",
         description: "Une erreur inattendue s'est produite",
