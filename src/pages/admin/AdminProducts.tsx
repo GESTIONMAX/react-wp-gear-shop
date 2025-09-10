@@ -14,6 +14,7 @@ import { useAdminProducts, useDeleteProduct, useToggleProductStatus } from '@/ho
 import ProductForm from '@/components/admin/ProductForm';
 import { toast } from '@/hooks/use-toast';
 
+// Page de gestion des produits
 const AdminProducts = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [categoryFilter, setCategoryFilter] = useState<string>('all');
