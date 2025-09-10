@@ -71,11 +71,11 @@ const AdminUsers = () => {
   const updateUserRole = useUpdateUserRole();
   const updateProfile = useUpdateProfile();
 
-  // Gestion de l'édition de profil
   const handleEditProfile = () => {
     console.log('📝 handleEditProfile called');
     console.log('👤 selectedUser:', selectedUser);
     console.log('🗂️ profile:', profile);
+    console.log('🔄 État editingProfile avant:', editingProfile);
     
     if (profile) {
       const newForm = {
@@ -92,7 +92,14 @@ const AdminUsers = () => {
       };
       console.log('📋 Formulaire pré-rempli:', newForm);
       setProfileForm(newForm);
+      console.log('🔄 Activation du mode édition...');
       setEditingProfile(true);
+      console.log('🔄 État editingProfile après setEditingProfile(true):', editingProfile);
+      
+      // Force re-render pour debug
+      setTimeout(() => {
+        console.log('🔄 État editingProfile après timeout:', editingProfile);
+      }, 100);
     } else {
       console.error('❌ Pas de profil disponible pour l\'édition');
     }
@@ -282,6 +289,12 @@ const AdminUsers = () => {
                   </Button>
                 </div>
               )}
+            </div>
+
+            <div className="mb-4 p-2 bg-blue-50 rounded text-sm text-blue-700">
+              Mode édition: {editingProfile ? 'ACTIVÉ' : 'DÉSACTIVÉ'} | 
+              Profile ID: {profile?.id} | 
+              Selected User ID: {selectedUser?.user_id}
             </div>
 
             {!editingProfile ? (
