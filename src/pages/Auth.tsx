@@ -31,14 +31,26 @@ const Auth = () => {
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const type = urlParams.get('type');
-    if (type === 'recovery') {
+    const accessToken = urlParams.get('access_token');
+    const refreshToken = urlParams.get('refresh_token');
+    
+    console.log('URL params:', window.location.search);
+    console.log('Type parameter:', type);
+    console.log('Has access token:', !!accessToken);
+    console.log('Has refresh token:', !!refreshToken);
+    
+    // Check for recovery session using multiple indicators
+    if (type === 'recovery' || (accessToken && refreshToken && window.location.search.includes('type=recovery'))) {
+      console.log('Setting recovery session to true');
       setIsRecoverySession(true);
     }
   }, []);
 
   // Redirect if already authenticated and not in recovery mode
   useEffect(() => {
+    console.log('Auth redirect check - user:', !!user, 'isRecoverySession:', isRecoverySession);
     if (user && !isRecoverySession) {
+      console.log('Redirecting to home');
       navigate('/');
     }
   }, [user, navigate, isRecoverySession]);
