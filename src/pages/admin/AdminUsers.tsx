@@ -745,6 +745,10 @@ const ClientDetailDialog = ({
     );
   };
 
+  // Fonction handleRoleChange supprimée car le sélecteur de rôles a été retiré
+  // pour des raisons de sécurité - les rôles ne doivent pas être modifiables 
+  // depuis l'interface client de manière arbitraire
+  /*
   const handleRoleChange = async (userId: string, newRole: 'admin' | 'user') => {
     try {
       await updateClientRole.mutateAsync({ userId, role: newRole });
@@ -760,6 +764,7 @@ const ClientDetailDialog = ({
       });
     }
   };
+  */
 
   // Filter clients based on search term and role filter
   const filteredClients = clients.filter(client => {
@@ -1003,22 +1008,6 @@ const ClientDetailDialog = ({
                 setProfileForm={setProfileForm}
               />
                             </Dialog>
-                            
-                            <Select
-                              value={user.role || 'user'}
-                              onValueChange={(newRole: 'admin' | 'user') => 
-                                handleRoleChange(user.user_id, newRole)
-                              }
-                              disabled={updateClientRole.isPending}
-                            >
-                              <SelectTrigger className="w-20">
-                                <SelectValue />
-                              </SelectTrigger>
-                              <SelectContent>
-                                <SelectItem value="user">Client</SelectItem>
-                                <SelectItem value="admin">Admin</SelectItem>
-                              </SelectContent>
-                            </Select>
                           </div>
                         </TableCell>
                       </TableRow>
