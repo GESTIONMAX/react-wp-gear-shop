@@ -160,8 +160,8 @@ const ClientDetailDialog = ({
       await queryClient.invalidateQueries({ queryKey: ['clientData', user.user_id] });
       await queryClient.invalidateQueries({ queryKey: ['allClients'] });
       
-      // Forcer le re-rendu du composant
-      window.location.reload();
+      // Rafraîchir les données utilisateurs pour voir les changements
+      await queryClient.refetchQueries({ queryKey: ['users'] });
       
       setEditingProfile(false);
       
