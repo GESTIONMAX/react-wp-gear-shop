@@ -20,7 +20,8 @@ import {
   Calendar,
   ShoppingBag,
   Euro,
-  FileText
+  FileText,
+  Truck
 } from 'lucide-react';
 import {
   Dialog,
@@ -85,8 +86,9 @@ const AdminUsers = () => {
         </DialogHeader>
 
         <Tabs defaultValue="profile" className="w-full">
-          <TabsList className="grid w-full grid-cols-4">
+          <TabsList className="grid w-full grid-cols-5">
             <TabsTrigger value="profile">Profil</TabsTrigger>
+            <TabsTrigger value="addresses">Adresses</TabsTrigger>
             <TabsTrigger value="orders">Commandes ({userOrders.length})</TabsTrigger>
             <TabsTrigger value="invoices">Factures ({userInvoices.length})</TabsTrigger>
             <TabsTrigger value="stats">Statistiques</TabsTrigger>
@@ -150,6 +152,117 @@ const AdminUsers = () => {
                 </CardContent>
               </Card>
             </div>
+          </TabsContent>
+
+          <TabsContent value="addresses" className="space-y-4">
+            {userOrders.length > 0 ? (
+              <div className="space-y-4">
+                {/* Adresses de livraison uniques */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-lg flex items-center gap-2">
+                      <Truck className="h-5 w-5" />
+                      Adresses de livraison
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
+                      {Array.from(new Set(userOrders
+                        .filter(order => order.shipping_address)
+                        .map(order => JSON.stringify(order.shipping_address))))
+                        .map((addressStr, index) => {
+                          const address = JSON.parse(addressStr);
+                          const ordersWithThisAddress = userOrders.filter(
+                            order => JSON.stringify(order.shipping_address) === addressStr
+                          );
+                          
+                          return (
+                            <div key={index} className="border rounded-lg p-4 bg-background">
+                              <div className="flex justify-between items-start mb-2">
+                                <div className="font-medium">
+                                  {address.firstName} {address.lastName}
+                                </div>
+                                <Badge variant="outline">
+                                  {ordersWithThisAddress.length} commande{ordersWithThisAddress.length > 1 ? 's' : ''}
+                                </Badge>
+                              </div>
+                              <div className="text-sm text-muted-foreground space-y-1">
+                                <div>{address.address}</div>
+                                <div>{address.postalCode} {address.city}</div>
+                                <div>{address.country}</div>
+                                {address.phone && <div>Tél: {address.phone}</div>}
+                              </div>
+                              <div className="mt-2 text-xs text-muted-foreground">
+                                Dernière utilisation: {new Date(ordersWithThisAddress[0].created_at).toLocaleDateString('fr-FR')}
+                              </div>
+                            </div>
+                          );
+                        })}
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Adresses de facturation uniques */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-lg flex items-center gap-2">
+                      <FileText className="h-5 w-5" />
+                      Adresses de facturation
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
+                      {Array.from(new Set(userOrders
+                        .filter(order => order.billing_address)
+                        .map(order => JSON.stringify(order.billing_address))))
+                        .map((addressStr, index) => {
+                          const address = JSON.parse(addressStr);
+                          const ordersWithThisAddress = userOrders.filter(
+                            order => JSON.stringify(order.billing_address) === addressStr
+                          );
+                          
+                          return (
+                            <div key={index} className="border rounded-lg p-4 bg-background">
+                              <div className="flex justify-between items-start mb-2">
+                                <div className="font-medium">
+                                  {address.firstName} {address.lastName}
+                                </div>
+                                <Badge variant="outline">
+                                  {ordersWithThisAddress.length} commande{ordersWithThisAddress.length > 1 ? 's' : ''}
+                                </Badge>
+                              </div>
+                              <div className="text-sm text-muted-foreground space-y-1">
+                                <div>{address.address}</div>
+                                <div>{address.postalCode} {address.city}</div>
+                                <div>{address.country}</div>
+                                {address.phone && <div>Tél: {address.phone}</div>}
+                              </div>
+                              <div className="mt-2 text-xs text-muted-foreground">
+                                Dernière utilisation: {new Date(ordersWithThisAddress[0].created_at).toLocaleDateString('fr-FR')}
+                              </div>
+                            </div>
+                          );
+                        })}
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            ) : (
+              <Card>
+                <CardContent className="text-center py-8">
+                  <div className="space-y-4">
+                    <div className="flex justify-center space-x-4">
+                      <Truck className="h-12 w-12 text-muted-foreground/50" />
+                      <FileText className="h-12 w-12 text-muted-foreground/50" />
+                    </div>
+                    <div>
+                      <p className="text-muted-foreground">Aucune adresse enregistrée</p>
+                      <p className="text-sm text-muted-foreground">Les adresses apparaîtront après la première commande</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
           </TabsContent>
 
           <TabsContent value="orders" className="space-y-4">
