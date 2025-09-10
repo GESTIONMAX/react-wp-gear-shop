@@ -10,7 +10,7 @@ export const useProducts = () => {
         .from('products')
         .select(`
           *,
-          categories!inner(name, slug),
+          categories(name, slug),
           product_images(image_url, alt_text, sort_order),
           product_variants(*)
         `)
@@ -57,7 +57,7 @@ export const useProductBySlug = (slug: string) => {
         .from('products')
         .select(`
           *,
-          categories!inner(name, slug),
+          categories(name, slug),
           product_images(image_url, alt_text, sort_order),
           product_variants(*)
         `)
