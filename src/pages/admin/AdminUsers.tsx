@@ -41,7 +41,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { useClients, useUpdateClientRole } from '@/hooks/useClients';
 import { useAdminOrders } from '@/hooks/useOrders';
 import { useInvoices } from '@/hooks/useInvoices';
-import { useProfile, useUpdateProfile } from '@/hooks/useProfile';
+import { useClientData, useUpdateClientData } from '@/hooks/useClientData';
 import { toast } from '@/hooks/use-toast';
 import { formatDistanceToNow } from 'date-fns';
 import { fr } from 'date-fns/locale';
@@ -96,8 +96,8 @@ const ClientDetailDialog = ({
   profileForm: any;
   setProfileForm: (form: any) => void;
 }) => {
-  const { data: profile } = useProfile(user?.user_id);
-  const updateProfile = useUpdateProfile();
+  const { data: clientData } = useClientData(user?.user_id);
+  const updateClientData = useUpdateClientData();
   
   if (!user) return null;
 
@@ -109,23 +109,23 @@ const ClientDetailDialog = ({
 
   const handleEditProfile = () => {
     console.log('=== DEBUT handleEditProfile ===');
-    console.log('profile:', profile);
+    console.log('clientData:', clientData);
     console.log('editingProfile avant:', editingProfile);
     
-    if (profile) {
+    if (clientData) {
       const newForm = {
-        first_name: profile.first_name || '',
-        last_name: profile.last_name || '',
-        address: profile.address || '',
-        address_complement: (profile as any).address_complement || '',
-        city: profile.city || '',
-        postal_code: profile.postal_code || '',
-        country: profile.country || 'France',
-        marketing_phone: profile.marketing_phone || '',
-        marketing_consent: profile.marketing_consent || false,
-        notes: profile.notes || '',
-        preferred_shipping_address: (profile as any).preferred_shipping_address || null,
-        preferred_billing_address: (profile as any).preferred_billing_address || null
+        first_name: clientData.first_name || '',
+        last_name: clientData.last_name || '',
+        address: clientData.address || '',
+        address_complement: clientData.address_complement || '',
+        city: clientData.city || '',
+        postal_code: clientData.postal_code || '',
+        country: clientData.country || 'France',
+        marketing_phone: clientData.marketing_phone || '',
+        marketing_consent: clientData.marketing_consent || false,
+        notes: clientData.notes || '',
+        preferred_shipping_address: clientData.preferred_shipping_address || null,
+        preferred_billing_address: clientData.preferred_billing_address || null
       };
       console.log('newForm créé:', newForm);
       setProfileForm(newForm);
@@ -139,7 +139,7 @@ const ClientDetailDialog = ({
     if (!user?.user_id) return;
     
     try {
-      await updateProfile.mutateAsync({
+      await updateClientData.mutateAsync({
         userId: user.user_id,
         updates: profileForm
       });
@@ -283,11 +283,11 @@ const ClientDetailDialog = ({
                 <div className="flex gap-2">
                   <Button 
                     onClick={handleSaveProfile} 
-                    size="sm"
-                    disabled={updateProfile.isPending}
+                  size="sm"
+                  disabled={updateClientData.isPending}
                   >
                     <Save className="h-4 w-4 mr-2" />
-                    {updateProfile.isPending ? 'Sauvegarde...' : 'Sauvegarder'}
+                    {updateClientData.isPending ? 'Sauvegarde...' : 'Sauvegarder'}
                   </Button>
                   <Button onClick={handleCancelEdit} variant="outline" size="sm">
                     <X className="h-4 w-4 mr-2" />
@@ -310,19 +310,19 @@ const ClientDetailDialog = ({
                   <CardContent>
                     <div className="space-y-2">
                       <div className="font-medium">
-                        {profile?.first_name} {profile?.last_name}
+                        {clientData?.first_name} {clientData?.last_name}
                       </div>
-                       {profile?.address && (
-                         <div className="text-sm text-muted-foreground space-y-1">
-                           <div>{profile.address}</div>
-                           {(profile as any).address_complement && (
-                             <div>{(profile as any).address_complement}</div>
-                           )}
-                           <div>{profile.postal_code} {profile.city}</div>
-                           <div>{profile.country}</div>
-                         </div>
-                       )}
-                      {!profile?.address && (
+                       {clientData?.address && (
+                          <div className="text-sm text-muted-foreground space-y-1">
+                            <div>{clientData.address}</div>
+                            {clientData.address_complement && (
+                              <div>{clientData.address_complement}</div>
+                            )}
+                            <div>{clientData.postal_code} {clientData.city}</div>
+                            <div>{clientData.country}</div>
+                          </div>
+                        )}
+                      {!clientData?.address && (
                         <div className="text-sm text-muted-foreground italic">
                           Aucune adresse par défaut définie
                         </div>
@@ -343,20 +343,20 @@ const ClientDetailDialog = ({
                       <div className="flex justify-between">
                         <span className="text-sm font-medium">Téléphone SMS:</span>
                         <span className="text-sm">
-                          {profile?.marketing_phone || 'Non renseigné'}
+                          {clientData?.marketing_phone || 'Non renseigné'}
                         </span>
                       </div>
                       <div className="flex justify-between">
                         <span className="text-sm font-medium">Consentement SMS:</span>
-                        <Badge variant={profile?.marketing_consent ? 'default' : 'secondary'}>
-                          {profile?.marketing_consent ? 'Accepté' : 'Refusé'}
+                        <Badge variant={clientData?.marketing_consent ? 'default' : 'secondary'}>
+                          {clientData?.marketing_consent ? 'Accepté' : 'Refusé'}
                         </Badge>
                       </div>
-                      {profile?.notes && (
+                      {clientData?.notes && (
                         <div className="mt-4">
                           <span className="text-sm font-medium">Notes internes:</span>
                           <div className="text-sm text-muted-foreground mt-1 p-2 bg-muted rounded">
-                            {profile.notes}
+                            {clientData.notes}
                           </div>
                         </div>
                       )}
