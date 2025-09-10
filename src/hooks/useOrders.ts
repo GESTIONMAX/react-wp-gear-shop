@@ -1,44 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-
-// Types pour les commandes
-export interface Order {
-  id: string;
-  order_number: string;
-  user_id: string;
-  total_amount: number;
-  currency: string;
-  status: 'pending' | 'confirmed' | 'shipped' | 'delivered' | 'cancelled';
-  payment_status: 'pending' | 'paid' | 'failed' | 'refunded';
-  payment_method?: string;
-  stripe_session_id?: string;
-  billing_address?: Record<string, any>;
-  shipping_address?: Record<string, any>;
-  notes?: string;
-  created_at: string;
-  updated_at: string;
-  profiles?: {
-    id: string;
-    first_name?: string;
-    last_name?: string;
-    email?: string;
-  };
-  order_items?: OrderItem[];
-}
-
-export interface OrderItem {
-  id: string;
-  order_id: string;
-  product_id: string;
-  product_variant_id?: string;
-  product_name: string;
-  variant_name?: string;
-  quantity: number;
-  unit_price: number;
-  total_price: number;
-  created_at: string;
-}
+import { Order, OrderItem } from '@/types/order';
 
 // Hook pour récupérer les commandes d'un utilisateur
 export const useOrders = () => {

@@ -52,9 +52,9 @@ import {
   useDeleteOrder,
   formatPrice,
   getStatusColor,
-  getPaymentStatusColor,
-  type Order 
+  getPaymentStatusColor
 } from '@/hooks/useOrders';
+import { Order } from '@/types/order';
 import { formatDistanceToNow } from 'date-fns';
 import { fr } from 'date-fns/locale';
 
