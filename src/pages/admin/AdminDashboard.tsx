@@ -80,82 +80,100 @@ const AdminDashboard: React.FC = () => {
     <AdminLayout title="Dashboard" description="Vue d'ensemble de votre boutique">
       <div className="space-y-8">
         {/* Cartes de statistiques principales */}
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-6">
-          <Card className="border-l-4 border-l-blue-500 xl:col-span-2">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Produits</CardTitle>
-              <Package className="h-4 w-4 text-muted-foreground" />
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
+          {/* Produits */}
+          <Card className="bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200 hover:shadow-lg transition-all duration-300">
+            <CardHeader className="pb-2">
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-sm font-medium text-blue-700">Produits</CardTitle>
+                <Package className="h-5 w-5 text-blue-600" />
+              </div>
             </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{stats?.products.total || 0}</div>
-              <p className="text-xs text-muted-foreground">
-                {stats?.products.active || 0} en stock • {stats?.products.withVariants || 0} avec variantes
+            <CardContent className="pt-0">
+              <div className="text-3xl font-bold text-blue-900">{stats?.products.total || 0}</div>
+              <p className="text-xs text-blue-600 mt-1">
+                {stats?.products.active || 0} actifs • {stats?.products.withVariants || 0} avec variantes
               </p>
             </CardContent>
           </Card>
 
-          <Card className="border-l-4 border-l-green-500">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Collections</CardTitle>
-              <FolderOpen className="h-4 w-4 text-muted-foreground" />
+          {/* Collections */}
+          <Card className="bg-gradient-to-br from-green-50 to-green-100 border-green-200 hover:shadow-lg transition-all duration-300">
+            <CardHeader className="pb-2">
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-sm font-medium text-green-700">Collections</CardTitle>
+                <FolderOpen className="h-5 w-5 text-green-600" />
+              </div>
             </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{stats?.categories.total || 0}</div>
-              <p className="text-xs text-muted-foreground">
+            <CardContent className="pt-0">
+              <div className="text-3xl font-bold text-green-900">{stats?.categories.total || 0}</div>
+              <p className="text-xs text-green-600 mt-1">
                 {stats?.categories.active || 0} actives
               </p>
             </CardContent>
           </Card>
 
-          <Card className="border-l-4 border-l-indigo-500">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Variantes</CardTitle>
-              <Layers3 className="h-4 w-4 text-muted-foreground" />
+          {/* Variantes */}
+          <Card className="bg-gradient-to-br from-purple-50 to-purple-100 border-purple-200 hover:shadow-lg transition-all duration-300">
+            <CardHeader className="pb-2">
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-sm font-medium text-purple-700">Variantes</CardTitle>
+                <Layers3 className="h-5 w-5 text-purple-600" />
+              </div>
             </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{stats?.variants.total || 0}</div>
-              <p className="text-xs text-muted-foreground">
+            <CardContent className="pt-0">
+              <div className="text-3xl font-bold text-purple-900">{stats?.variants.total || 0}</div>
+              <p className="text-xs text-purple-600 mt-1">
                 {stats?.variants.active || 0} disponibles
               </p>
             </CardContent>
           </Card>
 
-          <Card className="border-l-4 border-l-orange-500">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Commandes</CardTitle>
-              <ShoppingCart className="h-4 w-4 text-muted-foreground" />
+          {/* Commandes */}
+          <Card className="bg-gradient-to-br from-orange-50 to-orange-100 border-orange-200 hover:shadow-lg transition-all duration-300">
+            <CardHeader className="pb-2">
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-sm font-medium text-orange-700">Commandes</CardTitle>
+                <ShoppingCart className="h-5 w-5 text-orange-600" />
+              </div>
             </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{stats?.orders.total || 0}</div>
-              <p className="text-xs text-muted-foreground">
+            <CardContent className="pt-0">
+              <div className="text-3xl font-bold text-orange-900">{stats?.orders.total || 0}</div>
+              <p className="text-xs text-orange-600 mt-1">
                 {stats?.orders.recent || 0} ce mois
               </p>
             </CardContent>
           </Card>
 
-          <Card className="border-l-4 border-l-purple-500">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Chiffre d'Affaires</CardTitle>
-              <Euro className="h-4 w-4 text-muted-foreground" />
+          {/* Chiffre d'Affaires */}
+          <Card className="bg-gradient-to-br from-indigo-50 to-indigo-100 border-indigo-200 hover:shadow-lg transition-all duration-300">
+            <CardHeader className="pb-2">
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-sm font-medium text-indigo-700">Chiffre d'Affaires</CardTitle>
+                <Euro className="h-5 w-5 text-indigo-600" />
+              </div>
             </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">
+            <CardContent className="pt-0">
+              <div className="text-3xl font-bold text-indigo-900">
                 {formatPrice(stats?.revenue.total || 0)}
               </div>
-              <p className="text-xs text-muted-foreground">
+              <p className="text-xs text-indigo-600 mt-1">
                 {formatPrice(stats?.revenue.recent || 0)} ce mois
               </p>
             </CardContent>
           </Card>
 
-          <Card className="border-l-4 border-l-rose-500">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Clients</CardTitle>
-              <Users className="h-4 w-4 text-muted-foreground" />
+          {/* Clients */}
+          <Card className="bg-gradient-to-br from-pink-50 to-pink-100 border-pink-200 hover:shadow-lg transition-all duration-300">
+            <CardHeader className="pb-2">
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-sm font-medium text-pink-700">Clients</CardTitle>
+                <Users className="h-5 w-5 text-pink-600" />
+              </div>
             </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{stats?.users.total || 0}</div>
-              <p className="text-xs text-muted-foreground">
+            <CardContent className="pt-0">
+              <div className="text-3xl font-bold text-pink-900">{stats?.users.total || 0}</div>
+              <p className="text-xs text-pink-600 mt-1">
                 Clients enregistrés
               </p>
             </CardContent>
@@ -164,85 +182,112 @@ const AdminDashboard: React.FC = () => {
 
         {/* Graphiques et détails */}
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {/* Répartition des produits par catégorie */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Produits par Collection</CardTitle>
-              <CardDescription>
+          {/* Produits par Collection */}
+          <Card className="hover:shadow-lg transition-all duration-300">
+            <CardHeader className="pb-4">
+              <CardTitle className="text-lg font-semibold">Produits par Collection</CardTitle>
+              <CardDescription className="text-sm">
                 Répartition de vos produits
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              {stats?.products.byCategory && Object.entries(stats.products.byCategory).map(([category, count]) => (
-                <div key={category} className="flex items-center justify-between">
-                  <div className="flex items-center space-x-3">
-                    <div className="w-3 h-3 rounded-full bg-primary"></div>
-                    <span className="text-sm font-medium">{category}</span>
+              {stats?.products.byCategory && Object.entries(stats.products.byCategory).length > 0 ? (
+                Object.entries(stats.products.byCategory).map(([category, count]) => (
+                  <div key={category} className="flex items-center justify-between py-2">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-2 h-2 rounded-full bg-blue-600"></div>
+                      <span className="text-sm font-medium text-gray-700">{category.toUpperCase()}</span>
+                    </div>
+                    <span className="text-sm font-bold text-gray-900">{count as number}</span>
                   </div>
-                  <Badge variant="outline">{count as number}</Badge>
+                ))
+              ) : (
+                <div className="text-center py-8 text-gray-500">
+                  <Package className="h-8 w-8 mx-auto mb-2 opacity-50" />
+                  <p>Aucun produit trouvé</p>
                 </div>
-              ))}
+              )}
             </CardContent>
           </Card>
 
-          {/* Statut des commandes */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Statut des Commandes</CardTitle>
-              <CardDescription>
+          {/* Statut des Commandes */}
+          <Card className="hover:shadow-lg transition-all duration-300">
+            <CardHeader className="pb-4">
+              <CardTitle className="text-lg font-semibold">Statut des Commandes</CardTitle>
+              <CardDescription className="text-sm">
                 État actuel des commandes
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              {stats?.orders.byStatus && Object.entries(stats.orders.byStatus).map(([status, count]) => {
-                const statusConfig: Record<string, { label: string; color: string; icon: any }> = {
-                  pending: { label: 'En attente', color: 'bg-yellow-500', icon: Clock },
-                  confirmed: { label: 'Confirmées', color: 'bg-blue-500', icon: CheckCircle },
-                  shipped: { label: 'Expédiées', color: 'bg-purple-500', icon: Truck },
-                  delivered: { label: 'Livrées', color: 'bg-green-500', icon: CheckCircle },
-                  cancelled: { label: 'Annulées', color: 'bg-red-500', icon: AlertCircle }
-                };
+              {stats?.orders.byStatus && Object.entries(stats.orders.byStatus).length > 0 ? (
+                Object.entries(stats.orders.byStatus).map(([status, count]) => {
+                  const statusConfig: Record<string, { label: string; color: string }> = {
+                    pending: { label: 'En attente', color: 'bg-yellow-500' },
+                    confirmed: { label: 'Confirmées', color: 'bg-blue-500' },
+                    shipped: { label: 'Expédiées', color: 'bg-purple-500' },
+                    delivered: { label: 'Livrées', color: 'bg-green-500' },
+                    cancelled: { label: 'Annulées', color: 'bg-red-500' }
+                  };
 
-                const config = statusConfig[status] || statusConfig.pending;
-                const Icon = config.icon;
+                  const config = statusConfig[status] || statusConfig.pending;
 
-                return (
-                  <div key={status} className="flex items-center justify-between">
-                    <div className="flex items-center space-x-3">
-                      <div className={`w-3 h-3 rounded-full ${config.color}`}></div>
-                      <Icon className="h-4 w-4 text-muted-foreground" />
-                      <span className="text-sm font-medium">{config.label}</span>
+                  return (
+                    <div key={status} className="flex items-center justify-between py-2">
+                      <div className="flex items-center space-x-3">
+                        <div className={`w-2 h-2 rounded-full ${config.color}`}></div>
+                        <span className="text-sm font-medium text-gray-700">{config.label}</span>
+                      </div>
+                      <span className="text-sm font-bold text-gray-900">{count as number}</span>
                     </div>
-                    <Badge variant="outline">{count as number}</Badge>
-                  </div>
-                );
-              })}
+                  );
+                })
+              ) : (
+                <div className="text-center py-8 text-gray-500">
+                  <ShoppingCart className="h-8 w-8 mx-auto mb-2 opacity-50" />
+                  <p>Aucune commande trouvée</p>
+                </div>
+              )}
             </CardContent>
           </Card>
 
-          {/* Actions rapides */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Actions Rapides</CardTitle>
-              <CardDescription>
+          {/* Actions Rapides */}
+          <Card className="hover:shadow-lg transition-all duration-300">
+            <CardHeader className="pb-4">
+              <CardTitle className="text-lg font-semibold">Actions Rapides</CardTitle>
+              <CardDescription className="text-sm">
                 Raccourcis vers les tâches courantes
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-3">
-              <Button className="w-full justify-start" onClick={() => window.location.href = '/admin/products'}>
-                <Package className="h-4 w-4 mr-2" />
+              <Button 
+                className="w-full justify-start bg-blue-600 hover:bg-blue-700" 
+                onClick={() => window.location.href = '/admin/products'}
+              >
+                <Package className="h-4 w-4 mr-3" />
                 Ajouter un produit
               </Button>
-              <Button className="w-full justify-start" variant="outline" onClick={() => window.location.href = '/admin/categories'}>
-                <FolderOpen className="h-4 w-4 mr-2" />
+              <Button 
+                className="w-full justify-start" 
+                variant="outline" 
+                onClick={() => window.location.href = '/admin/categories'}
+              >
+                <FolderOpen className="h-4 w-4 mr-3" />
                 Gérer les collections
               </Button>
-              <Button className="w-full justify-start" variant="outline" onClick={() => window.location.href = '/admin/orders'}>
-                <ShoppingCart className="h-4 w-4 mr-2" />
+              <Button 
+                className="w-full justify-start" 
+                variant="outline" 
+                onClick={() => window.location.href = '/admin/orders'}
+              >
+                <ShoppingCart className="h-4 w-4 mr-3" />
                 Voir les commandes
               </Button>
-              <Button className="w-full justify-start" variant="outline" onClick={() => window.location.href = '/admin/analytics'}>
-                <TrendingUp className="h-4 w-4 mr-2" />
+              <Button 
+                className="w-full justify-start" 
+                variant="outline" 
+                onClick={() => window.location.href = '/admin/analytics'}
+              >
+                <TrendingUp className="h-4 w-4 mr-3" />
                 Statistiques détaillées
               </Button>
             </CardContent>
