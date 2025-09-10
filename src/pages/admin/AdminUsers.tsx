@@ -34,7 +34,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'; // Fixed Tabs import
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Textarea } from '@/components/ui/textarea';
@@ -360,59 +360,101 @@ const AdminUsers = () => {
                   </CardContent>
                 </Card>
 
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="text-lg">Adresse par défaut</CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                     <div>
-                       <Label htmlFor="address">Adresse</Label>
-                       <Input
-                         id="address"
-                         value={profileForm.address}
-                         onChange={(e) => setProfileForm(prev => ({ ...prev, address: e.target.value }))}
-                         placeholder="123 Rue de la Paix"
-                       />
-                     </div>
-                     <div>
-                       <Label htmlFor="address_complement">Complément d'adresse</Label>
-                       <Input
-                         id="address_complement"
-                         value={profileForm.address_complement}
-                         onChange={(e) => setProfileForm(prev => ({ ...prev, address_complement: e.target.value }))}
-                         placeholder="Bâtiment A, Apt 4"
-                       />
-                     </div>
-                    <div className="grid grid-cols-3 gap-4">
-                      <div>
-                        <Label htmlFor="postal_code">Code postal</Label>
-                        <Input
-                          id="postal_code"
-                          value={profileForm.postal_code}
-                          onChange={(e) => setProfileForm(prev => ({ ...prev, postal_code: e.target.value }))}
-                          placeholder="75001"
-                        />
-                      </div>
-                      <div>
-                        <Label htmlFor="city">Ville</Label>
-                        <Input
-                          id="city"
-                          value={profileForm.city}
-                          onChange={(e) => setProfileForm(prev => ({ ...prev, city: e.target.value }))}
-                          placeholder="Paris"
-                        />
-                      </div>
-                      <div>
-                        <Label htmlFor="country">Pays</Label>
-                        <Input
-                          id="country"
-                          value={profileForm.country}
-                          onChange={(e) => setProfileForm(prev => ({ ...prev, country: e.target.value }))}
-                        />
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
+                <Tabs defaultValue="principal" className="w-full">
+                  <TabsList className="grid w-full grid-cols-3">
+                    <TabsTrigger value="principal">Adresse principale</TabsTrigger>
+                    <TabsTrigger value="livraison">Livraison préférée</TabsTrigger>
+                    <TabsTrigger value="facturation">Facturation préférée</TabsTrigger>
+                  </TabsList>
+                  
+                  <TabsContent value="principal">
+                    <Card>
+                      <CardHeader>
+                        <CardTitle className="text-lg">Adresse par défaut</CardTitle>
+                      </CardHeader>
+                      <CardContent className="space-y-4">
+                         <div>
+                           <Label htmlFor="address">Adresse</Label>
+                           <Input
+                             id="address"
+                             value={profileForm.address}
+                             onChange={(e) => setProfileForm(prev => ({ ...prev, address: e.target.value }))}
+                             placeholder="123 Rue de la Paix"
+                           />
+                         </div>
+                         <div>
+                           <Label htmlFor="address_complement">Complément d'adresse</Label>
+                           <Input
+                             id="address_complement"
+                             value={profileForm.address_complement}
+                             onChange={(e) => setProfileForm(prev => ({ ...prev, address_complement: e.target.value }))}
+                             placeholder="Bâtiment A, Apt 4"
+                           />
+                         </div>
+                        <div className="grid grid-cols-3 gap-4">
+                          <div>
+                            <Label htmlFor="postal_code">Code postal</Label>
+                            <Input
+                              id="postal_code"
+                              value={profileForm.postal_code}
+                              onChange={(e) => setProfileForm(prev => ({ ...prev, postal_code: e.target.value }))}
+                              placeholder="75001"
+                            />
+                          </div>
+                          <div>
+                            <Label htmlFor="city">Ville</Label>
+                            <Input
+                              id="city"
+                              value={profileForm.city}
+                              onChange={(e) => setProfileForm(prev => ({ ...prev, city: e.target.value }))}
+                              placeholder="Paris"
+                            />
+                          </div>
+                          <div>
+                            <Label htmlFor="country">Pays</Label>
+                            <Input
+                              id="country"
+                              value={profileForm.country}
+                              onChange={(e) => setProfileForm(prev => ({ ...prev, country: e.target.value }))}
+                            />
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </TabsContent>
+                  
+                  <TabsContent value="livraison">
+                    <Card>
+                      <CardHeader>
+                        <CardTitle className="text-lg">Adresse de livraison préférée</CardTitle>
+                        <p className="text-sm text-muted-foreground">
+                          Cette adresse sera proposée par défaut lors du checkout (bureau, autre domicile...)
+                        </p>
+                      </CardHeader>
+                      <CardContent className="space-y-4">
+                        <div className="text-sm text-muted-foreground p-4 border rounded">
+                          Interface pour adresse de livraison préférée (à implémenter)
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </TabsContent>
+                  
+                  <TabsContent value="facturation">
+                    <Card>
+                      <CardHeader>
+                        <CardTitle className="text-lg">Adresse de facturation préférée</CardTitle>
+                        <p className="text-sm text-muted-foreground">
+                          Cette adresse sera utilisée pour la facturation (comptabilité, entreprise...)
+                        </p>
+                      </CardHeader>
+                      <CardContent className="space-y-4">
+                        <div className="text-sm text-muted-foreground p-4 border rounded">
+                          Interface pour adresse de facturation préférée (à implémenter)
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </TabsContent>
+                </Tabs>
 
                 <Card>
                   <CardHeader>
