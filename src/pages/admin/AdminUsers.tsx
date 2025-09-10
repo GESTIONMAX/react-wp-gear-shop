@@ -99,7 +99,8 @@ const ClientDetailDialog = ({
   profileForm: any;
   setProfileForm: (form: any) => void;
 }) => {
-  const { data: clientData } = useClientData(user?.user_id);
+  // Utiliser directement les données de l'utilisateur au lieu de re-fetcher
+  const clientData = user; // user contient déjà toutes les données clients
   const updateClientData = useUpdateClientData();
   const queryClient = useQueryClient();
   
