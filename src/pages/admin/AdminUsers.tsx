@@ -51,6 +51,7 @@ const AdminUsers = () => {
   const [roleFilter, setRoleFilter] = useState<string>('all');
   const [selectedUser, setSelectedUser] = useState<any>(null);
   const [editingProfile, setEditingProfile] = useState(false);
+  console.log('🔄 Component render - editingProfile:', editingProfile);
   const [profileForm, setProfileForm] = useState({
     first_name: '',
     last_name: '',
@@ -63,6 +64,11 @@ const AdminUsers = () => {
     marketing_consent: false,
     notes: ''
   });
+  
+  // Debug: Track state changes
+  React.useEffect(() => {
+    console.log('🔄 editingProfile state changed to:', editingProfile);
+  }, [editingProfile]);
   
   const { data: users = [], isLoading, error } = useUsers();
   const { data: orders = [] } = useAdminOrders();
@@ -269,7 +275,14 @@ const AdminUsers = () => {
                 </p>
               </div>
               {!editingProfile ? (
-                <Button onClick={handleEditProfile} variant="outline" size="sm">
+                <Button 
+                  onClick={() => {
+                    console.log('🖱️ Button "Modifier" clicked!');
+                    handleEditProfile();
+                  }} 
+                  variant="outline" 
+                  size="sm"
+                >
                   <Edit className="h-4 w-4 mr-2" />
                   Modifier
                 </Button>
