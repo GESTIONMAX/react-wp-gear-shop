@@ -34,10 +34,10 @@ export interface CreateInvoiceData {
   invoice_date?: string;
   due_date?: string;
   notes?: string;
-  items: {
+  items: Array<{
     product_name: string;
     quantity: number;
     unit_price: number;
     total_price: number;
-  }[];
+  }>;
 }

@@ -21,8 +21,8 @@ import {
   Calendar,
   ShoppingBag,
   FileText,
-  LogOut,
-  Receipt
+  Receipt,
+  LogOut
 } from 'lucide-react';
 import { useOrders } from '@/hooks/useOrders';
 import { useInvoices } from '@/hooks/useInvoices';
@@ -200,16 +200,14 @@ const Account = () => {
                 <Card>
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                     <CardTitle className="text-sm font-medium">
-                      Total dépensé
+                      Total factures
                     </CardTitle>
-                    <CreditCard className="h-4 w-4 text-muted-foreground" />
+                    <Receipt className="h-4 w-4 text-muted-foreground" />
                   </CardHeader>
                   <CardContent>
-                    <div className="text-2xl font-bold">
-                      {formatPrice(orders?.reduce((total, order) => total + order.total_amount, 0) || 0)}
-                    </div>
+                    <div className="text-2xl font-bold">{invoices?.length || 0}</div>
                     <p className="text-xs text-muted-foreground">
-                      Montant total de vos achats
+                      Factures émises
                     </p>
                   </CardContent>
                 </Card>
