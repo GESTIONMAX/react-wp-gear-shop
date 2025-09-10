@@ -1,16 +1,19 @@
 import React, { useState } from 'react';
-import { Search, ShoppingCart, Menu, X, User, Heart } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { Search, ShoppingCart, Menu, X, User, Heart, LogOut } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { useCart } from '@/contexts/CartContext';
+import { useAuth } from '@/contexts/AuthContext';
 import { MiniCart } from '@/components/MiniCart';
 
 const Header = () => {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const { totalItems } = useCart();
+  const { user, signOut, loading } = useAuth();
 
   const navigation = [
     { name: 'SPORT', href: '#sport' },
@@ -87,9 +90,36 @@ const Header = () => {
             </Button>
 
             {/* Account */}
-            <Button variant="ghost" size="icon" className="hidden sm:flex">
-              <User className="h-5 w-5" />
-            </Button>
+            {!loading && (
+              user ? (
+                <div className="flex items-center space-x-2">
+                  <span className="hidden lg:block text-sm text-muted-foreground">
+                    {user.email?.split('@')[0]}
+                  </span>
+                  <Button 
+                    variant="ghost" 
+                    size="icon" 
+                    onClick={signOut}
+                    className="hidden sm:flex"
+                    title="Se déconnecter"
+                  >
+                    <LogOut className="h-5 w-5" />
+                  </Button>
+                </div>
+              ) : (
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  asChild
+                  className="hidden sm:flex"
+                  title="Mon compte"
+                >
+                  <Link to="/auth">
+                    <User className="h-5 w-5" />
+                  </Link>
+                </Button>
+              )
+            )}
 
             {/* Cart */}
             <Sheet open={isCartOpen} onOpenChange={setIsCartOpen}>

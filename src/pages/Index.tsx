@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import Hero from '@/components/Hero';
 import { ProductCard } from '@/components/ProductCard';
 import { ProductFilters } from '@/components/ProductFilters';
@@ -7,14 +8,40 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { products } from '@/data/products';
-import { TrendingUp, Sparkles, Clock } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
+import { TrendingUp, Sparkles, Clock, User } from 'lucide-react';
 
 const Index = () => {
+  const { user } = useAuth();
   const featuredProducts = products.slice(0, 4);
   const onSaleProducts = products.filter(p => p.salePrice && p.salePrice < p.price);
 
   return (
     <div className="min-h-screen bg-background">
+      {/* Auth Banner for non-authenticated users */}
+      {!user && (
+        <div className="bg-primary text-primary-foreground py-3">
+          <div className="container mx-auto px-4 text-center">
+            <div className="flex items-center justify-center space-x-4">
+              <User className="h-5 w-5" />
+              <span className="text-sm">
+                Créez votre compte pour une expérience personnalisée
+              </span>
+              <Button 
+                variant="secondary" 
+                size="sm" 
+                asChild
+                className="bg-primary-foreground text-primary hover:bg-primary-foreground/90"
+              >
+                <Link to="/auth">
+                  Se connecter
+                </Link>
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+      
       {/* Hero Section */}
       <Hero />
       
