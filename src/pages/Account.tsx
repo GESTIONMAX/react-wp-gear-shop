@@ -9,6 +9,8 @@ import { Separator } from '@/components/ui/separator';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { Checkbox } from '@/components/ui/checkbox';
 import { 
   User, 
   Package, 
@@ -22,10 +24,14 @@ import {
   ShoppingBag,
   FileText,
   Receipt,
-  LogOut
+  LogOut,
+  Edit,
+  Save,
+  X
 } from 'lucide-react';
 import { useOrders } from '@/hooks/useOrders';
 import { useInvoices } from '@/hooks/useInvoices';
+import { useProfile, useUpdateProfile } from '@/hooks/useProfile';
 import { toast } from '@/hooks/use-toast';
 
 const Account = () => {
@@ -33,7 +39,42 @@ const Account = () => {
   const navigate = useNavigate();
   const { data: orders, isLoading } = useOrders();
   const { data: invoices, isLoading: invoicesLoading } = useInvoices();
+  const { data: profile, isLoading: profileLoading } = useProfile(user?.id || '');
+  const updateProfile = useUpdateProfile();
   const [activeTab, setActiveTab] = useState('dashboard');
+  const [editingProfile, setEditingProfile] = useState(false);
+  const [profileForm, setProfileForm] = useState({
+    first_name: '',
+    last_name: '',
+    address: '',
+    address_complement: '',
+    city: '',
+    postal_code: '',
+    country: 'France',
+    phone: '',
+    marketing_phone: '',
+    marketing_consent: false,
+    notes: ''
+  });
+
+  // Initialiser le formulaire quand le profil est chargé
+  React.useEffect(() => {
+    if (profile && !editingProfile) {
+      setProfileForm({
+        first_name: profile.first_name || '',
+        last_name: profile.last_name || '',
+        address: profile.address || '',
+        address_complement: profile.address_complement || '',
+        city: profile.city || '',
+        postal_code: profile.postal_code || '',
+        country: profile.country || 'France',
+        phone: profile.phone || '',
+        marketing_phone: profile.marketing_phone || '',
+        marketing_consent: profile.marketing_consent || false,
+        notes: profile.notes || ''
+      });
+    }
+  }, [profile, editingProfile]);
 
   if (!user) {
     // Afficher l'interface d'authentification au lieu de rediriger
@@ -69,6 +110,58 @@ const Account = () => {
       description: "À bientôt sur MyTechGear !",
     });
     navigate('/');
+  };
+
+  const handleEditProfile = () => {
+    if (profile) {
+      setProfileForm({
+        first_name: profile.first_name || '',
+        last_name: profile.last_name || '',
+        address: profile.address || '',
+        address_complement: profile.address_complement || '',
+        city: profile.city || '',
+        postal_code: profile.postal_code || '',
+        country: profile.country || 'France',
+        phone: profile.phone || '',
+        marketing_phone: profile.marketing_phone || '',
+        marketing_consent: profile.marketing_consent || false,
+        notes: profile.notes || ''
+      });
+      setEditingProfile(true);
+    }
+  };
+
+  const handleSaveProfile = async () => {
+    if (!user?.id) return;
+    
+    try {
+      await updateProfile.mutateAsync({
+        userId: user.id,
+        updates: profileForm
+      });
+      setEditingProfile(false);
+    } catch (error) {
+      console.error('Erreur lors de la sauvegarde du profil:', error);
+    }
+  };
+
+  const handleCancelEdit = () => {
+    setEditingProfile(false);
+    if (profile) {
+      setProfileForm({
+        first_name: profile.first_name || '',
+        last_name: profile.last_name || '',
+        address: profile.address || '',
+        address_complement: profile.address_complement || '',
+        city: profile.city || '',
+        postal_code: profile.postal_code || '',
+        country: profile.country || 'France',
+        phone: profile.phone || '',
+        marketing_phone: profile.marketing_phone || '',
+        marketing_consent: profile.marketing_consent || false,
+        notes: profile.notes || ''
+      });
+    }
   };
 
   const getStatusBadge = (status: string) => {
@@ -398,68 +491,279 @@ const Account = () => {
             <TabsContent value="profile" className="space-y-8 mt-8">
               <Card>
                 <CardHeader>
-                  <CardTitle>Informations personnelles</CardTitle>
-                  <CardDescription>
-                    Gérez vos informations de profil
-                  </CardDescription>
+                  <div className="flex justify-between items-center">
+                    <div>
+                      <CardTitle>Informations personnelles</CardTitle>
+                      <CardDescription>
+                        Gérez vos informations de profil et adresses
+                      </CardDescription>
+                    </div>
+                    {!editingProfile ? (
+                      <Button 
+                        onClick={handleEditProfile} 
+                        variant="outline" 
+                        size="sm"
+                        disabled={profileLoading}
+                      >
+                        <Edit className="h-4 w-4 mr-2" />
+                        Modifier
+                      </Button>
+                    ) : (
+                      <div className="flex gap-2">
+                        <Button 
+                          onClick={handleSaveProfile} 
+                          size="sm"
+                          disabled={updateProfile.isPending}
+                        >
+                          <Save className="h-4 w-4 mr-2" />
+                          {updateProfile.isPending ? 'Sauvegarde...' : 'Sauvegarder'}
+                        </Button>
+                        <Button onClick={handleCancelEdit} variant="outline" size="sm">
+                          <X className="h-4 w-4 mr-2" />
+                          Annuler
+                        </Button>
+                      </div>
+                    )}
+                  </div>
                 </CardHeader>
                 <CardContent className="space-y-6">
-                  <div className="flex items-center space-x-4">
-                    <Avatar className="h-20 w-20">
-                      <AvatarImage src={user.user_metadata?.avatar_url} />
-                      <AvatarFallback className="bg-primary text-primary-foreground text-xl">
-                        {userInitials}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div className="space-y-1">
-                      <h3 className="font-semibold text-lg">
-                        {user.user_metadata?.first_name} {user.user_metadata?.last_name}
-                      </h3>
-                      <p className="text-sm text-muted-foreground flex items-center">
-                        <Mail className="h-4 w-4 mr-1" />
-                        {user.email}
-                      </p>
+                  {profileLoading ? (
+                    <div className="text-center py-8">
+                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
+                      <p className="text-sm text-muted-foreground mt-2">Chargement du profil...</p>
                     </div>
-                  </div>
+                  ) : (
+                    <>
+                      <div className="flex items-center space-x-4">
+                        <Avatar className="h-20 w-20">
+                          <AvatarImage src={user.user_metadata?.avatar_url} />
+                          <AvatarFallback className="bg-primary text-primary-foreground text-xl">
+                            {userInitials}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div className="space-y-1">
+                          <h3 className="font-semibold text-lg">
+                            {profile?.first_name || profile?.last_name 
+                              ? `${profile?.first_name || ''} ${profile?.last_name || ''}`.trim()
+                              : 'Nom non renseigné'
+                            }
+                          </h3>
+                          <p className="text-sm text-muted-foreground flex items-center">
+                            <Mail className="h-4 w-4 mr-1" />
+                            {user.email}
+                          </p>
+                          {profile?.phone && (
+                            <p className="text-sm text-muted-foreground flex items-center">
+                              <Phone className="h-4 w-4 mr-1" />
+                              {profile.phone}
+                            </p>
+                          )}
+                        </div>
+                      </div>
 
-                  <Separator />
+                      <Separator />
 
-                  <div className="grid gap-4 md:grid-cols-2">
-                    <div className="space-y-2">
-                      <Label htmlFor="firstName">Prénom</Label>
-                      <Input
-                        id="firstName"
-                        value={user.user_metadata?.first_name || ''}
-                        readOnly
-                        className="bg-muted"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="lastName">Nom</Label>
-                      <Input
-                        id="lastName"
-                        value={user.user_metadata?.last_name || ''}
-                        readOnly
-                        className="bg-muted"
-                      />
-                    </div>
-                    <div className="space-y-2 md:col-span-2">
-                      <Label htmlFor="email">Email</Label>
-                      <Input
-                        id="email"
-                        value={user.email || ''}
-                        readOnly
-                        className="bg-muted"
-                      />
-                    </div>
-                  </div>
+                      {!editingProfile ? (
+                        // Mode affichage
+                        <div className="space-y-6">
+                          <div>
+                            <h4 className="font-medium text-lg mb-4">Informations personnelles</h4>
+                            <div className="grid gap-4 md:grid-cols-2">
+                              <div className="space-y-2">
+                                <Label className="text-sm font-medium text-muted-foreground">Prénom</Label>
+                                <p className="text-sm">{profile?.first_name || 'Non renseigné'}</p>
+                              </div>
+                              <div className="space-y-2">
+                                <Label className="text-sm font-medium text-muted-foreground">Nom</Label>
+                                <p className="text-sm">{profile?.last_name || 'Non renseigné'}</p>
+                              </div>
+                              <div className="space-y-2 md:col-span-2">
+                                <Label className="text-sm font-medium text-muted-foreground">Email</Label>
+                                <p className="text-sm">{user.email}</p>
+                              </div>
+                              <div className="space-y-2">
+                                <Label className="text-sm font-medium text-muted-foreground">Téléphone</Label>
+                                <p className="text-sm">{profile?.phone || 'Non renseigné'}</p>
+                              </div>
+                            </div>
+                          </div>
 
-                  <div className="bg-muted/50 p-4 rounded-lg">
-                    <p className="text-sm text-muted-foreground">
-                      <strong>Note :</strong> Pour modifier vos informations personnelles, 
-                      veuillez nous contacter directement.
-                    </p>
-                  </div>
+                          <Separator />
+
+                          <div>
+                            <h4 className="font-medium text-lg mb-4 flex items-center gap-2">
+                              <MapPin className="h-5 w-5" />
+                              Adresse principale
+                            </h4>
+                            {profile?.address ? (
+                              <div className="space-y-2 p-4 bg-muted/50 rounded-lg">
+                                <p className="text-sm font-medium">
+                                  {profile.first_name} {profile.last_name}
+                                </p>
+                                <div className="text-sm text-muted-foreground space-y-1">
+                                  <p>{profile.address}</p>
+                                  {profile.address_complement && (
+                                    <p>{profile.address_complement}</p>
+                                  )}
+                                  <p>{profile.postal_code} {profile.city}</p>
+                                  <p>{profile.country}</p>
+                                </div>
+                              </div>
+                            ) : (
+                              <p className="text-sm text-muted-foreground italic">
+                                Aucune adresse principale définie
+                              </p>
+                            )}
+                          </div>
+
+                          <Separator />
+
+                          <div>
+                            <h4 className="font-medium text-lg mb-4">Préférences marketing</h4>
+                            <div className="space-y-3">
+                              <div className="flex justify-between items-center">
+                                <Label className="text-sm font-medium text-muted-foreground">Téléphone SMS</Label>
+                                <p className="text-sm">{profile?.marketing_phone || 'Non renseigné'}</p>
+                              </div>
+                              <div className="flex justify-between items-center">
+                                <Label className="text-sm font-medium text-muted-foreground">Consentement SMS</Label>
+                                <Badge variant={profile?.marketing_consent ? 'default' : 'secondary'}>
+                                  {profile?.marketing_consent ? 'Accepté' : 'Refusé'}
+                                </Badge>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      ) : (
+                        // Mode édition
+                        <div className="space-y-6">
+                          <div>
+                            <h4 className="font-medium text-lg mb-4">Informations personnelles</h4>
+                            <div className="grid gap-4 md:grid-cols-2">
+                              <div className="space-y-2">
+                                <Label htmlFor="first_name">Prénom</Label>
+                                <Input
+                                  id="first_name"
+                                  value={profileForm.first_name}
+                                  onChange={(e) => setProfileForm(prev => ({ ...prev, first_name: e.target.value }))}
+                                  placeholder="Votre prénom"
+                                />
+                              </div>
+                              <div className="space-y-2">
+                                <Label htmlFor="last_name">Nom</Label>
+                                <Input
+                                  id="last_name"
+                                  value={profileForm.last_name}
+                                  onChange={(e) => setProfileForm(prev => ({ ...prev, last_name: e.target.value }))}
+                                  placeholder="Votre nom"
+                                />
+                              </div>
+                              <div className="space-y-2 md:col-span-2">
+                                <Label className="text-sm font-medium text-muted-foreground">Email</Label>
+                                <Input value={user.email || ''} readOnly className="bg-muted" />
+                                <p className="text-xs text-muted-foreground">
+                                  L'email ne peut pas être modifié depuis cette interface
+                                </p>
+                              </div>
+                              <div className="space-y-2">
+                                <Label htmlFor="phone">Téléphone</Label>
+                                <Input
+                                  id="phone"
+                                  value={profileForm.phone}
+                                  onChange={(e) => setProfileForm(prev => ({ ...prev, phone: e.target.value }))}
+                                  placeholder="0123456789"
+                                />
+                              </div>
+                            </div>
+                          </div>
+
+                          <Separator />
+
+                          <div>
+                            <h4 className="font-medium text-lg mb-4">Adresse principale</h4>
+                            <div className="space-y-4">
+                              <div className="space-y-2">
+                                <Label htmlFor="address">Adresse</Label>
+                                <Input
+                                  id="address"
+                                  value={profileForm.address}
+                                  onChange={(e) => setProfileForm(prev => ({ ...prev, address: e.target.value }))}
+                                  placeholder="123 Rue de la Paix"
+                                />
+                              </div>
+                              <div className="space-y-2">
+                                <Label htmlFor="address_complement">Complément d'adresse</Label>
+                                <Input
+                                  id="address_complement"
+                                  value={profileForm.address_complement}
+                                  onChange={(e) => setProfileForm(prev => ({ ...prev, address_complement: e.target.value }))}
+                                  placeholder="Appartement, bâtiment, etc."
+                                />
+                              </div>
+                              <div className="grid gap-4 md:grid-cols-3">
+                                <div className="space-y-2">
+                                  <Label htmlFor="postal_code">Code postal</Label>
+                                  <Input
+                                    id="postal_code"
+                                    value={profileForm.postal_code}
+                                    onChange={(e) => setProfileForm(prev => ({ ...prev, postal_code: e.target.value }))}
+                                    placeholder="75001"
+                                  />
+                                </div>
+                                <div className="space-y-2">
+                                  <Label htmlFor="city">Ville</Label>
+                                  <Input
+                                    id="city"
+                                    value={profileForm.city}
+                                    onChange={(e) => setProfileForm(prev => ({ ...prev, city: e.target.value }))}
+                                    placeholder="Paris"
+                                  />
+                                </div>
+                                <div className="space-y-2">
+                                  <Label htmlFor="country">Pays</Label>
+                                  <Input
+                                    id="country"
+                                    value={profileForm.country}
+                                    onChange={(e) => setProfileForm(prev => ({ ...prev, country: e.target.value }))}
+                                    placeholder="France"
+                                  />
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+
+                          <Separator />
+
+                          <div>
+                            <h4 className="font-medium text-lg mb-4">Préférences marketing</h4>
+                            <div className="space-y-4">
+                              <div className="space-y-2">
+                                <Label htmlFor="marketing_phone">Téléphone pour SMS marketing</Label>
+                                <Input
+                                  id="marketing_phone"
+                                  value={profileForm.marketing_phone}
+                                  onChange={(e) => setProfileForm(prev => ({ ...prev, marketing_phone: e.target.value }))}
+                                  placeholder="0123456789"
+                                />
+                              </div>
+                              <div className="flex items-center space-x-2">
+                                <Checkbox
+                                  id="marketing_consent"
+                                  checked={profileForm.marketing_consent}
+                                  onCheckedChange={(checked) => 
+                                    setProfileForm(prev => ({ ...prev, marketing_consent: checked as boolean }))
+                                  }
+                                />
+                                <Label htmlFor="marketing_consent" className="text-sm">
+                                  J'accepte de recevoir des SMS marketing
+                                </Label>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                    </>
+                  )}
                 </CardContent>
               </Card>
             </TabsContent>
