@@ -1,4 +1,5 @@
 import React from 'react';
+import { Helmet } from 'react-helmet-async';
 import { Link, useSearchParams } from 'react-router-dom';
 import Hero from '@/components/Hero';
 import CategoryHero from '@/components/CategoryHero';
@@ -62,7 +63,18 @@ const Index = () => {
   const onSaleProducts = filteredProducts.filter(p => p.salePrice && p.salePrice < p.price);
 
   return (
-    <div className="min-h-screen bg-background">
+    <>
+      <Helmet>
+        <title>MyTechGear | Lunettes Connectées Premium - Sport, Lifestyle & Prismatic</title>
+        <meta 
+          name="description" 
+          content="Découvrez notre gamme complète de lunettes connectées : Sport (249-329€), Lifestyle (349-599€), Prismatic (449-699€). Innovation, style et performance." 
+        />
+        <meta name="keywords" content="lunettes connectées, smart glasses, wearable tech, sport, lifestyle, prismatic, MyTechGear" />
+        <link rel="canonical" href="/" />
+      </Helmet>
+      
+      <div className="min-h-screen bg-background">
       {/* Auth Banner for non-authenticated users */}
       {!user && !categoryFilter && (
         <div className="bg-primary text-primary-foreground py-3">
@@ -334,8 +346,9 @@ const Index = () => {
             </div>
           </div>
         </div>
-      </section>
-    </div>
+        </section>
+      </div>
+    </>
   );
 };
 

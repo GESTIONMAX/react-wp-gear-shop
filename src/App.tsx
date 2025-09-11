@@ -3,6 +3,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { HelmetProvider } from "react-helmet-async";
 import { CartProvider } from "@/contexts/CartContext";
 import { AuthProvider } from "@/contexts/AuthContext";
 import Header from "@/components/Header";
@@ -12,6 +13,9 @@ import ProductDetail from "./pages/ProductDetail";
 import Auth from "./pages/Auth";
 import Account from "./pages/Account";
 import Blog from "./pages/Blog";
+import Sport from "./pages/categories/Sport";
+import Lifestyle from "./pages/categories/Lifestyle";
+import Prismatic from "./pages/categories/Prismatic";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminUsers from "./pages/admin/AdminUsers";
 import AdminSystemUsers from "./pages/admin/AdminSystemUsers";
@@ -31,19 +35,23 @@ const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <AuthProvider>
-      <CartProvider>
-        <TooltipProvider>
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
-            <Header />
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/product/:slug" element={<ProductDetail />} />
-              <Route path="/blog" element={<Blog />} />
-              <Route path="/auth" element={<Auth />} />
-              <Route path="/account" element={<Account />} />
+    <HelmetProvider>
+      <AuthProvider>
+        <CartProvider>
+          <TooltipProvider>
+            <Toaster />
+            <Sonner />
+            <BrowserRouter>
+              <Header />
+              <Routes>
+                <Route path="/" element={<Index />} />
+                <Route path="/sport" element={<Sport />} />
+                <Route path="/lifestyle" element={<Lifestyle />} />
+                <Route path="/prismatic" element={<Prismatic />} />
+                <Route path="/product/:slug" element={<ProductDetail />} />
+                <Route path="/blog" element={<Blog />} />
+                <Route path="/auth" element={<Auth />} />
+                <Route path="/account" element={<Account />} />
               <Route path="/admin" element={
                 <ProtectedRoute>
                   <AdminDashboard />
@@ -99,10 +107,11 @@ const App = () => (
               <Route path="*" element={<NotFound />} />
             </Routes>
             <Footer />
-          </BrowserRouter>
-        </TooltipProvider>
-      </CartProvider>
-    </AuthProvider>
+            </BrowserRouter>
+          </TooltipProvider>
+        </CartProvider>
+      </AuthProvider>
+    </HelmetProvider>
   </QueryClientProvider>
 );
 

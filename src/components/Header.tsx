@@ -16,10 +16,9 @@ const Header = () => {
   const { user, signOut, loading } = useAuth();
 
   const navigation = [
-    { name: 'SPORT', href: '/?category=sport' },
-    { name: 'LIFESTYLE', href: '/?category=lifestyle' },
-    { name: 'PRISMATIC', href: '/?category=prismatic' },
-    { name: 'Accessoires', href: '/?category=accessoires' },
+    { name: 'SPORT', href: '/sport' },
+    { name: 'LIFESTYLE', href: '/lifestyle' },
+    { name: 'PRISMATIC', href: '/prismatic' },
     { name: 'Blog', href: '/blog' },
   ];
 
