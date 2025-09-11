@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import Hero from '@/components/Hero';
+import CategoryHero from '@/components/CategoryHero';
 import { ProductCard } from '@/components/ProductCard';
 import { ProductFilters } from '@/components/ProductFilters';
 import { Badge } from '@/components/ui/badge';
@@ -108,24 +109,11 @@ const Index = () => {
         </div>
       )}
       
-      {/* Hero Section - Only show if no category filter */}
-      {!categoryFilter && <Hero />}
-      
-      {/* Category Header - Show when filtering */}
-      {categoryFilter && (
-        <div className="py-12 bg-gradient-subtle">
-          <div className="container mx-auto px-4 text-center">
-            <Badge variant="outline" className="mb-4 text-lg px-4 py-2">
-              {categoryFilter.toUpperCase()}
-            </Badge>
-            <h1 className="font-merriweather text-4xl font-bold mb-4">
-              Collection {categoryFilter.charAt(0).toUpperCase() + categoryFilter.slice(1)}
-            </h1>
-            <p className="text-muted-foreground max-w-2xl mx-auto">
-              Découvrez notre sélection exclusive de lunettes connectées {categoryFilter}
-            </p>
-          </div>
-        </div>
+      {/* Hero Section */}
+      {!categoryFilter ? (
+        <Hero />
+      ) : (
+        <CategoryHero category={categoryFilter} />
       )}
       
       {/* Paiement en plusieurs fois - CTA Section - Only show on home */}
