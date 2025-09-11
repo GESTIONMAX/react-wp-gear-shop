@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
-import { ArrowRight, Zap, Eye, Trophy } from "lucide-react";
+import { ArrowRight, Zap, Eye, Trophy, CreditCard, Shield, Clock, CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 
@@ -146,6 +146,135 @@ const Home = () => {
                   </Card>
                 );
               })}
+            </div>
+          </div>
+        </section>
+
+        {/* Payment Options Section */}
+        <section className="py-20 bg-gradient-to-br from-muted/30 to-background">
+          <div className="container mx-auto px-4">
+            <div className="text-center mb-16 animate-fade-in">
+              <h2 className="text-3xl md:text-4xl font-bold mb-6">
+                Payez en Plusieurs Fois
+              </h2>
+              <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+                Profitez de nos lunettes connectées dès maintenant avec nos solutions 
+                de paiement flexibles et sécurisées.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+              {/* 3x Sans Frais */}
+              <Card className="group relative overflow-hidden border-0 bg-gradient-to-br from-background to-muted/50 hover:shadow-xl transition-all duration-300 hover:scale-105">
+                <div className="absolute inset-0 bg-gradient-to-br from-green-500/10 to-emerald-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                <CardContent className="p-8 text-center relative z-10">
+                  <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-green-500 to-emerald-500 mb-6 group-hover:scale-110 transition-transform duration-300">
+                    <CreditCard className="w-8 h-8 text-white" />
+                  </div>
+                  <h3 className="text-xl font-bold mb-3">3x Sans Frais</h3>
+                  <p className="text-muted-foreground mb-6">
+                    Répartissez votre achat en 3 mensualités égales sans aucun frais supplémentaire.
+                  </p>
+                  <div className="space-y-3 mb-6">
+                    <div className="flex items-center gap-3">
+                      <CheckCircle className="w-4 h-4 text-green-500" />
+                      <span className="text-sm">0% de frais</span>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <CheckCircle className="w-4 h-4 text-green-500" />
+                      <span className="text-sm">Dès 150€ d'achat</span>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <CheckCircle className="w-4 h-4 text-green-500" />
+                      <span className="text-sm">Réponse immédiate</span>
+                    </div>
+                  </div>
+                  <div className="text-2xl font-bold text-green-600">
+                    Exemple : 99€/mois
+                  </div>
+                  <div className="text-sm text-muted-foreground">pour un achat de 297€</div>
+                </CardContent>
+              </Card>
+
+              {/* 4x Sans Frais */}
+              <Card className="group relative overflow-hidden border-0 bg-gradient-to-br from-background to-muted/50 hover:shadow-xl transition-all duration-300 hover:scale-105 lg:scale-110">
+                <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                <div className="absolute -top-4 -right-4 bg-gradient-to-r from-blue-500 to-purple-500 text-white px-6 py-2 rounded-bl-2xl text-sm font-bold">
+                  POPULAIRE
+                </div>
+                <CardContent className="p-8 text-center relative z-10">
+                  <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 mb-6 group-hover:scale-110 transition-transform duration-300">
+                    <Clock className="w-8 h-8 text-white" />
+                  </div>
+                  <h3 className="text-xl font-bold mb-3">4x Sans Frais</h3>
+                  <p className="text-muted-foreground mb-6">
+                    Étalez votre paiement sur 4 mois pour un confort financier optimal.
+                  </p>
+                  <div className="space-y-3 mb-6">
+                    <div className="flex items-center gap-3">
+                      <CheckCircle className="w-4 h-4 text-blue-500" />
+                      <span className="text-sm">0% de frais</span>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <CheckCircle className="w-4 h-4 text-blue-500" />
+                      <span className="text-sm">Dès 200€ d'achat</span>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <CheckCircle className="w-4 h-4 text-blue-500" />
+                      <span className="text-sm">Flexible et sécurisé</span>
+                    </div>
+                  </div>
+                  <div className="text-2xl font-bold text-blue-600">
+                    Exemple : 75€/mois
+                  </div>
+                  <div className="text-sm text-muted-foreground">pour un achat de 300€</div>
+                </CardContent>
+              </Card>
+
+              {/* Paiement Immédiat */}
+              <Card className="group relative overflow-hidden border-0 bg-gradient-to-br from-background to-muted/50 hover:shadow-xl transition-all duration-300 hover:scale-105">
+                <div className="absolute inset-0 bg-gradient-to-br from-orange-500/10 to-red-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                <CardContent className="p-8 text-center relative z-10">
+                  <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-orange-500 to-red-500 mb-6 group-hover:scale-110 transition-transform duration-300">
+                    <Shield className="w-8 h-8 text-white" />
+                  </div>
+                  <h3 className="text-xl font-bold mb-3">Paiement Immédiat</h3>
+                  <p className="text-muted-foreground mb-6">
+                    Payez en une fois et bénéficiez d'avantages exclusifs et d'une livraison prioritaire.
+                  </p>
+                  <div className="space-y-3 mb-6">
+                    <div className="flex items-center gap-3">
+                      <CheckCircle className="w-4 h-4 text-orange-500" />
+                      <span className="text-sm">Livraison express</span>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <CheckCircle className="w-4 h-4 text-orange-500" />
+                      <span className="text-sm">-5% de réduction</span>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <CheckCircle className="w-4 h-4 text-orange-500" />
+                      <span className="text-sm">Support prioritaire</span>
+                    </div>
+                  </div>
+                  <div className="text-2xl font-bold text-orange-600">
+                    Économisez 5%
+                  </div>
+                  <div className="text-sm text-muted-foreground">sur votre commande</div>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Security & Partners */}
+            <div className="text-center">
+              <p className="text-sm text-muted-foreground mb-6">
+                Paiements sécurisés par nos partenaires de confiance
+              </p>
+              <div className="flex justify-center items-center gap-8 opacity-60">
+                <div className="text-xs font-bold tracking-wider">KLARNA</div>
+                <div className="text-xs font-bold tracking-wider">PAYPAL</div>
+                <div className="text-xs font-bold tracking-wider">ALMA</div>
+                <div className="text-xs font-bold tracking-wider">STRIPE</div>
+              </div>
             </div>
           </div>
         </section>
