@@ -134,33 +134,6 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, className }) 
                 </span>
               )}
             </div>
-            
-            {/* Variants display */}
-            {product.variants && product.variants.length > 0 && (
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <Badge variant="outline" className="text-xs">
-                    {product.variants.length} variant{product.variants.length > 1 ? 's' : ''}
-                  </Badge>
-                  <span className="text-xs text-muted-foreground">
-                    À partir de {Math.min(...product.variants.map(v => v.salePrice || v.price))}€
-                  </span>
-                </div>
-                {/* Quick variant preview */}
-                <div className="flex flex-wrap gap-1">
-                  {product.variants.slice(0, 3).map((variant, index) => (
-                    <Badge key={variant.id} variant="secondary" className="text-xs px-2 py-1">
-                      {variant.name}
-                    </Badge>
-                  ))}
-                  {product.variants.length > 3 && (
-                    <Badge variant="secondary" className="text-xs px-2 py-1">
-                      +{product.variants.length - 3}
-                    </Badge>
-                  )}
-                </div>
-              </div>
-            )}
           </div>
         </CardFooter>
       </Card>
