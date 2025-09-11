@@ -10,6 +10,8 @@ import { useProducts } from '@/hooks/useProducts';
 import { expandProductVariants, filterVariantsByCategory } from '@/utils/productVariants';
 import { BlogCarousel } from '@/components/BlogCarousel';
 import { getBlogPostsByCategory } from '@/data/blog';
+import { FAQSection } from '@/components/FAQSection';
+import { getFAQByCategory } from '@/data/faq';
 
 const Sport = () => {
   const { data: products = [], isLoading } = useProducts();
@@ -20,6 +22,9 @@ const Sport = () => {
   
   // Get blog posts for sport category
   const sportBlogPosts = getBlogPostsByCategory('sport');
+  
+  // Get FAQ for sport category
+  const sportFAQ = getFAQByCategory('sport');
 
   if (isLoading) {
     return (
@@ -146,6 +151,9 @@ const Sport = () => {
           title="Actualités Sport & Performance"
           subtitle="Découvrez les derniers conseils, tests et innovations pour optimiser vos performances sportives avec les lunettes connectées."
         />
+
+        {/* FAQ Section */}
+        {sportFAQ && <FAQSection faq={sportFAQ} />}
 
         {/* CTA Section */}
         <section className="py-16 gradient-primary">

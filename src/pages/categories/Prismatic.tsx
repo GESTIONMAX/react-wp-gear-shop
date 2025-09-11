@@ -10,6 +10,8 @@ import { useProducts } from '@/hooks/useProducts';
 import { expandProductVariants, filterVariantsByCategory } from '@/utils/productVariants';
 import { BlogCarousel } from '@/components/BlogCarousel';
 import { getBlogPostsByCategory } from '@/data/blog';
+import { FAQSection } from '@/components/FAQSection';
+import { getFAQByCategory } from '@/data/faq';
 
 const Prismatic = () => {
   const { data: products = [], isLoading } = useProducts();
@@ -20,6 +22,9 @@ const Prismatic = () => {
   
   // Get blog posts for prismatic category
   const prismaticBlogPosts = getBlogPostsByCategory('prismatic');
+  
+  // Get FAQ for prismatic category
+  const prismaticFAQ = getFAQByCategory('prismatic');
 
   if (isLoading) {
     return (
@@ -214,6 +219,9 @@ const Prismatic = () => {
           title="Innovation & Technologie Prismatique"
           subtitle="Explorez l'univers fascinant des verres prismatiques et découvrez les dernières innovations technologiques qui révolutionnent l'optique connectée."
         />
+
+        {/* FAQ Section */}
+        {prismaticFAQ && <FAQSection faq={prismaticFAQ} />}
       </div>
     </>
   );

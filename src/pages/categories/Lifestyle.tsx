@@ -10,6 +10,8 @@ import { useProducts } from '@/hooks/useProducts';
 import { expandProductVariants, filterVariantsByCategory } from '@/utils/productVariants';
 import { BlogCarousel } from '@/components/BlogCarousel';
 import { getBlogPostsByCategory } from '@/data/blog';
+import { FAQSection } from '@/components/FAQSection';
+import { getFAQByCategory } from '@/data/faq';
 
 const Lifestyle = () => {
   const { data: products = [], isLoading } = useProducts();
@@ -20,6 +22,9 @@ const Lifestyle = () => {
   
   // Get blog posts for lifestyle category
   const lifestyleBlogPosts = getBlogPostsByCategory('lifestyle');
+  
+  // Get FAQ for lifestyle category
+  const lifestyleFAQ = getFAQByCategory('lifestyle');
 
   if (isLoading) {
     return (
@@ -181,6 +186,9 @@ const Lifestyle = () => {
           title="Lifestyle & Tech Connectée"
           subtitle="Restez informé des dernières tendances en matière de lunettes connectées et découvrez comment intégrer cette technologie dans votre quotidien."
         />
+
+        {/* FAQ Section */}
+        {lifestyleFAQ && <FAQSection faq={lifestyleFAQ} />}
 
         {/* CTA Section */}
         <section className="py-16 gradient-primary">
