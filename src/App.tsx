@@ -8,7 +8,7 @@ import { CartProvider } from "@/contexts/CartContext";
 import { AuthProvider } from "@/contexts/AuthContext";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import Index from "./pages/Index";
+import Home from "./pages/Home";
 import ProductDetail from "./pages/ProductDetail";
 import Auth from "./pages/Auth";
 import Account from "./pages/Account";
@@ -44,7 +44,7 @@ const App = () => (
             <BrowserRouter>
               <Header />
               <Routes>
-                <Route path="/" element={<Index />} />
+                <Route path="/" element={<Home />} />
                 <Route path="/sport" element={<Sport />} />
                 <Route path="/lifestyle" element={<Lifestyle />} />
                 <Route path="/prismatic" element={<Prismatic />} />
