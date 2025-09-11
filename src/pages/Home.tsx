@@ -3,6 +3,7 @@ import { Helmet } from "react-helmet-async";
 import { ArrowRight, Zap, Eye, Trophy, CreditCard, Shield, Clock, CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import heroImage from "@/assets/hero-smart-glasses.jpg";
 
 const Home = () => {
   const categories = [
@@ -60,32 +61,61 @@ const Home = () => {
                }} />
           
           <div className="container mx-auto px-4 relative z-10">
-            <div className="text-center max-w-4xl mx-auto animate-fade-in">
-              <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-6">
-                <span className="block text-foreground">Choisissez Votre</span>
-                <span className="block bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent">
-                  Vision du Futur
-                </span>
-              </h1>
-              
-              <p className="text-xl md:text-2xl text-muted-foreground mb-8 leading-relaxed">
-                Trois univers, une technologie révolutionnaire.<br />
-                Découvrez la catégorie qui correspond à votre style de vie.
-              </p>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+              {/* Left side - Text content */}
+              <div className="text-center lg:text-left animate-fade-in">
+                <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
+                  <span className="block text-foreground">Choisissez Votre</span>
+                  <span className="block bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent">
+                    Vision du Futur
+                  </span>
+                </h1>
+                
+                <p className="text-lg md:text-xl text-muted-foreground mb-8 leading-relaxed">
+                  Trois univers, une technologie révolutionnaire.<br />
+                  Découvrez la catégorie qui correspond à votre style de vie.
+                </p>
 
-              <div className="flex flex-wrap justify-center gap-4 mb-12">
-                <div className="flex items-center gap-2 px-4 py-2 bg-muted/50 rounded-full">
-                  <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-                  <span className="text-sm font-medium">Technologie Française</span>
+                <div className="flex flex-wrap justify-center lg:justify-start gap-4 mb-8">
+                  <div className="flex items-center gap-2 px-4 py-2 bg-muted/50 rounded-full">
+                    <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+                    <span className="text-sm font-medium">Technologie Française</span>
+                  </div>
+                  <div className="flex items-center gap-2 px-4 py-2 bg-muted/50 rounded-full">
+                    <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse" />
+                    <span className="text-sm font-medium">Garantie 2 ans</span>
+                  </div>
+                  <div className="flex items-center gap-2 px-4 py-2 bg-muted/50 rounded-full">
+                    <div className="w-2 h-2 bg-purple-500 rounded-full animate-pulse" />
+                    <span className="text-sm font-medium">Livraison Gratuite</span>
+                  </div>
                 </div>
-                <div className="flex items-center gap-2 px-4 py-2 bg-muted/50 rounded-full">
-                  <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse" />
-                  <span className="text-sm font-medium">Garantie 2 ans</span>
+
+                <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+                  <Button size="lg" className="bg-gradient-to-r from-primary to-secondary hover:from-secondary hover:to-primary">
+                    Découvrir nos collections
+                    <ArrowRight className="w-4 h-4 ml-2" />
+                  </Button>
+                  <Button size="lg" variant="outline">
+                    Voir les prix
+                  </Button>
                 </div>
-                <div className="flex items-center gap-2 px-4 py-2 bg-muted/50 rounded-full">
-                  <div className="w-2 h-2 bg-purple-500 rounded-full animate-pulse" />
-                  <span className="text-sm font-medium">Livraison Gratuite</span>
+              </div>
+
+              {/* Right side - Hero image */}
+              <div className="relative animate-fade-in" style={{ animationDelay: '0.3s' }}>
+                <div className="relative rounded-2xl overflow-hidden shadow-2xl">
+                  <img 
+                    src={heroImage} 
+                    alt="Lunettes connectées MyTechGear - Technologie de pointe" 
+                    className="w-full h-auto object-cover hover:scale-105 transition-transform duration-700"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
                 </div>
+                
+                {/* Floating elements */}
+                <div className="absolute -top-4 -left-4 w-20 h-20 bg-gradient-to-r from-primary to-secondary rounded-full opacity-20 animate-pulse" />
+                <div className="absolute -bottom-4 -right-4 w-16 h-16 bg-gradient-to-r from-accent to-primary rounded-full opacity-30 animate-pulse" style={{ animationDelay: '1s' }} />
               </div>
             </div>
           </div>
