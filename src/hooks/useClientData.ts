@@ -91,6 +91,24 @@ export const useUpdateClientData = () => {
       console.log('userId:', userId);
       console.log('updates:', updates);
       
+      // Vérifier l'utilisateur connecté et son rôle
+      const { data: { user }, error: userError } = await supabase.auth.getUser();
+      console.log('=== Utilisateur connecté ===');
+      console.log('user:', user);
+      console.log('userError:', userError);
+      
+      if (user) {
+        // Vérifier le rôle
+        const { data: roleData, error: roleError } = await supabase
+          .from('user_roles')
+          .select('role')
+          .eq('user_id', user.id)
+          .single();
+        console.log('=== Rôle utilisateur ===');
+        console.log('roleData:', roleData);
+        console.log('roleError:', roleError);
+      }
+      
       const { data, error } = await supabase
         .from('clients')
         .update({
