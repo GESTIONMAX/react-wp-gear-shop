@@ -3,7 +3,9 @@ import { Link, useSearchParams } from 'react-router-dom';
 import Hero from '@/components/Hero';
 import CategoryHero from '@/components/CategoryHero';
 import { ProductCard } from '@/components/ProductCard';
+import { ProductVariantCard } from '@/components/ProductVariantCard';
 import { ProductFilters } from '@/components/ProductFilters';
+import { expandProductVariants, filterVariantsByCategory } from '@/utils/productVariants';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -43,7 +45,13 @@ const Index = () => {
     );
   }
 
-  // Filter products by category if specified
+  // Expand products into variants for display
+  const allVariants = expandProductVariants(products);
+  
+  // Filter variants by category if specified
+  const filteredVariants = filterVariantsByCategory(allVariants, categoryFilter || undefined);
+  
+  // Keep original product filtering for featured and sale sections
   const filteredProducts = categoryFilter 
     ? products.filter(product => 
         product.category.toLowerCase() === categoryFilter.toLowerCase()
@@ -233,7 +241,7 @@ const Index = () => {
             <div className={categoryFilter ? "lg:col-span-4" : "lg:col-span-3"}>
               <div className="flex items-center justify-between mb-6">
                 <p className="text-muted-foreground">
-                  {filteredProducts.length} produit{filteredProducts.length > 1 ? 's' : ''} trouvé{filteredProducts.length > 1 ? 's' : ''}
+                  {filteredVariants.length} variante{filteredVariants.length > 1 ? 's' : ''} trouvée{filteredVariants.length > 1 ? 's' : ''}
                   {categoryFilter && (
                     <>
                       {' '}dans la catégorie{' '}
@@ -254,13 +262,17 @@ const Index = () => {
               <div className={`grid grid-cols-1 sm:grid-cols-2 gap-6 ${
                 categoryFilter ? 'xl:grid-cols-4' : 'xl:grid-cols-3'
               }`}>
-                {filteredProducts.map((product) => (
-                  <ProductCard key={product.id} product={product} />
+                {filteredVariants.map(({ product, variant, key }) => (
+                  <ProductVariantCard 
+                    key={key} 
+                    product={product} 
+                    variant={variant} 
+                  />
                 ))}
               </div>
               
               {/* Load more - only show if we have many products */}
-              {filteredProducts.length === 0 && (
+              {filteredVariants.length === 0 && (
                 <div className="text-center mt-12">
                   <p className="text-muted-foreground mb-4">
                     Aucun produit trouvé dans cette catégorie.
