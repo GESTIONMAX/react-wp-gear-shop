@@ -8,6 +8,8 @@ import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { useProducts } from '@/hooks/useProducts';
 import { expandProductVariants, filterVariantsByCategory } from '@/utils/productVariants';
+import { BlogCarousel } from '@/components/BlogCarousel';
+import { getBlogPostsByCategory } from '@/data/blog';
 
 const Prismatic = () => {
   const { data: products = [], isLoading } = useProducts();
@@ -15,6 +17,9 @@ const Prismatic = () => {
   // Expand products into variants and filter by prismatic category
   const allVariants = expandProductVariants(products);
   const prismaticVariants = filterVariantsByCategory(allVariants, 'prismatic');
+  
+  // Get blog posts for prismatic category
+  const prismaticBlogPosts = getBlogPostsByCategory('prismatic');
 
   if (isLoading) {
     return (
@@ -202,6 +207,13 @@ const Prismatic = () => {
             </div>
           </div>
         </section>
+
+        {/* Blog Articles Section */}
+        <BlogCarousel 
+          posts={prismaticBlogPosts}
+          title="Innovation & Technologie Prismatique"
+          subtitle="Explorez l'univers fascinant des verres prismatiques et découvrez les dernières innovations technologiques qui révolutionnent l'optique connectée."
+        />
       </div>
     </>
   );

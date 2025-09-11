@@ -8,6 +8,8 @@ import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { useProducts } from '@/hooks/useProducts';
 import { expandProductVariants, filterVariantsByCategory } from '@/utils/productVariants';
+import { BlogCarousel } from '@/components/BlogCarousel';
+import { getBlogPostsByCategory } from '@/data/blog';
 
 const Sport = () => {
   const { data: products = [], isLoading } = useProducts();
@@ -15,6 +17,9 @@ const Sport = () => {
   // Expand products into variants and filter by sport category
   const allVariants = expandProductVariants(products);
   const sportVariants = filterVariantsByCategory(allVariants, 'sport');
+  
+  // Get blog posts for sport category
+  const sportBlogPosts = getBlogPostsByCategory('sport');
 
   if (isLoading) {
     return (
@@ -134,6 +139,13 @@ const Sport = () => {
             )}
           </div>
         </section>
+
+        {/* Blog Articles Section */}
+        <BlogCarousel 
+          posts={sportBlogPosts}
+          title="Actualités Sport & Performance"
+          subtitle="Découvrez les derniers conseils, tests et innovations pour optimiser vos performances sportives avec les lunettes connectées."
+        />
 
         {/* CTA Section */}
         <section className="py-16 gradient-primary">

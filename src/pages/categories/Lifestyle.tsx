@@ -8,6 +8,8 @@ import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { useProducts } from '@/hooks/useProducts';
 import { expandProductVariants, filterVariantsByCategory } from '@/utils/productVariants';
+import { BlogCarousel } from '@/components/BlogCarousel';
+import { getBlogPostsByCategory } from '@/data/blog';
 
 const Lifestyle = () => {
   const { data: products = [], isLoading } = useProducts();
@@ -15,6 +17,9 @@ const Lifestyle = () => {
   // Expand products into variants and filter by lifestyle category
   const allVariants = expandProductVariants(products);
   const lifestyleVariants = filterVariantsByCategory(allVariants, 'lifestyle');
+  
+  // Get blog posts for lifestyle category
+  const lifestyleBlogPosts = getBlogPostsByCategory('lifestyle');
 
   if (isLoading) {
     return (
@@ -169,6 +174,13 @@ const Lifestyle = () => {
             </div>
           </div>
         </section>
+
+        {/* Blog Articles Section */}
+        <BlogCarousel 
+          posts={lifestyleBlogPosts}
+          title="Lifestyle & Tech Connectée"
+          subtitle="Restez informé des dernières tendances en matière de lunettes connectées et découvrez comment intégrer cette technologie dans votre quotidien."
+        />
 
         {/* CTA Section */}
         <section className="py-16 gradient-primary">
