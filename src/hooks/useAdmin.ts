@@ -89,7 +89,7 @@ export const useAssignAdminRole = () => {
   });
 };
 
-// Hook pour les statistiques admin
+// Hook pour les statistiques admin avancées
 export const useAdminStats = () => {
   return useQuery({
     queryKey: ['adminStats'],
@@ -104,6 +104,7 @@ export const useAdminStats = () => {
           in_stock, 
           created_at,
           category_id,
+          stock_quantity,
           categories(id, name)
         `);
 
@@ -119,66 +120,167 @@ export const useAdminStats = () => {
       // Statistiques des variantes
       const { data: variantsStats, error: variantsError } = await supabase
         .from('product_variants')
-        .select('id, product_id, in_stock, price, created_at');
+        .select('id, product_id, in_stock, price, created_at, stock_quantity');
 
       if (variantsError) throw variantsError;
 
-      // Statistiques des commandes
+      // Statistiques des commandes avec articles
       const { data: ordersStats, error: ordersError } = await supabase
         .from('orders')
-        .select('id, total_amount, status, created_at');
+        .select(`
+          id, 
+          total_amount, 
+          status, 
+          created_at, 
+          payment_status,
+          user_id
+        `);
 
       if (ordersError) throw ordersError;
+
+      // Statistiques des items de commandes
+      const { data: orderItemsStats, error: orderItemsError } = await supabase
+        .from('order_items')
+        .select('id, order_id, product_id, quantity, unit_price, total_price, created_at');
+
+      if (orderItemsError) throw orderItemsError;
 
       // Statistiques des utilisateurs
       const { data: usersStats, error: usersError } = await supabase
         .from('profiles')
-        .select('id, created_at');
+        .select('id, created_at, user_id');
 
       if (usersError) throw usersError;
 
-      // Calculs des produits
+      // Statistiques du panier
+      const { data: cartStats, error: cartError } = await supabase
+        .from('shopping_cart')
+        .select('id, user_id, product_id, quantity, created_at');
+
+      if (cartError) throw cartError;
+
+      // Calculs de base
       const totalProducts = productsStats?.length || 0;
       const activeProducts = productsStats?.filter(p => p.in_stock).length || 0;
       const productsWithVariants = productsStats?.filter(p => 
         variantsStats?.some(v => v.product_id === p.id)
       ).length || 0;
 
-      // Calculs des catégories
       const totalCategories = categoriesStats?.length || 0;
       const activeCategories = categoriesStats?.filter(c => c.is_active).length || 0;
       
-      // Répartition des produits par catégorie
+      const totalVariants = variantsStats?.length || 0;
+      const activeVariants = variantsStats?.filter(v => v.in_stock).length || 0;
+
+      const totalOrders = ordersStats?.length || 0;
+      const totalRevenue = ordersStats?.reduce((sum, order) => sum + (order.total_amount || 0), 0) || 0;
+      const totalUsers = usersStats?.length || 0;
+
+      // Calculs avancés par période
+      const now = new Date();
+      const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      const thisWeek = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+      const thisMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+      const lastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+      const lastMonthEnd = new Date(now.getFullYear(), now.getMonth(), 0);
+
+      // Commandes par période
+      const todayOrders = ordersStats?.filter(order => 
+        new Date(order.created_at) >= today
+      ) || [];
+      
+      const weekOrders = ordersStats?.filter(order => 
+        new Date(order.created_at) >= thisWeek
+      ) || [];
+      
+      const monthOrders = ordersStats?.filter(order => 
+        new Date(order.created_at) >= thisMonth
+      ) || [];
+
+      const lastMonthOrders = ordersStats?.filter(order => {
+        const orderDate = new Date(order.created_at);
+        return orderDate >= lastMonth && orderDate <= lastMonthEnd;
+      }) || [];
+
+      // Revenus par période
+      const todayRevenue = todayOrders.reduce((sum, order) => sum + (order.total_amount || 0), 0);
+      const weekRevenue = weekOrders.reduce((sum, order) => sum + (order.total_amount || 0), 0);
+      const monthRevenue = monthOrders.reduce((sum, order) => sum + (order.total_amount || 0), 0);
+      const lastMonthRevenue = lastMonthOrders.reduce((sum, order) => sum + (order.total_amount || 0), 0);
+
+      // Évolution mensuelle
+      const monthGrowth = lastMonthRevenue > 0 
+        ? ((monthRevenue - lastMonthRevenue) / lastMonthRevenue) * 100 
+        : 0;
+
+      // Panier moyen
+      const averageOrderValue = totalOrders > 0 ? totalRevenue / totalOrders : 0;
+
+      // Taux de conversion (approximatif basé sur les paniers vs commandes)
+      const activeCartUsers = new Set(cartStats?.map(c => c.user_id)).size;
+      const orderUsers = new Set(ordersStats?.map(o => o.user_id)).size;
+      const conversionRate = activeCartUsers > 0 ? (orderUsers / activeCartUsers) * 100 : 0;
+
+      // Répartitions
       const productsByCategory = productsStats?.reduce((acc: any, product) => {
         const categoryName = product.categories?.name || 'Sans catégorie';
         acc[categoryName] = (acc[categoryName] || 0) + 1;
         return acc;
       }, {}) || {};
 
-      // Calculs des variantes
-      const totalVariants = variantsStats?.length || 0;
-      const activeVariants = variantsStats?.filter(v => v.in_stock).length || 0;
-
-      // Calculs des commandes
-      const totalOrders = ordersStats?.length || 0;
-      const totalRevenue = ordersStats?.reduce((sum, order) => sum + (order.total_amount || 0), 0) || 0;
-      const totalUsers = usersStats?.length || 0;
-
-      // Commandes par statut
       const ordersByStatus = ordersStats?.reduce((acc: any, order) => {
         acc[order.status] = (acc[order.status] || 0) + 1;
         return acc;
       }, {}) || {};
 
-      // Ventes des 30 derniers jours
-      const thirtyDaysAgo = new Date();
-      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-      
-      const recentOrders = ordersStats?.filter(order => 
-        new Date(order.created_at) >= thirtyDaysAgo
-      ) || [];
+      const ordersByPaymentStatus = ordersStats?.reduce((acc: any, order) => {
+        acc[order.payment_status || 'unknown'] = (acc[order.payment_status || 'unknown'] || 0) + 1;
+        return acc;
+      }, {}) || {};
 
-      const recentRevenue = recentOrders.reduce((sum, order) => sum + (order.total_amount || 0), 0);
+      // Top produits vendus
+      const productSales = orderItemsStats?.reduce((acc: any, item) => {
+        acc[item.product_id] = (acc[item.product_id] || 0) + item.quantity;
+        return acc;
+      }, {}) || {};
+
+      const topProducts = Object.entries(productSales)
+        .map(([productId, quantity]) => {
+          const product = productsStats?.find(p => p.id === productId);
+          return {
+            id: productId,
+            name: product?.categories?.name || 'Produit inconnu',
+            quantity: quantity as number,
+            revenue: orderItemsStats
+              ?.filter(item => item.product_id === productId)
+              .reduce((sum, item) => sum + (item.total_price || 0), 0) || 0
+          };
+        })
+        .sort((a, b) => b.quantity - a.quantity)
+        .slice(0, 5);
+
+      // Évolution des ventes sur 7 jours
+      const salesByDay = Array.from({ length: 7 }, (_, i) => {
+        const date = new Date(now.getTime() - i * 24 * 60 * 60 * 1000);
+        const dayStart = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+        const dayEnd = new Date(dayStart.getTime() + 24 * 60 * 60 * 1000);
+        
+        const dayOrders = ordersStats?.filter(order => {
+          const orderDate = new Date(order.created_at);
+          return orderDate >= dayStart && orderDate < dayEnd;
+        }) || [];
+
+        return {
+          date: dayStart.toISOString().split('T')[0],
+          orders: dayOrders.length,
+          revenue: dayOrders.reduce((sum, order) => sum + (order.total_amount || 0), 0)
+        };
+      }).reverse();
+
+      // Stock critique (produits avec moins de 5 unités)
+      const lowStockProducts = productsStats?.filter(p => 
+        p.stock_quantity < 5 && p.in_stock
+      ).length || 0;
 
       return {
         products: {
@@ -187,7 +289,9 @@ export const useAdminStats = () => {
           inactive: totalProducts - activeProducts,
           withVariants: productsWithVariants,
           withoutVariants: totalProducts - productsWithVariants,
-          byCategory: productsByCategory
+          lowStock: lowStockProducts,
+          byCategory: productsByCategory,
+          topSelling: topProducts
         },
         categories: {
           total: totalCategories,
@@ -201,16 +305,32 @@ export const useAdminStats = () => {
         },
         orders: {
           total: totalOrders,
+          today: todayOrders.length,
+          week: weekOrders.length,
+          month: monthOrders.length,
+          lastMonth: lastMonthOrders.length,
           byStatus: ordersByStatus,
-          recent: recentOrders.length,
-          recentRevenue
+          byPaymentStatus: ordersByPaymentStatus,
+          salesByDay
         },
         revenue: {
           total: totalRevenue,
-          recent: recentRevenue
+          today: todayRevenue,
+          week: weekRevenue,
+          month: monthRevenue,
+          lastMonth: lastMonthRevenue,
+          growth: monthGrowth,
+          averageOrderValue
         },
         users: {
-          total: totalUsers
+          total: totalUsers,
+          conversionRate
+        },
+        performance: {
+          conversionRate,
+          averageOrderValue,
+          monthGrowth,
+          activeCartUsers
         }
       };
     },

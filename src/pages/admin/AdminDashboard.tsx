@@ -3,6 +3,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { useAdminStats, useAssignAdminRole } from '@/hooks/useAdmin';
 import AdminLayout from '@/components/admin/AdminLayout';
+import StatsCard from '@/components/admin/StatsCard';
+import SalesChart from '@/components/admin/SalesChart';
+import TopProductsChart from '@/components/admin/TopProductsChart';
 import { 
   Package, 
   ShoppingCart, 
@@ -15,7 +18,11 @@ import {
   Truck,
   FolderOpen,
   Layers3,
-  Settings
+  Settings,
+  Target,
+  CreditCard,
+  BarChart3,
+  Zap
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 
@@ -80,104 +87,94 @@ const AdminDashboard: React.FC = () => {
     <AdminLayout title="Dashboard" description="Vue d'ensemble de votre boutique">
       <div className="space-y-8">
         {/* Cartes de statistiques principales */}
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
-          {/* Produits */}
-          <Card className="bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200 hover:shadow-lg transition-all duration-300">
-            <CardHeader className="pb-2">
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-sm font-medium text-blue-700">Produits</CardTitle>
-                <Package className="h-5 w-5 text-blue-600" />
-              </div>
-            </CardHeader>
-            <CardContent className="pt-0">
-              <div className="text-3xl font-bold text-blue-900">{stats?.products.total || 0}</div>
-              <p className="text-xs text-blue-600 mt-1">
-                {stats?.products.active || 0} actifs • {stats?.products.withVariants || 0} avec variantes
-              </p>
-            </CardContent>
-          </Card>
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-8">
+          <StatsCard
+            title="Produits"
+            value={stats?.products.total || 0}
+            subtitle={`${stats?.products.active || 0} actifs • ${stats?.products.lowStock || 0} stock faible`}
+            icon={Package}
+            className="bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200 text-blue-900"
+            iconClassName="text-blue-600"
+          />
 
-          {/* Collections */}
-          <Card className="bg-gradient-to-br from-green-50 to-green-100 border-green-200 hover:shadow-lg transition-all duration-300">
-            <CardHeader className="pb-2">
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-sm font-medium text-green-700">Collections</CardTitle>
-                <FolderOpen className="h-5 w-5 text-green-600" />
-              </div>
-            </CardHeader>
-            <CardContent className="pt-0">
-              <div className="text-3xl font-bold text-green-900">{stats?.categories.total || 0}</div>
-              <p className="text-xs text-green-600 mt-1">
-                {stats?.categories.active || 0} actives
-              </p>
-            </CardContent>
-          </Card>
+          <StatsCard
+            title="Collections"
+            value={stats?.categories.total || 0}
+            subtitle={`${stats?.categories.active || 0} actives`}
+            icon={FolderOpen}
+            className="bg-gradient-to-br from-green-50 to-green-100 border-green-200 text-green-900"
+            iconClassName="text-green-600"
+          />
 
-          {/* Variantes */}
-          <Card className="bg-gradient-to-br from-purple-50 to-purple-100 border-purple-200 hover:shadow-lg transition-all duration-300">
-            <CardHeader className="pb-2">
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-sm font-medium text-purple-700">Variantes</CardTitle>
-                <Layers3 className="h-5 w-5 text-purple-600" />
-              </div>
-            </CardHeader>
-            <CardContent className="pt-0">
-              <div className="text-3xl font-bold text-purple-900">{stats?.variants.total || 0}</div>
-              <p className="text-xs text-purple-600 mt-1">
-                {stats?.variants.active || 0} disponibles
-              </p>
-            </CardContent>
-          </Card>
+          <StatsCard
+            title="Variantes"
+            value={stats?.variants.total || 0}
+            subtitle={`${stats?.variants.active || 0} disponibles`}
+            icon={Layers3}
+            className="bg-gradient-to-br from-purple-50 to-purple-100 border-purple-200 text-purple-900"
+            iconClassName="text-purple-600"
+          />
 
-          {/* Commandes */}
-          <Card className="bg-gradient-to-br from-orange-50 to-orange-100 border-orange-200 hover:shadow-lg transition-all duration-300">
-            <CardHeader className="pb-2">
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-sm font-medium text-orange-700">Commandes</CardTitle>
-                <ShoppingCart className="h-5 w-5 text-orange-600" />
-              </div>
-            </CardHeader>
-            <CardContent className="pt-0">
-              <div className="text-3xl font-bold text-orange-900">{stats?.orders.total || 0}</div>
-              <p className="text-xs text-orange-600 mt-1">
-                {stats?.orders.recent || 0} ce mois
-              </p>
-            </CardContent>
-          </Card>
+          <StatsCard
+            title="Commandes"
+            value={stats?.orders.total || 0}
+            subtitle={`${stats?.orders.month || 0} ce mois`}
+            trend={{
+              value: ((stats?.orders.month || 0) - (stats?.orders.lastMonth || 0)) / Math.max(stats?.orders.lastMonth || 1, 1) * 100,
+              isPositive: (stats?.orders.month || 0) >= (stats?.orders.lastMonth || 0),
+              period: 'vs mois dernier'
+            }}
+            icon={ShoppingCart}
+            className="bg-gradient-to-br from-orange-50 to-orange-100 border-orange-200 text-orange-900"
+            iconClassName="text-orange-600"
+          />
 
-          {/* Chiffre d'Affaires */}
-          <Card className="bg-gradient-to-br from-indigo-50 to-indigo-100 border-indigo-200 hover:shadow-lg transition-all duration-300">
-            <CardHeader className="pb-2">
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-sm font-medium text-indigo-700">Chiffre d'Affaires</CardTitle>
-                <Euro className="h-5 w-5 text-indigo-600" />
-              </div>
-            </CardHeader>
-            <CardContent className="pt-0">
-              <div className="text-3xl font-bold text-indigo-900">
-                {formatPrice(stats?.revenue.total || 0)}
-              </div>
-              <p className="text-xs text-indigo-600 mt-1">
-                {formatPrice(stats?.revenue.recent || 0)} ce mois
-              </p>
-            </CardContent>
-          </Card>
+          <StatsCard
+            title="Revenus"
+            value={formatPrice(stats?.revenue.total || 0)}
+            subtitle={`${formatPrice(stats?.revenue.month || 0)} ce mois`}
+            trend={{
+              value: stats?.revenue.growth || 0,
+              isPositive: (stats?.revenue.growth || 0) >= 0,
+              period: 'vs mois dernier'
+            }}
+            icon={Euro}
+            className="bg-gradient-to-br from-indigo-50 to-indigo-100 border-indigo-200 text-indigo-900"
+            iconClassName="text-indigo-600"
+          />
 
-          {/* Clients */}
-          <Card className="bg-gradient-to-br from-pink-50 to-pink-100 border-pink-200 hover:shadow-lg transition-all duration-300">
-            <CardHeader className="pb-2">
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-sm font-medium text-pink-700">Clients</CardTitle>
-                <Users className="h-5 w-5 text-pink-600" />
-              </div>
-            </CardHeader>
-            <CardContent className="pt-0">
-              <div className="text-3xl font-bold text-pink-900">{stats?.users.total || 0}</div>
-              <p className="text-xs text-pink-600 mt-1">
-                Clients enregistrés
-              </p>
-            </CardContent>
-          </Card>
+          <StatsCard
+            title="Panier Moyen"
+            value={formatPrice(stats?.revenue.averageOrderValue || 0)}
+            subtitle="Par commande"
+            icon={BarChart3}
+            className="bg-gradient-to-br from-teal-50 to-teal-100 border-teal-200 text-teal-900"
+            iconClassName="text-teal-600"
+          />
+
+          <StatsCard
+            title="Conversion"
+            value={`${(stats?.performance.conversionRate || 0).toFixed(1)}%`}
+            subtitle="Taux de conversion"
+            icon={Target}
+            className="bg-gradient-to-br from-amber-50 to-amber-100 border-amber-200 text-amber-900"
+            iconClassName="text-amber-600"
+          />
+
+          <StatsCard
+            title="Clients"
+            value={stats?.users.total || 0}
+            subtitle={`${stats?.performance.activeCartUsers || 0} paniers actifs`}
+            icon={Users}
+            className="bg-gradient-to-br from-pink-50 to-pink-100 border-pink-200 text-pink-900"
+            iconClassName="text-pink-600"
+          />
+        </div>
+
+        {/* Graphiques et métriques avancées */}
+        <div className="grid gap-6 lg:grid-cols-2">
+          <SalesChart data={stats?.orders.salesByDay || []} />
+          <TopProductsChart data={stats?.products.topSelling || []} />
         </div>
 
         {/* Graphiques et détails */}
