@@ -26,6 +26,8 @@ import AdminVariants from "./pages/admin/AdminVariants";
 import AdminCategories from "./pages/admin/AdminCategories";
 import AdminOrders from "./pages/admin/AdminOrders";
 import AdminInvoices from "./pages/admin/AdminInvoices";
+import AdminSettings from "./pages/admin/AdminSettings";
+import AdminAnalytics from "./pages/admin/AdminAnalytics";
 import ProtectedRoute from "./components/admin/ProtectedRoute";
 import Checkout from "./pages/Checkout";
 import OrderSuccess from "./pages/OrderSuccess";
@@ -100,6 +102,16 @@ const App = () => (
               <Route path="/admin/invoices" element={
                 <ProtectedRoute>
                   <AdminInvoices />
+                </ProtectedRoute>
+              } />
+              <Route path="/admin/settings" element={
+                <ProtectedRoute>
+                  <AdminSettings />
+                </ProtectedRoute>
+              } />
+              <Route path="/admin/analytics" element={
+                <ProtectedRoute>
+                  <AdminAnalytics />
                 </ProtectedRoute>
               } />
               <Route path="/checkout" element={<Checkout />} />
