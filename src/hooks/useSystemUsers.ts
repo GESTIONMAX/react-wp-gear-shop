@@ -8,7 +8,7 @@ export interface SystemUser {
   email: string | null;
   first_name: string | null;
   last_name: string | null;
-  role: 'admin' | 'user';
+  role: 'admin' | 'user' | 'staff' | 'employee' | 'client';
   created_at: string;
   updated_at: string;
 }
@@ -48,7 +48,7 @@ export const useSystemUsers = () => {
           email: profile?.email || null,
           first_name: profile?.first_name || null,
           last_name: profile?.last_name || null,
-          role: userRole.role,
+          role: userRole.role as SystemUser['role'],
           created_at: userRole.created_at,
           updated_at: userRole.updated_at,
         };

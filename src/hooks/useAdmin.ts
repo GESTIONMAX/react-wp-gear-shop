@@ -16,15 +16,18 @@ export const useIsAdmin = () => {
       if (!user) return false;
 
       const { data, error } = await supabase
-        .rpc('get_user_role', { _user_id: user.id });
+        .from('user_roles')
+        .select('role')
+        .eq('user_id', user.id)
+        .maybeSingle();
 
       if (error) {
         console.error('Erreur lors de la vérification du rôle:', error);
         return false;
       }
 
-      console.log('useIsAdmin - user.id:', user.id, 'role:', data);
-      return data === 'admin';
+      console.log('useIsAdmin - user.id:', user.id, 'role:', data?.role);
+      return data?.role === 'admin';
     },
     enabled: !!user,
     staleTime: 5 * 60 * 1000, // 5 minutes
@@ -41,14 +44,17 @@ export const useIsInternalUser = () => {
       if (!user) return false;
 
       const { data, error } = await supabase
-        .rpc('is_internal_user', { _user_id: user.id });
+        .from('user_roles')
+        .select('user_type')
+        .eq('user_id', user.id)
+        .maybeSingle();
 
       if (error) {
         console.error('Erreur lors de la vérification du type d\'utilisateur:', error);
         return false;
       }
 
-      return data;
+      return data?.user_type === 'internal';
     },
     enabled: !!user,
     staleTime: 5 * 60 * 1000,
@@ -65,14 +71,17 @@ export const useUserType = () => {
       if (!user) return null;
 
       const { data, error } = await supabase
-        .rpc('get_user_type', { _user_id: user.id });
+        .from('user_roles')
+        .select('user_type')
+        .eq('user_id', user.id)
+        .maybeSingle();
 
       if (error) {
         console.error('Erreur lors de la récupération du type d\'utilisateur:', error);
         return null;
       }
 
-      return data as UserType;
+      return (data?.user_type as UserType) || 'external';
     },
     enabled: !!user,
     staleTime: 5 * 60 * 1000,
@@ -89,14 +98,18 @@ export const useHasAnyRole = (roles: UserRole[]) => {
       if (!user) return false;
 
       const { data, error } = await supabase
-        .rpc('has_any_role', { _user_id: user.id, _roles: roles });
+        .from('user_roles')
+        .select('role')
+        .eq('user_id', user.id)
+        .in('role', roles)
+        .maybeSingle();
 
       if (error) {
         console.error('Erreur lors de la vérification des rôles:', error);
         return false;
       }
 
-      return data;
+      return !!data;
     },
     enabled: !!user,
     staleTime: 5 * 60 * 1000,
@@ -113,14 +126,17 @@ export const useUserRole = () => {
       if (!user) return null;
 
       const { data, error } = await supabase
-        .rpc('get_user_role', { _user_id: user.id });
+        .from('user_roles')
+        .select('role')
+        .eq('user_id', user.id)
+        .maybeSingle();
 
       if (error) {
         console.error('Erreur lors de la récupération du rôle:', error);
         return null;
       }
 
-      return data as UserRole;
+      return (data?.role as UserRole) || null;
     },
     enabled: !!user,
     staleTime: 5 * 60 * 1000,

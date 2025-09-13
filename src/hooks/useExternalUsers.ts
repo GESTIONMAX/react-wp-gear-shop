@@ -13,7 +13,7 @@ export interface ExternalUser {
   phone: string | null;
   created_at: string;
   updated_at: string;
-  role: 'client';
+  role: UserRole;
   user_type: 'external';
   // Données client spécifiques
   address?: string | null;
@@ -80,8 +80,8 @@ export const useExternalUsers = () => {
           last_name: profile.last_name,
           avatar_url: profile.avatar_url,
           phone: profile.phone,
-          role: userRole?.role || 'client',
-          user_type: 'external',
+          role: (userRole?.role as UserRole) || 'client',
+          user_type: 'external' as const,
           created_at: profile.created_at,
           updated_at: profile.updated_at,
           // Données client
@@ -181,12 +181,11 @@ export const useUpdateCustomer = () => {
 
 // Hook pour obtenir les statistiques des clients
 export const useCustomerStats = () => {
+  const { data: externalUsers } = useExternalUsers();
+  
   return useQuery({
     queryKey: ['customerStats'],
     queryFn: async () => {
-      // Récupérer tous les clients
-      const { data: externalUsers } = await useExternalUsers().queryFn();
-
       // Récupérer les commandes des clients
       const { data: orders, error: ordersError } = await supabase
         .from('orders')
@@ -232,6 +231,7 @@ export const useCustomerStats = () => {
           orders.reduce((sum, order) => sum + (order.total_amount || 0), 0) / orders.length : 0
       };
     },
+    enabled: !!externalUsers,
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
 };
