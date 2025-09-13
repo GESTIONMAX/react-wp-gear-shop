@@ -155,8 +155,8 @@ export const useUpdateCustomer = () => {
         .from('user_roles')
         .upsert({
           user_id: userId,
-          role: 'client' as UserRole,
-          user_type: 'external' as UserType
+          role: 'client',
+          user_type: 'external'
         });
 
       if (roleError) throw roleError;
@@ -184,8 +184,40 @@ export const useCustomerStats = () => {
   return useQuery({
     queryKey: ['customerStats'],
     queryFn: async () => {
-      // Récupérer tous les clients
-      const { data: externalUsers } = await useExternalUsers().queryFn();
+      // Récupérer tous les clients externes
+      const { data: profiles, error: profilesError } = await supabase
+        .from('profiles')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (profilesError) throw profilesError;
+
+      // Récupérer les rôles des utilisateurs internes pour les exclure
+      const { data: internalRoles, error: internalRolesError } = await supabase
+        .from('user_roles')
+        .select('user_id')
+        .eq('user_type', 'internal');
+
+      if (internalRolesError) throw internalRolesError;
+
+      const internalUserIds = new Set(internalRoles.map(role => role.user_id));
+
+      // Filtrer pour garder seulement les utilisateurs externes
+      const externalUsers = profiles.filter(profile =>
+        !internalUserIds.has(profile.user_id)
+      ).map(profile => ({
+        id: profile.user_id,
+        user_id: profile.user_id,
+        email: profile.email,
+        first_name: profile.first_name,
+        last_name: profile.last_name,
+        avatar_url: profile.avatar_url,
+        phone: profile.phone,
+        role: 'client' as const,
+        user_type: 'external' as const,
+        created_at: profile.created_at,
+        updated_at: profile.updated_at,
+      }));
 
       // Récupérer les commandes des clients
       const { data: orders, error: ordersError } = await supabase
