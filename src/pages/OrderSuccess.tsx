@@ -1,15 +1,33 @@
-import React from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { CheckCircle, Package, Truck, Mail } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { useOrder } from '@/hooks/useOrders';
+import { toast } from '@/hooks/use-toast';
 
 const OrderSuccess = () => {
-  const { orderId } = useParams();
+  const { orderId: urlOrderId } = useParams();
+  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
+  
+  // Get order ID from URL params or search params (from Stripe redirect)
+  const stripeOrderId = searchParams.get('order_id');
+  const sessionId = searchParams.get('session_id');
+  const orderId = urlOrderId || stripeOrderId;
+  
   const { data: order, isLoading } = useOrder(orderId!);
+
+  useEffect(() => {
+    // Show success message when coming from Stripe
+    if (sessionId && order) {
+      toast({
+        title: "Paiement réussi !",
+        description: `Votre paiement a été confirmé. Commande ${order.order_number} créée avec succès.`,
+      });
+    }
+  }, [sessionId, order]);
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('fr-FR', {
@@ -83,11 +101,15 @@ const OrderSuccess = () => {
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">Statut</p>
-                  <p className="font-semibold text-green-600">Confirmée</p>
+                  <p className="font-semibold text-green-600">
+                    {order.payment_status === 'paid' ? 'Payée' : 'Confirmée'}
+                  </p>
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">Mode de paiement</p>
-                  <p className="font-semibold">{order.payment_method === 'card' ? 'Carte bancaire' : order.payment_method}</p>
+                  <p className="text-sm text-muted-foreground">Paiement</p>
+                  <p className="font-semibold text-green-600">
+                    {order.payment_status === 'paid' ? 'Validé' : order.payment_status}
+                  </p>
                 </div>
               </div>
 

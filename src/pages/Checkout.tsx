@@ -12,7 +12,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useCart } from '@/contexts/CartContext';
 import { useAuth } from '@/contexts/AuthContext';
-import { useCreateOrder } from '@/hooks/useOrders';
+import { useCreatePaymentSession } from '@/hooks/useStripePayment';
 import { toast } from '@/hooks/use-toast';
 import { CheckoutFormData, ShippingAddress } from '@/types/order';
 import { supabase } from '@/integrations/supabase/client';
@@ -21,7 +21,7 @@ const Checkout = () => {
   const navigate = useNavigate();
   const { items, totalPrice, clearCart } = useCart();
   const { user, signIn, signUp, loading } = useAuth();
-  const { mutate: createOrder, isPending } = useCreateOrder();
+  const { mutate: createPaymentSession, isPending } = useCreatePaymentSession();
 
   // États pour l'authentification
   const [showAuth, setShowAuth] = useState(!user);
@@ -260,7 +260,6 @@ const Checkout = () => {
       total_amount: Math.round(totalPrice * 100), // Convertir en centimes
       shipping_address: formData.shippingAddress,
       billing_address: formData.useSameAddress ? formData.shippingAddress : formData.billingAddress!,
-      payment_method: formData.paymentMethod,
       notes: formData.notes || undefined,
       order_items: items.map(item => {
         const price = item.variant?.salePrice || item.variant?.price || item.product.salePrice || item.product.price;
@@ -276,20 +275,25 @@ const Checkout = () => {
       }),
     };
 
-    createOrder(orderData, {
-      onSuccess: (order) => {
+    const currentUrl = window.location.origin;
+    
+    createPaymentSession({
+      orderData,
+      successUrl: `${currentUrl}/order-success`,
+      cancelUrl: `${currentUrl}/checkout`,
+    }, {
+      onSuccess: (response) => {
+        // Clear cart before redirecting to Stripe
         clearCart();
-        toast({
-          title: "Commande confirmée !",
-          description: `Votre commande ${order.order_number} a été enregistrée avec succès.`,
-        });
-        navigate(`/order-success/${order.id}`);
+        
+        // Redirect to Stripe Checkout
+        window.location.href = response.url;
       },
       onError: (error) => {
-        console.error('Erreur lors de la création de la commande:', error);
+        console.error('Erreur lors de la création de la session de paiement:', error);
         toast({
           title: "Erreur",
-          description: "Une erreur est survenue lors de la création de votre commande. Veuillez réessayer.",
+          description: "Une erreur est survenue lors de la création de votre session de paiement. Veuillez réessayer.",
           variant: "destructive",
         });
       }
@@ -756,7 +760,7 @@ const Checkout = () => {
                 size="lg"
                 disabled={isPending}
               >
-                {isPending ? 'Traitement...' : 'Confirmer ma commande'}
+                {isPending ? 'Redirection vers le paiement...' : 'Procéder au paiement'}
               </Button>
             </div>
           </div>
