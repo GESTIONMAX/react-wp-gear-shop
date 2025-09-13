@@ -58,6 +58,10 @@ export const filterVariantsByCategory = (
     const productCategoryName = (product.category || '').toLowerCase();
     const productCategorySlug = (product as any).categorySlug ? (product as any).categorySlug.toLowerCase() : '';
     const targetCategory = category.toLowerCase();
+    
+    // Debug log pour voir les correspondances
+    console.log(`🔍 Filtering: ${product.name} | category: "${productCategoryName}" | slug: "${productCategorySlug}" | target: "${targetCategory}"`);
+    
     return productCategoryName === targetCategory || productCategorySlug === targetCategory;
   });
 };
