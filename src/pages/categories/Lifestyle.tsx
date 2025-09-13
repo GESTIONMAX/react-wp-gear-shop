@@ -14,11 +14,67 @@ import { FAQSection } from '@/components/FAQSection';
 import { getFAQByCategory } from '@/data/faq';
 
 const Lifestyle = () => {
-  const { data: products = [], isLoading } = useProducts();
+  const { data: products = [], isLoading, error } = useProducts();
+  
+  // Debug logs
+  console.log('Lifestyle page - Products loaded:', products.length);
+  console.log('Lifestyle page - Loading state:', isLoading);
+  console.log('Lifestyle page - Error:', error);
+  
+  // Fallback products for lifestyle category
+  const fallbackLifestyleProducts = [
+    {
+      id: 'lifestyle-1',
+      name: 'Urban Connect',
+      slug: 'urban-connect',
+      description: 'Lunettes lifestyle élégantes avec notifications discrètes',
+      shortDescription: 'Style urbain connecté',
+      price: 399,
+      salePrice: 349,
+      images: ['https://images.unsplash.com/photo-1574258495973-f010dfbb5371?w=600&h=600&fit=crop&crop=center'],
+      category: 'LIFESTYLE',
+      tags: ['Élégant', 'Notifications', 'Urbain'],
+      inStock: true,
+      stockQuantity: 8,
+      variants: [{
+        id: 'lifestyle-1-v1',
+        name: 'Noir Mat',
+        price: 399,
+        salePrice: 349,
+        inStock: true,
+        attributes: { color: 'Noir Mat', style: 'Minimaliste' }
+      }]
+    },
+    {
+      id: 'lifestyle-2',
+      name: 'Classic Premium',
+      slug: 'classic-premium',
+      description: 'Design intemporel avec technologie moderne intégrée',
+      shortDescription: 'Élégance moderne',
+      price: 449,
+      images: ['https://images.unsplash.com/photo-1556656793-08538906a9f8?w=600&h=600&fit=crop&crop=center'],
+      category: 'LIFESTYLE',
+      tags: ['Premium', 'Intemporel', 'Discret'],
+      inStock: true,
+      stockQuantity: 12,
+      variants: [{
+        id: 'lifestyle-2-v1',
+        name: 'Écaille/Or',
+        price: 449,
+        inStock: true,
+        attributes: { color: 'Écaille/Or', finition: 'Premium' }
+      }]
+    }
+  ];
+  
+  // Use fallback if no products loaded
+  const productsToUse = products.length > 0 ? products : fallbackLifestyleProducts;
   
   // Expand products into variants and filter by lifestyle category
-  const allVariants = expandProductVariants(products);
+  const allVariants = expandProductVariants(productsToUse);
   const lifestyleVariants = filterVariantsByCategory(allVariants, 'lifestyle');
+  
+  console.log('Lifestyle variants found:', lifestyleVariants.length);
   
   // Get blog posts for lifestyle category
   const lifestyleBlogPosts = getBlogPostsByCategory('lifestyle');
@@ -32,6 +88,18 @@ const Lifestyle = () => {
         <div className="text-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
           <p className="text-muted-foreground">Chargement des lunettes lifestyle...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    console.error('Error loading products:', error);
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-destructive mb-4">Erreur de chargement des produits</p>
+          <p className="text-sm text-muted-foreground">Affichage des produits de démonstration</p>
         </div>
       </div>
     );

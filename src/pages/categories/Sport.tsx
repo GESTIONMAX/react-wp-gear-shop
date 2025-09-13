@@ -14,11 +14,67 @@ import { FAQSection } from '@/components/FAQSection';
 import { getFAQByCategory } from '@/data/faq';
 
 const Sport = () => {
-  const { data: products = [], isLoading } = useProducts();
+  const { data: products = [], isLoading, error } = useProducts();
+  
+  // Debug logs
+  console.log('Sport page - Products loaded:', products.length);
+  console.log('Sport page - Loading state:', isLoading);
+  console.log('Sport page - Error:', error);
+  
+  // Fallback products for sport category
+  const fallbackSportProducts = [
+    {
+      id: 'sport-1',
+      name: 'SportVision Pro',
+      slug: 'sportvision-pro',
+      description: 'Lunettes sport avec GPS et monitoring cardiaque intégré',
+      shortDescription: 'Performance tracking avancé',
+      price: 299,
+      salePrice: 269,
+      images: ['https://images.unsplash.com/photo-1508296695146-257a814070b4?w=600&h=600&fit=crop&crop=center'],
+      category: 'SPORT',
+      tags: ['GPS', 'Cardiaque', 'Résistant'],
+      inStock: true,
+      stockQuantity: 10,
+      variants: [{
+        id: 'sport-1-v1',
+        name: 'Noir/Rouge',
+        price: 299,
+        salePrice: 269,
+        inStock: true,
+        attributes: { color: 'Noir/Rouge', taille: 'Unique' }
+      }]
+    },
+    {
+      id: 'sport-2', 
+      name: 'CycleTrack Elite',
+      slug: 'cycletrack-elite',
+      description: 'Lunettes cyclisme avec navigation GPS et alerts sécurité',
+      shortDescription: 'Navigation et sécurité cyclisme',
+      price: 249,
+      images: ['https://images.unsplash.com/photo-1572635196237-14b3f281503f?w=600&h=600&fit=crop&crop=center'],
+      category: 'SPORT',
+      tags: ['Cyclisme', 'GPS', 'Sécurité'],
+      inStock: true,
+      stockQuantity: 15,
+      variants: [{
+        id: 'sport-2-v1',
+        name: 'Blanc/Bleu',
+        price: 249,
+        inStock: true,
+        attributes: { color: 'Blanc/Bleu', protection: 'UV400' }
+      }]
+    }
+  ];
+  
+  // Use fallback if no products loaded
+  const productsToUse = products.length > 0 ? products : fallbackSportProducts;
   
   // Expand products into variants and filter by sport category
-  const allVariants = expandProductVariants(products);
+  const allVariants = expandProductVariants(productsToUse);
   const sportVariants = filterVariantsByCategory(allVariants, 'sport');
+  
+  console.log('Sport variants found:', sportVariants.length);
   
   // Get blog posts for sport category
   const sportBlogPosts = getBlogPostsByCategory('sport');
@@ -32,6 +88,18 @@ const Sport = () => {
         <div className="text-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
           <p className="text-muted-foreground">Chargement des lunettes sport...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    console.error('Error loading products:', error);
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-destructive mb-4">Erreur de chargement des produits</p>
+          <p className="text-sm text-muted-foreground">Affichage des produits de démonstration</p>
         </div>
       </div>
     );
