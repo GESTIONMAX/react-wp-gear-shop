@@ -6,6 +6,8 @@ export const useProducts = () => {
   return useQuery({
     queryKey: ['products'],
     queryFn: async (): Promise<Product[]> => {
+      console.log('🔄 Fetching products...');
+      
       const { data: products, error } = await supabase
         .from('products')
         .select(`
@@ -16,18 +18,30 @@ export const useProducts = () => {
         .eq('is_active', true)
         .order('created_at', { ascending: false });
 
-      if (error) throw error;
+      console.log('📦 Products raw data:', { products, error });
+      
+      if (error) {
+        console.error('❌ Products fetch error:', error);
+        throw error;
+      }
 
       const { data: categories, error: categoriesError } = await supabase
         .from('categories')
         .select('id, name, slug')
         .eq('is_active', true);
 
-      if (categoriesError) throw categoriesError;
+      console.log('📂 Categories data:', { categories, categoriesError });
+      
+      if (categoriesError) {
+        console.error('❌ Categories fetch error:', categoriesError);
+        throw categoriesError;
+      }
 
       const categoryMap = new Map(categories.map((c: any) => [c.id, c]));
+      
+      console.log('🏷️ Category mapping:', Object.fromEntries(categoryMap));
 
-      return products.map(product => ({
+      const transformedProducts = products.map(product => ({
         id: product.id,
         name: product.name,
         slug: product.slug,
@@ -53,6 +67,10 @@ export const useProducts = () => {
           attributes: (variant.attributes as Record<string, string>) || {}
         })) || []
       }));
+      
+      console.log('✅ Transformed products:', transformedProducts.length, transformedProducts);
+      
+      return transformedProducts;
     },
   });
 };
