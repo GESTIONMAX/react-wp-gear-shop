@@ -227,12 +227,12 @@ const Home = () => {
               </Card>
 
               {/* 4x Sans Frais */}
-              <Card className="group relative overflow-hidden border-0 bg-gradient-to-br from-background to-muted/50 hover:shadow-xl transition-all duration-300 hover:scale-105 lg:scale-110">
+              <Card className="group relative overflow-visible border-0 bg-gradient-to-br from-background to-muted/50 hover:shadow-xl transition-all duration-300 hover:scale-105 lg:scale-110">
                 <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                <div className="absolute -top-4 -right-4 bg-gradient-to-r from-blue-500 to-purple-500 text-white px-6 py-2 rounded-bl-2xl text-sm font-bold">
+                <div className="absolute -top-2 -right-2 bg-gradient-to-r from-blue-500 to-purple-500 text-white px-4 py-1.5 rounded-bl-xl text-xs font-bold whitespace-nowrap z-20">
                   POPULAIRE
                 </div>
-                <CardContent className="p-8 text-center relative z-10">
+                <CardContent className="p-8 pt-12 text-center relative z-10">
                   <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 mb-6 group-hover:scale-110 transition-transform duration-300">
                     <Clock className="w-8 h-8 text-white" />
                   </div>
