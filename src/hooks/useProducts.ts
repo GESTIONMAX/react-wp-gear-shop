@@ -4,10 +4,10 @@ import { Product } from '@/types';
 
 export const useProducts = () => {
   return useQuery({
-    queryKey: ['products'],
+    queryKey: ['products', 'v3', new Date().getHours()], // Force cache refresh every hour
     queryFn: async (): Promise<Product[]> => {
       console.log('🔄 Fetching products...');
-      
+
       const { data: products, error } = await supabase
         .from('products')
         .select(`
@@ -19,7 +19,7 @@ export const useProducts = () => {
         .order('created_at', { ascending: false });
 
       console.log('📦 Products raw data:', { products, error });
-      
+
       if (error) {
         console.error('❌ Products fetch error:', error);
         throw error;
@@ -70,9 +70,15 @@ export const useProducts = () => {
       }));
       
       console.log('✅ Transformed products:', transformedProducts.length, transformedProducts);
-      
+
       return transformedProducts;
     },
+    retry: 3,
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
+    staleTime: 1000 * 60, // 1 minute
+    gcTime: 1000 * 60 * 5, // 5 minutes
+    refetchOnMount: true,
+    refetchOnWindowFocus: false,
   });
 };
 

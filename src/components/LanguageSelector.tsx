@@ -1,5 +1,4 @@
 import React from 'react';
-import { Globe } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -10,12 +9,11 @@ import {
 import { useLanguage } from '@/hooks/useLanguage';
 
 const LanguageSelector: React.FC = () => {
-  const { 
-    changeLanguage, 
-    getCurrentLanguage, 
+  const {
+    changeLanguage,
+    getCurrentLanguage,
     getSupportedLanguages,
-    getLanguageFlag,
-    getLanguageName 
+    getLanguageFlag
   } = useLanguage();
 
   const currentLang = getCurrentLanguage();
@@ -24,12 +22,8 @@ const LanguageSelector: React.FC = () => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="sm" className="gap-2">
-          <Globe className="h-4 w-4" />
-          <span className="hidden sm:inline">
-            {getLanguageFlag(currentLang)} {getLanguageName(currentLang)}
-          </span>
-          <span className="sm:hidden">
+        <Button variant="ghost" size="icon">
+          <span className="text-base">
             {getLanguageFlag(currentLang)}
           </span>
         </Button>

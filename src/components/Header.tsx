@@ -75,7 +75,7 @@ const Header = () => {
           </div>
 
           {/* Actions */}
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-1">
             {/* Search - Mobile */}
             <Button
               variant="ghost"
@@ -89,47 +89,44 @@ const Header = () => {
             {/* Language Selector */}
             <LanguageSelector />
 
-          {/* Wishlist */}
-          <Button variant="ghost" size="icon" className="hidden sm:flex" asChild>
-            <Link to="/wishlist">
-              <Heart className="h-5 w-5" />
-            </Link>
-          </Button>
+            {/* Wishlist */}
+            <Button variant="ghost" size="icon" asChild>
+              <Link to="/wishlist">
+                <Heart className="h-5 w-5" />
+              </Link>
+            </Button>
 
             {/* Account */}
             {!loading && (
               user ? (
-                <div className="flex items-center space-x-2">
-                  <span className="hidden lg:block text-sm text-muted-foreground">
+                <div className="flex items-center space-x-1">
+                  <span className="hidden lg:block text-sm text-muted-foreground mr-2">
                     {user.email?.split('@')[0]}
                   </span>
-                  <Button 
-                    variant="ghost" 
-                    size="icon" 
+                  <Button
+                    variant="ghost"
+                    size="icon"
                     asChild
-                    className="hidden sm:flex"
                     title={t('navigation.account')}
                   >
                     <Link to="/account">
                       <User className="h-5 w-5" />
                     </Link>
                   </Button>
-                  <Button 
-                    variant="ghost" 
-                    size="icon" 
+                  <Button
+                    variant="ghost"
+                    size="icon"
                     onClick={signOut}
-                    className="hidden sm:flex"
                     title={t('account.logout')}
                   >
                     <LogOut className="h-5 w-5" />
                   </Button>
                 </div>
               ) : (
-                <Button 
-                  variant="ghost" 
-                  size="icon" 
+                <Button
+                  variant="ghost"
+                  size="icon"
                   asChild
-                  className="hidden sm:flex"
                   title={t('navigation.login')}
                 >
                   <Link to="/auth">
