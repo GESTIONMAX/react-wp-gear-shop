@@ -10,7 +10,6 @@ export const useProducts = () => {
         .from('products')
         .select(`
           *,
-          categories(name, slug),
           product_images(image_url, alt_text, sort_order),
           product_variants(*)
         `)
@@ -18,6 +17,15 @@ export const useProducts = () => {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
+
+      const { data: categories, error: categoriesError } = await supabase
+        .from('categories')
+        .select('id, name, slug')
+        .eq('is_active', true);
+
+      if (categoriesError) throw categoriesError;
+
+      const categoryMap = new Map(categories.map((c: any) => [c.id, c]));
 
       return products.map(product => ({
         id: product.id,
@@ -30,7 +38,7 @@ export const useProducts = () => {
         images: product.product_images
           ?.sort((a, b) => a.sort_order - b.sort_order)
           ?.map(img => img.image_url) || [],
-        category: product.categories?.name || '',
+        category: categoryMap.get(product.category_id)?.name || '',
         tags: product.tags || [],
         inStock: product.in_stock,
         stockQuantity: product.stock_quantity,
@@ -57,7 +65,6 @@ export const useProductBySlug = (slug: string) => {
         .from('products')
         .select(`
           *,
-          categories(name, slug),
           product_images(image_url, alt_text, sort_order),
           product_variants(*)
         `)
@@ -68,6 +75,17 @@ export const useProductBySlug = (slug: string) => {
       if (error) {
         if (error.code === 'PGRST116') return null; // Not found
         throw error;
+      }
+
+      const { data: category, error: categoryError } = await supabase
+        .from('categories')
+        .select('name')
+        .eq('id', product.category_id)
+        .maybeSingle();
+
+      // Ne pas jeter l'erreur pour ne pas bloquer l'affichage produit
+      if (categoryError) {
+        console.warn('Categorie introuvable pour le produit', product.id);
       }
 
       return {
@@ -81,7 +99,7 @@ export const useProductBySlug = (slug: string) => {
         images: product.product_images
           ?.sort((a, b) => a.sort_order - b.sort_order)
           ?.map(img => img.image_url) || [],
-        category: product.categories?.name || '',
+        category: (category?.name as string) || '',
         tags: product.tags || [],
         inStock: product.in_stock,
         stockQuantity: product.stock_quantity,
