@@ -50,38 +50,33 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
 
     try {
-      // Récupérer le rôle
-      const { data: role, error: roleError } = await supabase
-        .rpc('get_user_role', { _user_id: currentUser.id });
+      // Récupérer les informations de rôle et type d'utilisateur
+      const { data: userRoleData, error } = await supabase
+        .from('user_roles')
+        .select('role, user_type')
+        .eq('user_id', currentUser.id)
+        .maybeSingle();
 
-      // Récupérer le type d'utilisateur
-      const { data: userType, error: typeError } = await supabase
-        .rpc('get_user_type', { _user_id: currentUser.id });
-
-      // Vérifier si l'utilisateur est interne
-      const { data: isInternal, error: internalError } = await supabase
-        .rpc('is_internal_user', { _user_id: currentUser.id });
-
-      if (roleError || typeError || internalError) {
-        console.error('Erreur lors de la récupération des informations utilisateur:', {
-          roleError,
-          typeError,
-          internalError
-        });
+      if (error) {
+        console.error('Erreur lors de la récupération des informations utilisateur:', error);
       }
+
+      const role = userRoleData?.role as UserRole || null;
+      const userType = userRoleData?.user_type as UserType || 'external';
+      const isInternal = userType === 'internal';
 
       setUserInfo({
         user: currentUser,
-        role: (role as UserRole) || null,
-        userType: (userType as UserType) || null,
-        isInternal: isInternal || false,
+        role,
+        userType,
+        isInternal,
       });
     } catch (error) {
       console.error('Erreur lors de la récupération des informations utilisateur:', error);
       setUserInfo({
         user: currentUser,
         role: null,
-        userType: null,
+        userType: 'external',
         isInternal: false,
       });
     }

@@ -13,7 +13,7 @@ export interface ExternalUser {
   phone: string | null;
   created_at: string;
   updated_at: string;
-  role: 'client';
+  role: UserRole;
   user_type: 'external';
   // Données client spécifiques
   address?: string | null;
@@ -80,8 +80,8 @@ export const useExternalUsers = () => {
           last_name: profile.last_name,
           avatar_url: profile.avatar_url,
           phone: profile.phone,
-          role: userRole?.role || 'client',
-          user_type: 'external',
+          role: (userRole?.role as UserRole) || 'client',
+          user_type: 'external' as const,
           created_at: profile.created_at,
           updated_at: profile.updated_at,
           // Données client
@@ -218,7 +218,6 @@ export const useCustomerStats = () => {
         created_at: profile.created_at,
         updated_at: profile.updated_at,
       }));
-
       // Récupérer les commandes des clients
       const { data: orders, error: ordersError } = await supabase
         .from('orders')

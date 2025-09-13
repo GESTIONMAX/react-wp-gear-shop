@@ -61,8 +61,8 @@ export const useInternalUsers = () => {
           last_name: profile?.last_name || null,
           avatar_url: profile?.avatar_url || null,
           phone: profile?.phone || null,
-          role: userRole.role,
-          user_type: userRole.user_type,
+          role: userRole.role as UserRole,
+          user_type: userRole.user_type as UserType,
           created_at: userRole.created_at,
           updated_at: userRole.updated_at,
         };
