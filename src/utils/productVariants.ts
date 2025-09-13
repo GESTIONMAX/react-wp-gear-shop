@@ -54,17 +54,9 @@ export const filterVariantsByCategory = (
 ): ProductVariantPair[] => {
   if (!category) return variants;
   
-  console.log('Filtering variants by category:', category);
-  console.log('Available variants:', variants.map(v => ({ 
-    productName: v.product.name, 
-    category: v.product.category 
-  })));
-  
   return variants.filter(({ product }) => {
     const productCategory = product.category.toLowerCase();
     const targetCategory = category.toLowerCase();
-    const matches = productCategory === targetCategory;
-    console.log(`Product ${product.name}: category="${productCategory}", target="${targetCategory}", matches=${matches}`);
-    return matches;
+    return productCategory === targetCategory;
   });
 };
