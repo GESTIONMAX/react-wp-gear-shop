@@ -33,6 +33,9 @@ import Checkout from "./pages/Checkout";
 import OrderSuccess from "./pages/OrderSuccess";
 import NotFound from "./pages/NotFound";
 
+// Import i18n configuration
+import './i18n/config';
+
 const queryClient = new QueryClient();
 
 const App = () => (

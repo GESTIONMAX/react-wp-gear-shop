@@ -1,0 +1,150 @@
+{
+  "navigation": {
+    "home": "Home",
+    "sport": "Sport",
+    "lifestyle": "Lifestyle", 
+    "prismatic": "Prismatic",
+    "blog": "Blog",
+    "account": "My Account",
+    "cart": "Cart",
+    "login": "Login",
+    "admin": "Administration"
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "retry": "Retry",
+    "close": "Close",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "add": "Add",
+    "search": "Search",
+    "price": "Price",
+    "quantity": "Quantity",
+    "total": "Total",
+    "subtotal": "Subtotal",
+    "shipping": "Shipping",
+    "free": "Free",
+    "inStock": "In Stock",
+    "outOfStock": "Out of Stock",
+    "addToCart": "Add to Cart",
+    "viewDetails": "View Details",
+    "discover": "Discover",
+    "learnMore": "Learn More"
+  },
+  "home": {
+    "hero": {
+      "title": "Choose Your Vision of the Future",
+      "subtitle": "Three universes, one revolutionary technology. Discover the category that matches your lifestyle.",
+      "features": {
+        "frenchTech": "French Technology",
+        "warranty": "2-Year Warranty",
+        "freeShipping": "Free Shipping"
+      },
+      "cta": {
+        "collections": "Discover our collections",
+        "pricing": "View pricing"
+      }
+    },
+    "payment": {
+      "title": "Pay in Installments",
+      "subtitle": "Enjoy our smart glasses now with our flexible and secure payment solutions.",
+      "options": {
+        "3x": {
+          "title": "3x Interest-Free",
+          "description": "Split your purchase into 3 equal monthly payments with no additional fees.",
+          "example": "Example: €99/month for a €297 purchase"
+        },
+        "4x": {
+          "title": "4x Interest-Free", 
+          "description": "Spread your payment over 4 months for optimal financial comfort.",
+          "example": "Example: €75/month for a €300 purchase",
+          "popular": "POPULAR"
+        },
+        "immediate": {
+          "title": "Immediate Payment",
+          "description": "Pay at once and benefit from exclusive advantages and priority delivery.",
+          "benefit": "Save 5% on your order"
+        }
+      }
+    },
+    "cta": {
+      "title": "Not decided yet?",
+      "description": "Explore our blog to discover the latest innovations and find the perfect smart glasses for you.",
+      "blogButton": "Read the Blog"
+    }
+  },
+  "categories": {
+    "sport": {
+      "title": "Sport Collection",
+      "subtitle": "Performance & Cycling",
+      "description": "Smart glasses designed for demanding athletes. Durability, data precision and optimal comfort to push your limits.",
+      "features": {
+        "title": "Designed for Performance",
+        "subtitle": "Our sport glasses combine advanced technology and ergonomic design to accompany all your sporting challenges."
+      }
+    },
+    "lifestyle": {
+      "title": "Lifestyle Collection",
+      "subtitle": "Connected Elegance",
+      "description": "The perfect alliance between style and technology. Smart glasses that naturally integrate into your urban daily life.",
+      "features": {
+        "title": "Connected Elegance",
+        "subtitle": "Our lifestyle glasses combine sophistication and technology to accompany your daily life with style and intelligence."
+      }
+    },
+    "prismatic": {
+      "title": "Prismatic Collection",
+      "subtitle": "Adjustable Colors",
+      "description": "Revolutionary innovation: lenses that adapt to your environment and style. Fully customizable colors and opacity.",
+      "features": {
+        "title": "Prismatic Excellence",
+        "subtitle": "Our Prismatic collection pushes the limits of innovation with exclusive technologies and exceptional craftsmanship."
+      }
+    }
+  },
+  "cart": {
+    "title": "My Cart",
+    "empty": "Your cart is empty",
+    "emptyDescription": "Add products to your cart to continue",
+    "continueShopping": "Continue shopping",
+    "checkout": "Checkout",
+    "itemCount": "{{count}} item",
+    "itemCount_plural": "{{count}} items"
+  },
+  "checkout": {
+    "title": "Checkout",
+    "back": "Back",
+    "auth": {
+      "title": "Login or Sign up",
+      "signin": "Sign in",
+      "signup": "Sign up", 
+      "guest": "As guest"
+    },
+    "shipping": {
+      "title": "Shipping address",
+      "firstName": "First name",
+      "lastName": "Last name",
+      "address": "Address",
+      "city": "City",
+      "postalCode": "Postal code",
+      "country": "Country",
+      "phone": "Phone"
+    },
+    "payment": {
+      "title": "Payment method",
+      "card": "Credit card",
+      "paypal": "PayPal"
+    }
+  },
+  "account": {
+    "title": "My Account",
+    "profile": "Profile",
+    "orders": "Orders",
+    "addresses": "Addresses", 
+    "preferences": "Preferences",
+    "logout": "Logout"
+  }
+}

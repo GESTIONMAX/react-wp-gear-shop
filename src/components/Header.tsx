@@ -8,18 +8,21 @@ import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle, SheetDescri
 import { useCart } from '@/contexts/CartContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { MiniCart } from '@/components/MiniCart';
+import LanguageSelector from '@/components/LanguageSelector';
+import { useTranslation } from 'react-i18next';
 
 const Header = () => {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const { totalItems } = useCart();
   const { user, signOut, loading } = useAuth();
+  const { t } = useTranslation();
 
   const navigation = [
-    { name: 'SPORT', href: '/sport' },
-    { name: 'LIFESTYLE', href: '/lifestyle' },
-    { name: 'PRISMATIC', href: '/prismatic' },
-    { name: 'Blog', href: '/blog' },
+    { name: t('navigation.sport'), href: '/sport' },
+    { name: t('navigation.lifestyle'), href: '/lifestyle' },
+    { name: t('navigation.prismatic'), href: '/prismatic' },
+    { name: t('navigation.blog'), href: '/blog' },
   ];
 
   return (
@@ -65,7 +68,7 @@ const Header = () => {
             <div className="relative w-full">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
               <Input
-                placeholder="Rechercher des produits..."
+                placeholder={t('common.search') || 'Rechercher des produits...'}
                 className="pl-10 pr-4 bg-muted/50 border-0 focus:bg-background transition-colors"
               />
             </div>
@@ -82,6 +85,9 @@ const Header = () => {
             >
               <Search className="h-5 w-5" />
             </Button>
+
+            {/* Language Selector */}
+            <LanguageSelector />
 
             {/* Wishlist */}
             <Button variant="ghost" size="icon" className="hidden sm:flex">
@@ -100,7 +106,7 @@ const Header = () => {
                     size="icon" 
                     asChild
                     className="hidden sm:flex"
-                    title="Mon espace client"
+                    title={t('navigation.account')}
                   >
                     <Link to="/account">
                       <User className="h-5 w-5" />
@@ -111,7 +117,7 @@ const Header = () => {
                     size="icon" 
                     onClick={signOut}
                     className="hidden sm:flex"
-                    title="Se déconnecter"
+                    title={t('account.logout')}
                   >
                     <LogOut className="h-5 w-5" />
                   </Button>
@@ -122,7 +128,7 @@ const Header = () => {
                   size="icon" 
                   asChild
                   className="hidden sm:flex"
-                  title="Mon compte"
+                  title={t('navigation.login')}
                 >
                   <Link to="/auth">
                     <User className="h-5 w-5" />
@@ -145,9 +151,9 @@ const Header = () => {
               </SheetTrigger>
               <SheetContent side="right" className="w-full sm:w-96">
                 <SheetHeader>
-                  <SheetTitle>Mon panier</SheetTitle>
+                  <SheetTitle>{t('cart.title')}</SheetTitle>
                   <SheetDescription>
-                    Articles sélectionnés pour votre commande
+                    {t('cart.emptyDescription') || 'Articles sélectionnés pour votre commande'}
                   </SheetDescription>
                 </SheetHeader>
                 <MiniCart onClose={() => setIsCartOpen(false)} />
@@ -162,7 +168,7 @@ const Header = () => {
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
               <Input
-                placeholder="Rechercher des produits..."
+                placeholder={t('common.search') || 'Rechercher des produits...'}
                 className="pl-10 pr-10 bg-muted/50 border-0"
               />
               <Button

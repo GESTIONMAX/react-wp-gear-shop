@@ -1,0 +1,150 @@
+{
+  "navigation": {
+    "home": "Inicio",
+    "sport": "Deporte",
+    "lifestyle": "Lifestyle",
+    "prismatic": "Prismático",
+    "blog": "Blog", 
+    "account": "Mi Cuenta",
+    "cart": "Carrito",
+    "login": "Iniciar Sesión",
+    "admin": "Administración"
+  },
+  "common": {
+    "loading": "Cargando...",
+    "error": "Error",
+    "retry": "Reintentar",
+    "close": "Cerrar",
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "add": "Añadir",
+    "search": "Buscar",
+    "price": "Precio",
+    "quantity": "Cantidad",
+    "total": "Total",
+    "subtotal": "Subtotal",
+    "shipping": "Envío",
+    "free": "Gratis",
+    "inStock": "En Stock",
+    "outOfStock": "Agotado",
+    "addToCart": "Añadir al Carrito",
+    "viewDetails": "Ver Detalles",
+    "discover": "Descubrir",
+    "learnMore": "Saber Más"
+  },
+  "home": {
+    "hero": {
+      "title": "Elige Tu Visión del Futuro",
+      "subtitle": "Tres universos, una tecnología revolucionaria. Descubre la categoría que se adapta a tu estilo de vida.",
+      "features": {
+        "frenchTech": "Tecnología Francesa",
+        "warranty": "Garantía 2 Años",
+        "freeShipping": "Envío Gratis"
+      },
+      "cta": {
+        "collections": "Descubre nuestras colecciones",
+        "pricing": "Ver precios"
+      }
+    },
+    "payment": {
+      "title": "Paga a Plazos",
+      "subtitle": "Disfruta de nuestras gafas inteligentes ahora con nuestras soluciones de pago flexibles y seguras.",
+      "options": {
+        "3x": {
+          "title": "3x Sin Intereses",
+          "description": "Divide tu compra en 3 pagos mensuales iguales sin comisiones adicionales.",
+          "example": "Ejemplo: 99€/mes para una compra de 297€"
+        },
+        "4x": {
+          "title": "4x Sin Intereses",
+          "description": "Distribuye tu pago en 4 meses para una comodidad financiera óptima.",
+          "example": "Ejemplo: 75€/mes para una compra de 300€",
+          "popular": "POPULAR"
+        },
+        "immediate": {
+          "title": "Pago Inmediato",
+          "description": "Paga de una vez y benefíciate de ventajas exclusivas y entrega prioritaria.",
+          "benefit": "Ahorra 5% en tu pedido"
+        }
+      }
+    },
+    "cta": {
+      "title": "¿Aún no has decidido?",
+      "description": "Explora nuestro blog para descubrir las últimas innovaciones y encontrar las gafas inteligentes perfectas para ti.",
+      "blogButton": "Leer el Blog"
+    }
+  },
+  "categories": {
+    "sport": {
+      "title": "Colección Deporte",
+      "subtitle": "Rendimiento y Ciclismo",
+      "description": "Gafas inteligentes diseñadas para atletas exigentes. Resistencia, precisión de datos y comodidad óptima para superar tus límites.",
+      "features": {
+        "title": "Diseñadas para el Rendimiento",
+        "subtitle": "Nuestras gafas deportivas combinan tecnología avanzada y diseño ergonómico para acompañar todos tus desafíos deportivos."
+      }
+    },
+    "lifestyle": {
+      "title": "Colección Lifestyle",
+      "subtitle": "Elegancia Conectada",
+      "description": "La alianza perfecta entre estilo y tecnología. Gafas inteligentes que se integran naturalmente en tu vida urbana diaria.",
+      "features": {
+        "title": "Elegancia Conectada", 
+        "subtitle": "Nuestras gafas lifestyle combinan sofisticación y tecnología para acompañar tu día a día con estilo e inteligencia."
+      }
+    },
+    "prismatic": {
+      "title": "Colección Prismática",
+      "subtitle": "Colores Ajustables",
+      "description": "Innovación revolucionaria: lentes que se adaptan a tu entorno y estilo. Colores y opacidad completamente personalizables.",
+      "features": {
+        "title": "Excelencia Prismática",
+        "subtitle": "Nuestra colección Prismática empuja los límites de la innovación con tecnologías exclusivas y un savoir-faire excepcional."
+      }
+    }
+  },
+  "cart": {
+    "title": "Mi Carrito",
+    "empty": "Tu carrito está vacío",
+    "emptyDescription": "Añade productos a tu carrito para continuar",
+    "continueShopping": "Seguir comprando",
+    "checkout": "Finalizar compra",
+    "itemCount": "{{count}} artículo",
+    "itemCount_plural": "{{count}} artículos"
+  },
+  "checkout": {
+    "title": "Finalizar Compra",
+    "back": "Atrás",
+    "auth": {
+      "title": "Iniciar Sesión o Registrarse",
+      "signin": "Iniciar sesión",
+      "signup": "Registrarse",
+      "guest": "Como invitado"
+    },
+    "shipping": {
+      "title": "Dirección de envío",
+      "firstName": "Nombre",
+      "lastName": "Apellidos",
+      "address": "Dirección",
+      "city": "Ciudad",
+      "postalCode": "Código postal",
+      "country": "País",
+      "phone": "Teléfono"
+    },
+    "payment": {
+      "title": "Método de pago",
+      "card": "Tarjeta de crédito",
+      "paypal": "PayPal"
+    }
+  },
+  "account": {
+    "title": "Mi Cuenta",
+    "profile": "Perfil",
+    "orders": "Pedidos",
+    "addresses": "Direcciones",
+    "preferences": "Preferencias",
+    "logout": "Cerrar Sesión"
+  }
+}

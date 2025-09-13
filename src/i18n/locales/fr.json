@@ -1,0 +1,150 @@
+{
+  "navigation": {
+    "home": "Accueil",
+    "sport": "Sport",
+    "lifestyle": "Lifestyle",
+    "prismatic": "Prismatic",
+    "blog": "Blog",
+    "account": "Mon Compte",
+    "cart": "Panier",
+    "login": "Connexion",
+    "admin": "Administration"
+  },
+  "common": {
+    "loading": "Chargement...",
+    "error": "Erreur",
+    "retry": "Réessayer",
+    "close": "Fermer",
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "delete": "Supprimer",
+    "edit": "Modifier",
+    "add": "Ajouter",
+    "search": "Rechercher des produits...",
+    "price": "Prix",
+    "quantity": "Quantité",
+    "total": "Total",
+    "subtotal": "Sous-total",
+    "shipping": "Livraison",
+    "free": "Gratuit",
+    "inStock": "En stock",
+    "outOfStock": "Rupture de stock",
+    "addToCart": "Ajouter au panier",
+    "viewDetails": "Voir les détails",
+    "discover": "Découvrir",
+    "learnMore": "En savoir plus"
+  },
+  "home": {
+    "hero": {
+      "title": "Choisissez Votre Vision du Futur",
+      "subtitle": "Trois univers, une technologie révolutionnaire. Découvrez la catégorie qui correspond à votre style de vie.",
+      "features": {
+        "frenchTech": "Technologie Française",
+        "warranty": "Garantie 2 ans",
+        "freeShipping": "Livraison Gratuite"
+      },
+      "cta": {
+        "collections": "Découvrir nos collections",
+        "pricing": "Voir les prix"
+      }
+    },
+    "payment": {
+      "title": "Payez en Plusieurs Fois",
+      "subtitle": "Profitez de nos lunettes connectées dès maintenant avec nos solutions de paiement flexibles et sécurisées.",
+      "options": {
+        "3x": {
+          "title": "3x Sans Frais",
+          "description": "Répartissez votre achat en 3 mensualités égales sans aucun frais supplémentaire.",
+          "example": "Exemple : 99€/mois pour un achat de 297€"
+        },
+        "4x": {
+          "title": "4x Sans Frais",
+          "description": "Étalez votre paiement sur 4 mois pour un confort financier optimal.",
+          "example": "Exemple : 75€/mois pour un achat de 300€",
+          "popular": "POPULAIRE"
+        },
+        "immediate": {
+          "title": "Paiement Immédiat",
+          "description": "Payez en une fois et bénéficiez d'avantages exclusifs et d'une livraison prioritaire.",
+          "benefit": "Économisez 5% sur votre commande"
+        }
+      }
+    },
+    "cta": {
+      "title": "Pas encore décidé ?",
+      "description": "Explorez notre blog pour découvrir les dernières innovations et trouver les lunettes connectées parfaites pour vous.",
+      "blogButton": "Lire le Blog"
+    }
+  },
+  "categories": {
+    "sport": {
+      "title": "Collection Sport",
+      "subtitle": "Performance & Cyclisme",
+      "description": "Lunettes connectées conçues pour les sportifs exigeants. Résistance, précision des données et confort optimal pour repousser vos limites.",
+      "features": {
+        "title": "Conçues pour la Performance",
+        "subtitle": "Nos lunettes sport combinent technologie avancée et design ergonomique pour accompagner tous vos défis sportifs."
+      }
+    },
+    "lifestyle": {
+      "title": "Collection Lifestyle",
+      "subtitle": "Élégance Connectée",
+      "description": "L'alliance parfaite entre style et technologie. Des lunettes connectées qui s'intègrent naturellement à votre quotidien urbain.",
+      "features": {
+        "title": "L'Élégance Connectée",
+        "subtitle": "Nos lunettes lifestyle allient sophistication et technologie pour accompagner votre quotidien avec style et intelligence."
+      }
+    },
+    "prismatic": {
+      "title": "Collection Prismatic",
+      "subtitle": "Couleurs Réglables",
+      "description": "Innovation révolutionnaire : des verres qui s'adaptent à votre environnement et votre style. Couleurs et opacité entièrement personnalisables.",
+      "features": {
+        "title": "L'Excellence Prismatique",
+        "subtitle": "Notre collection Prismatic repousse les limites de l'innovation avec des technologies exclusives et un savoir-faire d'exception."
+      }
+    }
+  },
+  "cart": {
+    "title": "Mon Panier",
+    "empty": "Votre panier est vide",
+    "emptyDescription": "Articles sélectionnés pour votre commande",
+    "continueShopping": "Continuer mes achats",
+    "checkout": "Finaliser ma commande",
+    "itemCount": "{{count}} article",
+    "itemCount_plural": "{{count}} articles"
+  },
+  "checkout": {
+    "title": "Finaliser ma commande",
+    "back": "Retour",
+    "auth": {
+      "title": "Connexion ou Inscription",
+      "signin": "Se connecter",
+      "signup": "S'inscrire",
+      "guest": "En tant qu'invité"
+    },
+    "shipping": {
+      "title": "Adresse de livraison",
+      "firstName": "Prénom",
+      "lastName": "Nom",
+      "address": "Adresse",
+      "city": "Ville",
+      "postalCode": "Code postal",
+      "country": "Pays",
+      "phone": "Téléphone"
+    },
+    "payment": {
+      "title": "Mode de paiement",
+      "card": "Carte bancaire",
+      "paypal": "PayPal"
+    }
+  },
+  "account": {
+    "title": "Mon Compte",
+    "profile": "Profil",
+    "orders": "Commandes",
+    "addresses": "Adresses",
+    "preferences": "Préférences",
+    "logout": "Déconnexion"
+  }
+}

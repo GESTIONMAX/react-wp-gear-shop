@@ -1,0 +1,150 @@
+{
+  "navigation": {
+    "home": "Startseite",
+    "sport": "Sport",
+    "lifestyle": "Lifestyle",
+    "prismatic": "Prismatisch",
+    "blog": "Blog",
+    "account": "Mein Konto",
+    "cart": "Warenkorb",
+    "login": "Anmelden",
+    "admin": "Verwaltung"
+  },
+  "common": {
+    "loading": "Wird geladen...",
+    "error": "Fehler",
+    "retry": "Erneut versuchen",
+    "close": "Schließen",
+    "save": "Speichern",
+    "cancel": "Abbrechen",
+    "delete": "Löschen",
+    "edit": "Bearbeiten",
+    "add": "Hinzufügen",
+    "search": "Suchen",
+    "price": "Preis",
+    "quantity": "Anzahl",
+    "total": "Gesamt",
+    "subtotal": "Zwischensumme",
+    "shipping": "Versand",
+    "free": "Kostenlos",
+    "inStock": "Auf Lager",
+    "outOfStock": "Ausverkauft",
+    "addToCart": "In den Warenkorb",
+    "viewDetails": "Details anzeigen",
+    "discover": "Entdecken",
+    "learnMore": "Mehr erfahren"
+  },
+  "home": {
+    "hero": {
+      "title": "Wählen Sie Ihre Vision der Zukunft",
+      "subtitle": "Drei Welten, eine revolutionäre Technologie. Entdecken Sie die Kategorie, die zu Ihrem Lebensstil passt.",
+      "features": {
+        "frenchTech": "Französische Technologie",
+        "warranty": "2 Jahre Garantie",
+        "freeShipping": "Kostenloser Versand"
+      },
+      "cta": {
+        "collections": "Unsere Kollektionen entdecken",
+        "pricing": "Preise ansehen"
+      }
+    },
+    "payment": {
+      "title": "Ratenzahlung",
+      "subtitle": "Genießen Sie unsere intelligenten Brillen jetzt mit unseren flexiblen und sicheren Zahlungslösungen.",
+      "options": {
+        "3x": {
+          "title": "3x Zinsfrei",
+          "description": "Teilen Sie Ihren Kauf in 3 gleiche monatliche Zahlungen ohne zusätzliche Gebühren auf.",
+          "example": "Beispiel: 99€/Monat für einen Kauf von 297€"
+        },
+        "4x": {
+          "title": "4x Zinsfrei",
+          "description": "Verteilen Sie Ihre Zahlung über 4 Monate für optimalen finanziellen Komfort.",
+          "example": "Beispiel: 75€/Monat für einen Kauf von 300€",
+          "popular": "BELIEBT"
+        },
+        "immediate": {
+          "title": "Sofortzahlung",
+          "description": "Zahlen Sie auf einmal und profitieren Sie von exklusiven Vorteilen und prioritärer Lieferung.",
+          "benefit": "Sparen Sie 5% bei Ihrer Bestellung"
+        }
+      }
+    },
+    "cta": {
+      "title": "Noch nicht entschieden?",
+      "description": "Entdecken Sie unseren Blog, um die neuesten Innovationen zu entdecken und die perfekte intelligente Brille für Sie zu finden.",
+      "blogButton": "Blog lesen"
+    }
+  },
+  "categories": {
+    "sport": {
+      "title": "Sport-Kollektion",
+      "subtitle": "Leistung & Radsport",
+      "description": "Intelligente Brillen für anspruchsvolle Athleten. Widerstandsfähigkeit, Datenpräzision und optimaler Komfort, um Ihre Grenzen zu überwinden.",
+      "features": {
+        "title": "Für Leistung entwickelt",
+        "subtitle": "Unsere Sportbrillen kombinieren fortschrittliche Technologie und ergonomisches Design für alle Ihre sportlichen Herausforderungen."
+      }
+    },
+    "lifestyle": {
+      "title": "Lifestyle-Kollektion",
+      "subtitle": "Vernetzte Eleganz",
+      "description": "Die perfekte Verbindung von Stil und Technologie. Intelligente Brillen, die sich natürlich in Ihr urbanes Leben integrieren.",
+      "features": {
+        "title": "Vernetzte Eleganz",
+        "subtitle": "Unsere Lifestyle-Brillen verbinden Raffinesse und Technologie, um Ihren Alltag mit Stil und Intelligenz zu begleiten."
+      }
+    },
+    "prismatic": {
+      "title": "Prismatische Kollektion",
+      "subtitle": "Einstellbare Farben",
+      "description": "Revolutionäre Innovation: Gläser, die sich an Ihre Umgebung und Ihren Stil anpassen. Vollständig anpassbare Farben und Opazität.",
+      "features": {
+        "title": "Prismatische Exzellenz",
+        "subtitle": "Unsere Prismatische Kollektion überschreitet die Grenzen der Innovation mit exklusiven Technologien und außergewöhnlichem Know-how."
+      }
+    }
+  },
+  "cart": {
+    "title": "Mein Warenkorb",
+    "empty": "Ihr Warenkorb ist leer",
+    "emptyDescription": "Fügen Sie Produkte zu Ihrem Warenkorb hinzu, um fortzufahren",
+    "continueShopping": "Weiter einkaufen",
+    "checkout": "Zur Kasse",
+    "itemCount": "{{count}} Artikel",
+    "itemCount_plural": "{{count}} Artikel"
+  },
+  "checkout": {
+    "title": "Zur Kasse",
+    "back": "Zurück",
+    "auth": {
+      "title": "Anmelden oder Registrieren",
+      "signin": "Anmelden",
+      "signup": "Registrieren",
+      "guest": "Als Gast"
+    },
+    "shipping": {
+      "title": "Lieferadresse",
+      "firstName": "Vorname",
+      "lastName": "Nachname",
+      "address": "Adresse",
+      "city": "Stadt",
+      "postalCode": "Postleitzahl",
+      "country": "Land",
+      "phone": "Telefon"
+    },
+    "payment": {
+      "title": "Zahlungsmethode",
+      "card": "Kreditkarte",
+      "paypal": "PayPal"
+    }
+  },
+  "account": {
+    "title": "Mein Konto",
+    "profile": "Profil",
+    "orders": "Bestellungen",
+    "addresses": "Adressen",
+    "preferences": "Einstellungen",
+    "logout": "Abmelden"
+  }
+}

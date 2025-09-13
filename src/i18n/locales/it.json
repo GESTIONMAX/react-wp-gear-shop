@@ -1,0 +1,150 @@
+{
+  "navigation": {
+    "home": "Home",
+    "sport": "Sport", 
+    "lifestyle": "Lifestyle",
+    "prismatic": "Prismatico",
+    "blog": "Blog",
+    "account": "Il Mio Account",
+    "cart": "Carrello",
+    "login": "Accedi",
+    "admin": "Amministrazione"
+  },
+  "common": {
+    "loading": "Caricamento...",
+    "error": "Errore",
+    "retry": "Riprova",
+    "close": "Chiudi",
+    "save": "Salva",
+    "cancel": "Annulla",
+    "delete": "Elimina",
+    "edit": "Modifica",
+    "add": "Aggiungi",
+    "search": "Cerca",
+    "price": "Prezzo",
+    "quantity": "Quantità",
+    "total": "Totale",
+    "subtotal": "Subtotale",
+    "shipping": "Spedizione",
+    "free": "Gratis",
+    "inStock": "Disponibile",
+    "outOfStock": "Esaurito",
+    "addToCart": "Aggiungi al Carrello",
+    "viewDetails": "Vedi Dettagli",
+    "discover": "Scopri",
+    "learnMore": "Scopri di Più"
+  },
+  "home": {
+    "hero": {
+      "title": "Scegli la Tua Visione del Futuro",
+      "subtitle": "Tre universi, una tecnologia rivoluzionaria. Scopri la categoria che si adatta al tuo stile di vita.",
+      "features": {
+        "frenchTech": "Tecnologia Francese",
+        "warranty": "Garanzia 2 Anni",
+        "freeShipping": "Spedizione Gratuita"
+      },
+      "cta": {
+        "collections": "Scopri le nostre collezioni",
+        "pricing": "Vedi i prezzi"
+      }
+    },
+    "payment": {
+      "title": "Paga a Rate",
+      "subtitle": "Goditi i nostri occhiali intelligenti ora con le nostre soluzioni di pagamento flessibili e sicure.",
+      "options": {
+        "3x": {
+          "title": "3x Senza Interessi",
+          "description": "Dividi il tuo acquisto in 3 pagamenti mensili uguali senza commissioni aggiuntive.",
+          "example": "Esempio: 99€/mese per un acquisto di 297€"
+        },
+        "4x": {
+          "title": "4x Senza Interessi",
+          "description": "Distribuisci il tuo pagamento su 4 mesi per un comfort finanziario ottimale.",
+          "example": "Esempio: 75€/mese per un acquisto di 300€",
+          "popular": "POPOLARE"
+        },
+        "immediate": {
+          "title": "Pagamento Immediato",
+          "description": "Paga in una volta e beneficia di vantaggi esclusivi e consegna prioritaria.",
+          "benefit": "Risparmia il 5% sul tuo ordine"
+        }
+      }
+    },
+    "cta": {
+      "title": "Non hai ancora deciso?",
+      "description": "Esplora il nostro blog per scoprire le ultime innovazioni e trovare gli occhiali intelligenti perfetti per te.",
+      "blogButton": "Leggi il Blog"
+    }
+  },
+  "categories": {
+    "sport": {
+      "title": "Collezione Sport",
+      "subtitle": "Prestazioni e Ciclismo",
+      "description": "Occhiali intelligenti progettati per atleti esigenti. Resistenza, precisione dei dati e comfort ottimale per superare i tuoi limiti.",
+      "features": {
+        "title": "Progettati per le Prestazioni",
+        "subtitle": "I nostri occhiali sportivi combinano tecnologia avanzata e design ergonomico per accompagnare tutte le tue sfide sportive."
+      }
+    },
+    "lifestyle": {
+      "title": "Collezione Lifestyle",
+      "subtitle": "Eleganza Connessa",
+      "description": "L'alleanza perfetta tra stile e tecnologia. Occhiali intelligenti che si integrano naturalmente nella tua vita urbana quotidiana.",
+      "features": {
+        "title": "Eleganza Connessa",
+        "subtitle": "I nostri occhiali lifestyle combinano raffinatezza e tecnologia per accompagnare la tua quotidianità con stile e intelligenza."
+      }
+    },
+    "prismatic": {
+      "title": "Collezione Prismatica",
+      "subtitle": "Colori Regolabili",
+      "description": "Innovazione rivoluzionaria: lenti che si adattano al tuo ambiente e al tuo stile. Colori e opacità completamente personalizzabili.",
+      "features": {
+        "title": "Eccellenza Prismatica",
+        "subtitle": "La nostra collezione Prismatica spinge i limiti dell'innovazione con tecnologie esclusive e un savoir-faire eccezionale."
+      }
+    }
+  },
+  "cart": {
+    "title": "Il Mio Carrello",
+    "empty": "Il tuo carrello è vuoto",
+    "emptyDescription": "Aggiungi prodotti al tuo carrello per continuare",
+    "continueShopping": "Continua gli acquisti",
+    "checkout": "Vai al checkout",
+    "itemCount": "{{count}} articolo",
+    "itemCount_plural": "{{count}} articoli"
+  },
+  "checkout": {
+    "title": "Checkout",
+    "back": "Indietro",
+    "auth": {
+      "title": "Accedi o Registrati",
+      "signin": "Accedi",
+      "signup": "Registrati",
+      "guest": "Come ospite"
+    },
+    "shipping": {
+      "title": "Indirizzo di spedizione",
+      "firstName": "Nome",
+      "lastName": "Cognome", 
+      "address": "Indirizzo",
+      "city": "Città",
+      "postalCode": "Codice postale",
+      "country": "Paese",
+      "phone": "Telefono"
+    },
+    "payment": {
+      "title": "Metodo di pagamento",
+      "card": "Carta di credito",
+      "paypal": "PayPal"
+    }
+  },
+  "account": {
+    "title": "Il Mio Account",
+    "profile": "Profilo",
+    "orders": "Ordini",
+    "addresses": "Indirizzi",
+    "preferences": "Preferenze",
+    "logout": "Disconnetti"
+  }
+}
