@@ -7,6 +7,7 @@
     "blog": "Blog",
     "account": "My Account",
     "cart": "Cart",
+    "wishlist": "Wishlist",
     "login": "Login",
     "admin": "Administration"
   },
@@ -146,5 +147,25 @@
     "addresses": "Addresses", 
     "preferences": "Preferences",
     "logout": "Logout"
+  },
+  "wishlist": {
+    "title": "My Wishlist",
+    "metaDescription": "Discover your favorite products and add them to your cart",
+    "added": "Added to wishlist",
+    "addedDescription": "The product has been added to your wishlist",
+    "removed": "Removed from wishlist", 
+    "removedDescription": "The product has been removed from your wishlist",
+    "error": "An error occurred while updating your wishlist",
+    "empty": "Your wishlist is empty",
+    "emptyDescription": "Discover our products and add them to your wishlist to find them easily.",
+    "continueShopping": "Discover our products",
+    "loginMessage": "You must be logged in to view your wishlist",
+    "itemCount": "{{count}} product in your wishlist",
+    "itemCount_plural": "{{count}} products in your wishlist",
+    "remove": "Remove from wishlist"
+  },
+  "auth": {
+    "loginRequired": "Login required",
+    "loginRequiredDescription": "You must be logged in to use wishlist"
   }
 }

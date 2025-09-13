@@ -89,10 +89,12 @@ const Header = () => {
             {/* Language Selector */}
             <LanguageSelector />
 
-            {/* Wishlist */}
-            <Button variant="ghost" size="icon" className="hidden sm:flex">
+          {/* Wishlist */}
+          <Button variant="ghost" size="icon" className="hidden sm:flex" asChild>
+            <Link to="/wishlist">
               <Heart className="h-5 w-5" />
-            </Button>
+            </Link>
+          </Button>
 
             {/* Account */}
             {!loading && (

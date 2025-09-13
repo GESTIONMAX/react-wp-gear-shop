@@ -7,6 +7,7 @@
     "blog": "Blog", 
     "account": "Mi Cuenta",
     "cart": "Carrito",
+    "wishlist": "Favoritos",
     "login": "Iniciar Sesión",
     "admin": "Administración"
   },
@@ -146,5 +147,25 @@
     "addresses": "Direcciones",
     "preferences": "Preferencias",
     "logout": "Cerrar Sesión"
+  },
+  "wishlist": {
+    "title": "Mis Favoritos",
+    "metaDescription": "Descubre tus productos favoritos y añádelos a tu carrito",
+    "added": "Añadido a favoritos",
+    "addedDescription": "El producto ha sido añadido a tu lista de favoritos",
+    "removed": "Eliminado de favoritos", 
+    "removedDescription": "El producto ha sido eliminado de tu lista de favoritos",
+    "error": "Ha ocurrido un error al actualizar tus favoritos",
+    "empty": "Tu lista de favoritos está vacía",
+    "emptyDescription": "Descubre nuestros productos y añádelos a tus favoritos para encontrarlos fácilmente.",
+    "continueShopping": "Descubrir nuestros productos",
+    "loginMessage": "Debes estar conectado para ver tus favoritos",
+    "itemCount": "{{count}} producto en tus favoritos",
+    "itemCount_plural": "{{count}} productos en tus favoritos",
+    "remove": "Eliminar de favoritos"
+  },
+  "auth": {
+    "loginRequired": "Inicio de sesión requerido",
+    "loginRequiredDescription": "Debes estar conectado para usar favoritos"
   }
 }

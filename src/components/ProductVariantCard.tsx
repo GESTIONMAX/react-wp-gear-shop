@@ -6,6 +6,7 @@ import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Product, ProductVariant } from '@/types';
 import { useCart } from '@/contexts/CartContext';
+import { WishlistButton } from '@/components/WishlistButton';
 
 interface ProductVariantCardProps {
   product: Product;
@@ -18,7 +19,6 @@ export const ProductVariantCard: React.FC<ProductVariantCardProps> = ({
   variant, 
   className 
 }) => {
-  const [isLiked, setIsLiked] = useState(false);
   const { addItem } = useCart();
 
   const formatPrice = (price: number) => {
@@ -31,11 +31,6 @@ export const ProductVariantCard: React.FC<ProductVariantCardProps> = ({
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
     addItem(product, 1, variant.id);
-  };
-
-  const handleToggleLike = (e: React.MouseEvent) => {
-    e.preventDefault();
-    setIsLiked(!isLiked);
   };
 
   const isOnSale = variant.salePrice && variant.salePrice < variant.price;
@@ -69,16 +64,14 @@ export const ProductVariantCard: React.FC<ProductVariantCardProps> = ({
           )}
           
           {/* Wishlist button */}
-          <Button
-            variant="ghost"
-            size="icon"
+          <WishlistButton
+            productId={product.id}
+            variantId={variant.id}
             className={`absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity ${
               variant.inStock ? '' : 'right-20'
-            } ${isLiked ? 'text-destructive' : 'text-muted-foreground hover:text-destructive'}`}
-            onClick={handleToggleLike}
-          >
-            <Heart className={`h-4 w-4 ${isLiked ? 'fill-current' : ''}`} />
-          </Button>
+            } bg-background/80 hover:bg-background`}
+            size="sm"
+          />
           
           {/* Quick add button */}
           {variant.inStock && (

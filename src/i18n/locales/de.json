@@ -7,6 +7,7 @@
     "blog": "Blog",
     "account": "Mein Konto",
     "cart": "Warenkorb",
+    "wishlist": "Wunschliste",
     "login": "Anmelden",
     "admin": "Verwaltung"
   },
@@ -146,5 +147,25 @@
     "addresses": "Adressen",
     "preferences": "Einstellungen",
     "logout": "Abmelden"
+  },
+  "wishlist": {
+    "title": "Meine Wunschliste",
+    "metaDescription": "Entdecken Sie Ihre Lieblingsprodukte und fügen Sie sie zu Ihrem Warenkorb hinzu",
+    "added": "Zur Wunschliste hinzugefügt",
+    "addedDescription": "Das Produkt wurde zu Ihrer Wunschliste hinzugefügt",
+    "removed": "Von der Wunschliste entfernt", 
+    "removedDescription": "Das Produkt wurde von Ihrer Wunschliste entfernt",
+    "error": "Ein Fehler ist beim Aktualisieren Ihrer Wunschliste aufgetreten",
+    "empty": "Ihre Wunschliste ist leer",
+    "emptyDescription": "Entdecken Sie unsere Produkte und fügen Sie sie zu Ihrer Wunschliste hinzu, um sie leicht zu finden.",
+    "continueShopping": "Unsere Produkte entdecken",
+    "loginMessage": "Sie müssen angemeldet sein, um Ihre Wunschliste zu sehen",
+    "itemCount": "{{count}} Produkt in Ihrer Wunschliste",
+    "itemCount_plural": "{{count}} Produkte in Ihrer Wunschliste",
+    "remove": "Von der Wunschliste entfernen"
+  },
+  "auth": {
+    "loginRequired": "Anmeldung erforderlich",
+    "loginRequiredDescription": "Sie müssen angemeldet sein, um die Wunschliste zu verwenden"
   }
 }

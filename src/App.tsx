@@ -9,6 +9,7 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Home from "./pages/Home";
+import Wishlist from "./pages/Wishlist";
 import ProductDetail from "./pages/ProductDetail";
 import Auth from "./pages/Auth";
 import Account from "./pages/Account";
@@ -56,7 +57,7 @@ const App = () => (
                 <Route path="/product/:slug" element={<ProductDetail />} />
                 <Route path="/blog" element={<Blog />} />
                 <Route path="/auth" element={<Auth />} />
-                <Route path="/account" element={<Account />} />
+                <Route path="/wishlist" element={<Wishlist />} />
               <Route path="/admin" element={
                 <ProtectedRoute>
                   <AdminDashboard />
