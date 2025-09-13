@@ -2,16 +2,26 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 import { clearAuthData, recoverFromTokenError } from '@/utils/authRecovery';
+import { UserRole, UserType } from '@/hooks/useAdmin';
+
+interface AuthUserInfo {
+  user: User | null;
+  role: UserRole | null;
+  userType: UserType | null;
+  isInternal: boolean;
+}
 
 interface AuthContextType {
   user: User | null;
   session: Session | null;
   loading: boolean;
+  userInfo: AuthUserInfo;
   signUp: (email: string, password: string, firstName?: string, lastName?: string) => Promise<{ error: any }>;
   signIn: (email: string, password: string) => Promise<{ error: any }>;
   signOut: () => Promise<void>;
   resetPassword: (email: string) => Promise<{ error: any }>;
   updatePassword: (password: string) => Promise<{ error: any }>;
+  refreshUserInfo: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -20,42 +30,106 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
+  const [userInfo, setUserInfo] = useState<AuthUserInfo>({
+    user: null,
+    role: null,
+    userType: null,
+    isInternal: false,
+  });
+
+  // Fonction pour récupérer les informations utilisateur
+  const fetchUserInfo = async (currentUser: User | null) => {
+    if (!currentUser) {
+      setUserInfo({
+        user: null,
+        role: null,
+        userType: null,
+        isInternal: false,
+      });
+      return;
+    }
+
+    try {
+      // Récupérer le rôle
+      const { data: role, error: roleError } = await supabase
+        .rpc('get_user_role', { _user_id: currentUser.id });
+
+      // Récupérer le type d'utilisateur
+      const { data: userType, error: typeError } = await supabase
+        .rpc('get_user_type', { _user_id: currentUser.id });
+
+      // Vérifier si l'utilisateur est interne
+      const { data: isInternal, error: internalError } = await supabase
+        .rpc('is_internal_user', { _user_id: currentUser.id });
+
+      if (roleError || typeError || internalError) {
+        console.error('Erreur lors de la récupération des informations utilisateur:', {
+          roleError,
+          typeError,
+          internalError
+        });
+      }
+
+      setUserInfo({
+        user: currentUser,
+        role: (role as UserRole) || null,
+        userType: (userType as UserType) || null,
+        isInternal: isInternal || false,
+      });
+    } catch (error) {
+      console.error('Erreur lors de la récupération des informations utilisateur:', error);
+      setUserInfo({
+        user: currentUser,
+        role: null,
+        userType: null,
+        isInternal: false,
+      });
+    }
+  };
+
+  const refreshUserInfo = async () => {
+    await fetchUserInfo(user);
+  };
 
   useEffect(() => {
     // Set up auth state listener FIRST
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
         console.log('Auth state change:', event, session);
-        
+
         if (event === 'SIGNED_OUT' || event === 'TOKEN_REFRESHED') {
           setSession(session);
           setUser(session?.user ?? null);
+          await fetchUserInfo(session?.user ?? null);
         } else if (event === 'SIGNED_IN') {
           setSession(session);
           setUser(session?.user ?? null);
+          await fetchUserInfo(session?.user ?? null);
         }
         setLoading(false);
       }
     );
 
     // THEN check for existing session
-    supabase.auth.getSession().then(({ data: { session }, error }) => {
+    supabase.auth.getSession().then(async ({ data: { session }, error }) => {
       if (error) {
         console.error('Session error:', error);
-        
+
         // Handle specific refresh token errors
         if (error.message.includes('refresh') && error.message.includes('not found')) {
           console.log('Invalid refresh token detected, clearing auth data');
           recoverFromTokenError();
           return;
         }
-        
+
         // Clear any invalid session data
         setSession(null);
         setUser(null);
+        await fetchUserInfo(null);
       } else {
         setSession(session);
         setUser(session?.user ?? null);
+        await fetchUserInfo(session?.user ?? null);
       }
       setLoading(false);
     });
@@ -95,6 +169,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     // Force clear state
     setSession(null);
     setUser(null);
+    setUserInfo({
+      user: null,
+      role: null,
+      userType: null,
+      isInternal: false,
+    });
   };
 
   const resetPassword = async (email: string) => {
@@ -118,11 +198,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       user,
       session,
       loading,
+      userInfo,
       signUp,
       signIn,
       signOut,
       resetPassword,
-      updatePassword
+      updatePassword,
+      refreshUserInfo
     }}>
       {children}
     </AuthContext.Provider>

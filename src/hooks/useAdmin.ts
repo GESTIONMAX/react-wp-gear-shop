@@ -3,12 +3,13 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from '@/hooks/use-toast';
 
-export type UserRole = 'admin' | 'user';
+export type UserRole = 'admin' | 'staff' | 'employee' | 'client';
+export type UserType = 'internal' | 'external';
 
 // Hook pour vérifier si l'utilisateur est admin
 export const useIsAdmin = () => {
   const { user } = useAuth();
-  
+
   return useQuery({
     queryKey: ['userRole', user?.id],
     queryFn: async () => {
@@ -27,6 +28,78 @@ export const useIsAdmin = () => {
     },
     enabled: !!user,
     staleTime: 5 * 60 * 1000, // 5 minutes
+  });
+};
+
+// Hook pour vérifier si l'utilisateur est un utilisateur interne (admin, staff, employee)
+export const useIsInternalUser = () => {
+  const { user } = useAuth();
+
+  return useQuery({
+    queryKey: ['userType', user?.id],
+    queryFn: async () => {
+      if (!user) return false;
+
+      const { data, error } = await supabase
+        .rpc('is_internal_user', { _user_id: user.id });
+
+      if (error) {
+        console.error('Erreur lors de la vérification du type d\'utilisateur:', error);
+        return false;
+      }
+
+      return data;
+    },
+    enabled: !!user,
+    staleTime: 5 * 60 * 1000,
+  });
+};
+
+// Hook pour obtenir le type d'utilisateur (internal/external)
+export const useUserType = () => {
+  const { user } = useAuth();
+
+  return useQuery({
+    queryKey: ['userType', user?.id],
+    queryFn: async () => {
+      if (!user) return null;
+
+      const { data, error } = await supabase
+        .rpc('get_user_type', { _user_id: user.id });
+
+      if (error) {
+        console.error('Erreur lors de la récupération du type d\'utilisateur:', error);
+        return null;
+      }
+
+      return data as UserType;
+    },
+    enabled: !!user,
+    staleTime: 5 * 60 * 1000,
+  });
+};
+
+// Hook pour vérifier si l'utilisateur a l'un des rôles spécifiés
+export const useHasAnyRole = (roles: UserRole[]) => {
+  const { user } = useAuth();
+
+  return useQuery({
+    queryKey: ['hasAnyRole', user?.id, roles],
+    queryFn: async () => {
+      if (!user) return false;
+
+      const { data, error } = await supabase
+        .rpc('has_any_role', { _user_id: user.id, _roles: roles });
+
+      if (error) {
+        console.error('Erreur lors de la vérification des rôles:', error);
+        return false;
+      }
+
+      return data;
+    },
+    enabled: !!user,
+    staleTime: 5 * 60 * 1000,
   });
 };
 
@@ -67,7 +140,8 @@ export const useAssignAdminRole = () => {
         .from('user_roles')
         .upsert({
           user_id: user.id,
-          role: 'admin' as UserRole
+          role: 'admin' as UserRole,
+          user_type: 'internal' as UserType
         });
 
       if (error) throw error;
