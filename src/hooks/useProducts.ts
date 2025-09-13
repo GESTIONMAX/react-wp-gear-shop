@@ -53,6 +53,7 @@ export const useProducts = () => {
           ?.sort((a, b) => a.sort_order - b.sort_order)
           ?.map(img => img.image_url) || [],
         category: categoryMap.get(product.category_id)?.name || '',
+        categorySlug: categoryMap.get(product.category_id)?.slug || '',
         tags: product.tags || [],
         inStock: product.in_stock,
         stockQuantity: product.stock_quantity,

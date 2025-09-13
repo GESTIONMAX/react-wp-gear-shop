@@ -55,8 +55,9 @@ export const filterVariantsByCategory = (
   if (!category) return variants;
   
   return variants.filter(({ product }) => {
-    const productCategory = product.category.toLowerCase();
+    const productCategoryName = (product.category || '').toLowerCase();
+    const productCategorySlug = (product as any).categorySlug ? (product as any).categorySlug.toLowerCase() : '';
     const targetCategory = category.toLowerCase();
-    return productCategory === targetCategory;
+    return productCategoryName === targetCategory || productCategorySlug === targetCategory;
   });
 };

@@ -9,6 +9,7 @@ export interface Product {
   salePrice?: number;
   images: string[];
   category: string;
+  categorySlug?: string; // for robust filtering by slug
   tags: string[];
   inStock: boolean;
   stockQuantity: number;
