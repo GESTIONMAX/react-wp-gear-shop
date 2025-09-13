@@ -6,6 +6,8 @@ export const useProducts = () => {
   return useQuery({
     queryKey: ['products'],
     queryFn: async (): Promise<Product[]> => {
+      console.log('🔍 Fetching products from Supabase...');
+      
       const { data: products, error } = await supabase
         .from('products')
         .select(`
@@ -17,7 +19,19 @@ export const useProducts = () => {
         .eq('is_active', true)
         .order('created_at', { ascending: false });
 
-      if (error) throw error;
+      console.log('📦 Supabase response:', { products, error });
+
+      if (error) {
+        console.error('❌ Supabase error:', error);
+        throw error;
+      }
+
+      if (!products || products.length === 0) {
+        console.warn('⚠️ No products found in database');
+        return [];
+      }
+
+      console.log(`✅ Found ${products.length} products in database`);
 
       return products.map(product => ({
         id: product.id,

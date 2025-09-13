@@ -49,18 +49,15 @@ export const ProfileTab: React.FC<ProfileTabProps> = ({ user }) => {
           <CardContent>
             <div className="space-y-2">
               <div className="flex justify-between">
-                <span className="text-sm text-muted-foreground">Dernière connexion</span>
-                <span className="text-sm">
-                  {user.last_sign_in_at
-                    ? formatDistanceToNow(new Date(user.last_sign_in_at), { addSuffix: true, locale: fr })
-                    : 'Jamais connecté'
-                  }
-                </span>
-              </div>
-              <div className="flex justify-between">
                 <span className="text-sm text-muted-foreground">Compte créé</span>
                 <span className="text-sm">
                   {formatDistanceToNow(new Date(user.created_at), { addSuffix: true, locale: fr })}
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-sm text-muted-foreground">Dernière mise à jour</span>
+                <span className="text-sm">
+                  {formatDistanceToNow(new Date(user.updated_at), { addSuffix: true, locale: fr })}
                 </span>
               </div>
             </div>
