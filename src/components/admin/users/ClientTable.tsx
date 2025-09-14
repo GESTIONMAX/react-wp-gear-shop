@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Crown, UserCheck, ShoppingBag, Euro, Eye, UserX } from 'lucide-react';
 import { ClientWithRole } from '@/hooks/useClientData';
-import { Order } from '@/types';
+import { Order } from '@/components/admin/users/ClientDetailDialog/types';
 
 interface ClientTableProps {
   clients: ClientWithRole[];

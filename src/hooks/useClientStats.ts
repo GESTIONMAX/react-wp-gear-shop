@@ -1,12 +1,6 @@
 import { useMemo } from 'react';
 import { ClientWithRole } from './useClientData';
-
-interface Order {
-  id: string;
-  user_id: string;
-  total_amount: number;
-  profiles?: { id: string };
-}
+import { Order } from '@/components/admin/users/ClientDetailDialog/types';
 
 interface UseClientStatsProps {
   clients: ClientWithRole[];
@@ -18,7 +12,7 @@ export const useClientStats = ({ clients, orders }: UseClientStatsProps) => {
   const ordersByUserId = useMemo(() => {
     const map = new Map<string, Order[]>();
     orders.forEach(order => {
-      const userId = order.profiles?.id || order.user_id;
+      const userId = order.user_id;
       if (!map.has(userId)) {
         map.set(userId, []);
       }

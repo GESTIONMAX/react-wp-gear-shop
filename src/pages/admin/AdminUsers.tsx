@@ -34,8 +34,8 @@ const AdminUsers = () => {
   const { data: clients = [], isLoading, error } = useAllClients() as { data: ClientWithRole[], isLoading: boolean, error: Error | null };
 
   console.log('Clients data:', { clients: clients?.length, isLoading, error: error?.message || error });
-  const { data: orders = [] } = useAdminOrders() as { data: any[] };
-  const { data: invoices = [] } = useInvoices() as { data: any[] };
+  const { data: orders = [] } = useAdminOrders();
+  const { data: invoices = [] } = useInvoices();
 
   // Hooks optimisés
   const {
@@ -122,27 +122,26 @@ const AdminUsers = () => {
         <ClientTable
           clients={filteredClients}
           getClientTotalSpent={getClientTotalSpent}
-          getClientOrders={getClientOrders as (clientId: string) => any[]}
+          getClientOrders={getClientOrders}
           onViewClient={handleViewClient}
           searchTerm={searchTerm}
         />
 
+        {/* Dialog for client details */}
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-          {selectedUser && (
-            <ClientDetailDialog
-              user={selectedUser}
-              orders={orders as any[]}
-              invoices={invoices as any[]}
-              editingProfile={editingProfile}
-              setEditingProfile={setEditingProfile}
-              profileForm={profileForm}
-              setProfileForm={setProfileForm}
-              onEditProfile={handleEditProfile}
-              onSaveProfile={() => handleSaveProfile(selectedUser.user_id)}
-              onCancelEdit={handleCancelEdit}
-              updateClientData={updateClientData}
-            />
-          )}
+          <ClientDetailDialog
+            user={selectedUser}
+            orders={orders}
+            invoices={invoices}
+            editingProfile={editingProfile}
+            setEditingProfile={setEditingProfile}
+            profileForm={profileForm}
+            setProfileForm={setProfileForm}
+            onEditProfile={handleEditProfile}
+            onSaveProfile={() => selectedUser ? handleSaveProfile(selectedUser.user_id) : Promise.resolve()}
+            onCancelEdit={handleCancelEdit}
+            updateClientData={updateClientData}
+          />
         </Dialog>
       </div>
     </AdminLayout>
