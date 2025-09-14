@@ -3,6 +3,11 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from '@/hooks/use-toast';
 import { useTranslation } from 'react-i18next';
+import type { Database } from '@/integrations/supabase/types';
+
+type Category = Database['public']['Tables']['categories']['Row'];
+type ProductImage = { image_url: string; alt_text?: string; sort_order: number };
+type ProductVariant = Database['public']['Tables']['product_variants']['Row'];
 
 export interface WishlistItem {
   id: string;
@@ -135,7 +140,7 @@ export const useToggleWishlist = () => {
         });
       }
     },
-    onError: (error: any) => {
+    onError: (error: Error) => {
       console.error('Wishlist error:', error);
       
       if (error.message === 'User not authenticated') {
@@ -196,7 +201,7 @@ export const useWishlistWithProducts = () => {
 
       if (categoriesError) throw categoriesError;
       
-      const categoryMap = new Map(categories.map((c: any) => [c.id, c]));
+      const categoryMap = new Map(categories.map((c: Category) => [c.id, c]));
       
       // Combiner les données
       return wishlistItems.map(wishlistItem => {
@@ -216,15 +221,15 @@ export const useWishlistWithProducts = () => {
             price: product.price / 100,
             salePrice: product.sale_price ? product.sale_price / 100 : undefined,
             images: product.product_images
-              ?.sort((a: any, b: any) => a.sort_order - b.sort_order)
-              ?.map((img: any) => img.image_url) || [],
+              ?.sort((a: ProductImage, b: ProductImage) => a.sort_order - b.sort_order)
+              ?.map((img: ProductImage) => img.image_url) || [],
             category: category?.name || '',
             tags: product.tags || [],
             inStock: product.in_stock,
             stockQuantity: product.stock_quantity,
             features: product.features || [],
             specifications: (product.specifications as Record<string, string>) || {},
-            variants: product.product_variants?.map((variant: any) => ({
+            variants: product.product_variants?.map((variant: ProductVariant) => ({
               id: variant.id,
               name: variant.name,
               price: variant.price / 100,
