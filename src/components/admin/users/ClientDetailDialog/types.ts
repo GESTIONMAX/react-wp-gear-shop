@@ -1,4 +1,5 @@
 import type { Database } from '@/integrations/supabase/types';
+import type { ShippingAddress } from '@/types';
 
 export type Order = Database['public']['Tables']['orders']['Row'];
 export type Invoice = Database['public']['Tables']['invoices']['Row'];
@@ -14,8 +15,8 @@ export interface ProfileFormData {
   marketing_phone: string;
   marketing_consent: boolean;
   notes: string;
-  preferred_shipping_address: any;
-  preferred_billing_address: any;
+  preferred_shipping_address: ShippingAddress | null;
+  preferred_billing_address: ShippingAddress | null;
 }
 
 export interface ClientData {

@@ -66,3 +66,127 @@ export interface CartContextType {
   totalItems: number;
   totalPrice: number;
 }
+
+// User and Auth Types
+export interface User {
+  id: string;
+  email: string;
+  name?: string;
+  role?: 'admin' | 'staff' | 'employee' | 'client';
+  isInternal?: boolean;
+  createdAt: string;
+  updatedAt?: string;
+}
+
+export interface UserProfile {
+  id: string;
+  userId: string;
+  firstName?: string;
+  lastName?: string;
+  phone?: string;
+  address?: string;
+  city?: string;
+  postalCode?: string;
+  country?: string;
+  createdAt: string;
+  updatedAt?: string;
+}
+
+// Order and Invoice Types
+export interface OrderItem {
+  id: string;
+  orderId: string;
+  productId: string;
+  productVariantId?: string;
+  quantity: number;
+  unitPrice: number;
+  totalPrice: number;
+  product: Product;
+  variant?: ProductVariant;
+}
+
+export interface Order {
+  id: string;
+  userId: string;
+  status: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
+  totalAmount: number;
+  shippingAddress: ShippingAddress;
+  billingAddress: ShippingAddress;
+  items: OrderItem[];
+  createdAt: string;
+  updatedAt?: string;
+}
+
+export interface ShippingAddress {
+  firstName: string;
+  lastName: string;
+  company?: string;
+  address: string;
+  addressLine2?: string;
+  city: string;
+  postalCode: string;
+  country: string;
+  phone?: string;
+}
+
+export interface Invoice {
+  id: string;
+  orderId: string;
+  invoiceNumber: string;
+  status: 'draft' | 'sent' | 'paid' | 'overdue';
+  issueDate: string;
+  dueDate: string;
+  totalAmount: number;
+  taxAmount: number;
+  subtotal: number;
+  order: Order;
+  createdAt: string;
+}
+
+// Admin Types
+export interface AdminStats {
+  totalOrders: number;
+  totalRevenue: number;
+  totalProducts: number;
+  totalUsers: number;
+  recentOrders: Order[];
+  topProducts: Product[];
+}
+
+// Settings Types
+export interface SiteSettings {
+  siteName: string;
+  siteDescription: string;
+  siteUrl: string;
+  contactEmail: string;
+  supportEmail: string;
+  currency: string;
+  taxRate: number;
+  shippingRates: ShippingRate[];
+}
+
+export interface ShippingRate {
+  id: string;
+  name: string;
+  description?: string;
+  rate: number;
+  minOrderAmount?: number;
+  maxOrderAmount?: number;
+  enabled: boolean;
+}
+
+// Supplier Types
+export interface Supplier {
+  id: string;
+  name: string;
+  contactName?: string;
+  email?: string;
+  phone?: string;
+  address?: string;
+  city?: string;
+  country?: string;
+  website?: string;
+  notes?: string;
+  isActive: boolean;
+  createdAt: string;
+}

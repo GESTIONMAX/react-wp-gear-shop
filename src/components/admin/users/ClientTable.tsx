@@ -5,11 +5,12 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Crown, UserCheck, ShoppingBag, Euro, Eye, UserX } from 'lucide-react';
 import { ClientWithRole } from '@/hooks/useClientData';
+import { Order } from '@/types';
 
 interface ClientTableProps {
   clients: ClientWithRole[];
   getClientTotalSpent: (clientId: string) => number;
-  getClientOrders: (clientId: string) => any[];
+  getClientOrders: (clientId: string) => Order[];
   onViewClient: (client: ClientWithRole) => void;
   searchTerm: string;
 }

@@ -2,6 +2,7 @@ import { useState, useCallback } from 'react';
 import { useUpdateClientData } from './useClientData';
 import { useQueryClient } from '@tanstack/react-query';
 import { toast } from './use-toast';
+import { ShippingAddress } from '@/types';
 
 export interface ProfileForm {
   first_name: string;
@@ -14,8 +15,8 @@ export interface ProfileForm {
   marketing_phone: string;
   marketing_consent: boolean;
   notes: string;
-  preferred_shipping_address: any;
-  preferred_billing_address: any;
+  preferred_shipping_address: ShippingAddress | null;
+  preferred_billing_address: ShippingAddress | null;
 }
 
 const initialProfileForm: ProfileForm = {

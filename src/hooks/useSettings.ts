@@ -5,7 +5,7 @@ import { toast } from '@/hooks/use-toast';
 export interface SiteSetting {
   id: string;
   key: string;
-  value: any;
+  value: string | number | boolean | null;
   category: string;
   description?: string;
   created_at: string;
@@ -50,7 +50,7 @@ export const useUpdateSetting = () => {
   const queryClient = useQueryClient();
   
   return useMutation({
-    mutationFn: async ({ key, value }: { key: string; value: any }) => {
+    mutationFn: async ({ key, value }: { key: string; value: string | number | boolean }) => {
       const { data, error } = await supabase
         .from('site_settings')
         .update({

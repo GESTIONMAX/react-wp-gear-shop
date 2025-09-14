@@ -1,13 +1,14 @@
 import { useMutation } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
+import { ShippingAddress } from '@/types/order';
 
 interface CreatePaymentSessionData {
   orderData: {
     user_id: string;
     total_amount: number;
-    shipping_address: any;
-    billing_address: any;
+    shipping_address: ShippingAddress;
+    billing_address: ShippingAddress;
     notes?: string;
     order_items: Array<{
       product_id: string;

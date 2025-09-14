@@ -8,8 +8,14 @@ import { Slider } from '@/components/ui/slider';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 
+interface ProductFilters {
+  priceRange: [number, number];
+  collections: string[];
+  models: string[];
+}
+
 interface ProductFiltersProps {
-  onFiltersChange?: (filters: any) => void;
+  onFiltersChange?: (filters: ProductFilters) => void;
 }
 
 export const ProductFilters: React.FC<ProductFiltersProps> = ({ onFiltersChange }) => {
