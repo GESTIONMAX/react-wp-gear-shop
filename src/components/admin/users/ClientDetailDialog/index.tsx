@@ -12,19 +12,20 @@ import { OrdersTab } from './OrdersTab';
 import { InvoicesTab } from './InvoicesTab';
 import { StatsTab } from './StatsTab';
 import { ClientWithRole } from '@/hooks/useClientData';
+import type { Order, Invoice, ProfileFormData, UpdateClientData } from './types';
 
 interface ClientDetailDialogProps {
   user: ClientWithRole | null;
-  orders: any[];
-  invoices: any[];
+  orders: Order[];
+  invoices: Invoice[];
   editingProfile: boolean;
   setEditingProfile: (editing: boolean) => void;
-  profileForm: any;
-  setProfileForm: (form: any) => void;
-  onEditProfile: (clientData: any) => void;
+  profileForm: ProfileFormData;
+  setProfileForm: (form: ProfileFormData) => void;
+  onEditProfile: (clientData: ClientWithRole) => void;
   onSaveProfile: (userId: string) => Promise<void>;
   onCancelEdit: () => void;
-  updateClientData: any;
+  updateClientData: UpdateClientData;
 }
 
 export const ClientDetailDialog: React.FC<ClientDetailDialogProps> = ({

@@ -9,17 +9,18 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Edit, Save, X, Truck, Phone } from 'lucide-react';
 import { ClientWithRole } from '@/hooks/useClientData';
+import type { Order, ProfileFormData, UpdateClientData } from './types';
 
 interface AddressesTabProps {
   user: ClientWithRole;
-  userOrders: any[];
+  userOrders: Order[];
   editingProfile: boolean;
-  profileForm: any;
-  setProfileForm: (form: any) => void;
-  onEditProfile: (clientData: any) => void;
+  profileForm: ProfileFormData;
+  setProfileForm: (form: ProfileFormData) => void;
+  onEditProfile: (clientData: ClientWithRole) => void;
   onSaveProfile: (userId: string) => Promise<void>;
   onCancelEdit: () => void;
-  updateClientData: any;
+  updateClientData: UpdateClientData;
 }
 
 export const AddressesTab: React.FC<AddressesTabProps> = ({

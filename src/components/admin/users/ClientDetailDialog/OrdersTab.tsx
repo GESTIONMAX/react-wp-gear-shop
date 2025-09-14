@@ -3,9 +3,10 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { ShoppingBag } from 'lucide-react';
+import type { Order } from './types';
 
 interface OrdersTabProps {
-  userOrders: any[];
+  userOrders: Order[];
 }
 
 export const OrdersTab: React.FC<OrdersTabProps> = ({ userOrders }) => {

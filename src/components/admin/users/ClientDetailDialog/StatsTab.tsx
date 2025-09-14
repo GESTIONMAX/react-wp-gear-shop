@@ -1,9 +1,10 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import type { Order, Invoice } from './types';
 
 interface StatsTabProps {
-  userOrders: any[];
-  userInvoices: any[];
+  userOrders: Order[];
+  userInvoices: Invoice[];
 }
 
 export const StatsTab: React.FC<StatsTabProps> = ({ userOrders, userInvoices }) => {
