@@ -13,9 +13,31 @@ import { CreateProductData, UpdateProductData, useAdminCategories } from '@/hook
 import ImageUploader from './ImageUploader';
 import { UploadedImage } from '@/hooks/useImageUpload';
 import { X, Plus } from 'lucide-react';
+import type { Database } from '@/integrations/supabase/types';
+
+type Product = Database['public']['Tables']['products']['Row'] & {
+  images?: Array<{ image_url: string; alt_text?: string; sort_order?: number }>;
+  category?: { id: string; name: string; slug: string } | null;
+};
+
+interface ProductFormData {
+  name: string;
+  slug: string;
+  description: string;
+  short_description: string;
+  price: number;
+  sale_price: number;
+  category_id: string;
+  in_stock: boolean;
+  stock_quantity: number;
+  tags: string[];
+  features: string[];
+  specifications: Record<string, string>;
+  images: UploadedImage[];
+}
 
 interface ProductFormProps {
-  product?: any; // Type du produit existant
+  product?: Product;
   onSubmit: (data: CreateProductData | UpdateProductData) => void;
   onCancel: () => void;
   isLoading?: boolean;
@@ -33,7 +55,9 @@ const ProductForm: React.FC<ProductFormProps> = ({
   const [images, setImages] = useState<UploadedImage[]>([]);
   const [tags, setTags] = useState<string[]>(product?.tags || []);
   const [features, setFeatures] = useState<string[]>(product?.features || []);
-  const [specifications, setSpecifications] = useState<Record<string, string>>(product?.specifications || {});
+  const [specifications, setSpecifications] = useState<Record<string, string>>(
+    (product?.specifications as Record<string, string>) || {}
+  );
   const [newTag, setNewTag] = useState('');
   const [newFeature, setNewFeature] = useState('');
   const [newSpecKey, setNewSpecKey] = useState('');
@@ -79,7 +103,7 @@ const ProductForm: React.FC<ProductFormProps> = ({
   // Initialisation des images
   useEffect(() => {
     if (product?.images) {
-      const initialImages: UploadedImage[] = product.images.map((img: any) => ({
+      const initialImages: UploadedImage[] = product.images?.map((img) => ({
         url: img.image_url,
         path: img.image_url.split('/').pop() || '',
         name: img.alt_text || 'Image produit'
@@ -88,7 +112,7 @@ const ProductForm: React.FC<ProductFormProps> = ({
     }
   }, [product]);
 
-  const handleFormSubmit = (data: any) => {
+  const handleFormSubmit = (data: ProductFormData) => {
     const formData = {
       ...data,
       images: images.map(img => img.url),

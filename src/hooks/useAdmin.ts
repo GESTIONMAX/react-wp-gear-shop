@@ -2,6 +2,53 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from '@/hooks/use-toast';
+import type { Database } from '@/integrations/supabase/types';
+
+type Product = Database['public']['Tables']['products']['Row'];
+type Category = Database['public']['Tables']['categories']['Row'];
+type Order = Database['public']['Tables']['orders']['Row'];
+
+interface AdminStats {
+  products: {
+    total: number;
+    active: number;
+    lowStock: number;
+    byCategory: Record<string, number>;
+    topSelling: Array<{ name: string; count: number }>;
+  };
+  categories: {
+    total: number;
+    active: number;
+  };
+  variants: {
+    total: number;
+    active: number;
+  };
+  orders: {
+    total: number;
+    month: number;
+    lastMonth: number;
+    byStatus: Record<string, number>;
+    salesByDay: Array<{ date: string; amount: number }>;
+  };
+  revenue: {
+    total: number;
+    month: number;
+    growth: number;
+    averageOrderValue: number;
+  };
+  users: {
+    total: number;
+  };
+  performance: {
+    conversionRate: number;
+    activeCartUsers: number;
+  };
+  recentActivity: {
+    newOrders: number;
+    newProducts: number;
+  };
+}
 
 export type UserRole = 'admin' | 'staff' | 'employee' | 'client';
 export type UserType = 'internal' | 'external';
@@ -37,7 +84,7 @@ export const useAdminStats = () => {
 
   return useQuery({
     queryKey: ['adminStats'],
-    queryFn: async () => {
+    queryFn: async (): Promise<AdminStats> => {
       console.log('=== Fetching Admin Stats ===');
       console.log('User admin status:', userInfo.isInternal, userInfo.role);
 
@@ -53,6 +100,10 @@ export const useAdminStats = () => {
           .select('id, price, sale_price, in_stock, created_at, stock_quantity')
           .limit(100);
 
+        if (productsError) {
+          console.error('Products query error:', productsError);
+        }
+
         console.log('Products query:', { count: productsStats?.length, error: productsError?.message });
 
         // Statistiques des catégories
@@ -60,6 +111,10 @@ export const useAdminStats = () => {
           .from('categories')
           .select('id, name, is_active, created_at')
           .limit(50);
+
+        if (categoriesError) {
+          console.error('Categories query error:', categoriesError);
+        }
 
         console.log('Categories query:', { count: categoriesStats?.length, error: categoriesError?.message });
 
@@ -69,15 +124,19 @@ export const useAdminStats = () => {
           .select('id, total_amount, status, created_at')
           .limit(100);
 
+        if (ordersError) {
+          console.error('Orders query error:', ordersError);
+        }
+
         console.log('Orders query:', { count: ordersStats?.length, error: ordersError?.message });
 
         // Calculer les statistiques de base
         const totalProducts = productsStats?.length || 0;
-        const activeProducts = productsStats?.filter(p => p.in_stock).length || 0;
+        const activeProducts = productsStats?.filter((p: Product) => p.in_stock).length || 0;
         const totalCategories = categoriesStats?.length || 0;
-        const activeCategories = categoriesStats?.filter(c => c.is_active).length || 0;
+        const activeCategories = categoriesStats?.filter((c: Category) => c.is_active).length || 0;
         const totalOrders = ordersStats?.length || 0;
-        const totalRevenue = ordersStats?.reduce((sum, order) => sum + (order.total_amount || 0), 0) || 0;
+        const totalRevenue = ordersStats?.reduce((sum: number, order: Order) => sum + (order.total_amount || 0), 0) || 0;
 
         const stats = {
           products: {
@@ -97,13 +156,13 @@ export const useAdminStats = () => {
           },
           orders: {
             total: totalOrders,
-            month: ordersStats?.filter(o => {
+            month: ordersStats?.filter((o: Order) => {
               const orderDate = new Date(o.created_at);
               const thisMonth = new Date();
               thisMonth.setDate(1);
               return orderDate >= thisMonth;
             }).length || 0,
-            lastMonth: ordersStats?.filter(o => {
+            lastMonth: ordersStats?.filter((o: Order) => {
               const orderDate = new Date(o.created_at);
               const lastMonth = new Date();
               lastMonth.setMonth(lastMonth.getMonth() - 1);
@@ -118,12 +177,12 @@ export const useAdminStats = () => {
           },
           revenue: {
             total: totalRevenue,
-            month: ordersStats?.filter(o => {
+            month: ordersStats?.filter((o: Order) => {
               const orderDate = new Date(o.created_at);
               const thisMonth = new Date();
               thisMonth.setDate(1);
               return orderDate >= thisMonth;
-            }).reduce((sum, order) => sum + (order.total_amount || 0), 0) || 0,
+            }).reduce((sum: number, order: Order) => sum + (order.total_amount || 0), 0) || 0,
             growth: 0,
             averageOrderValue: totalOrders > 0 ? totalRevenue / totalOrders : 0
           },
@@ -135,12 +194,12 @@ export const useAdminStats = () => {
             activeCartUsers: 0
           },
           recentActivity: {
-            newOrders: ordersStats?.filter(o => {
+            newOrders: ordersStats?.filter((o: Order) => {
               const orderDate = new Date(o.created_at);
               const lastWeek = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
               return orderDate > lastWeek;
             }).length || 0,
-            newProducts: productsStats?.filter(p => {
+            newProducts: productsStats?.filter((p: Product) => {
               const productDate = new Date(p.created_at);
               const lastWeek = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
               return productDate > lastWeek;
