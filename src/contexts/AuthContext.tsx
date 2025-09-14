@@ -37,7 +37,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     isInternal: false,
   });
 
-  // Fonction simplifiée pour éviter les blocages
+  // Fonction pour récupérer les infos utilisateur depuis la DB
   const fetchUserInfo = async (currentUser: User | null) => {
     if (!currentUser) {
       setUserInfo({
@@ -51,16 +51,25 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     console.log('Fetching user info for:', currentUser.email);
 
-    // Traitement en arrière-plan sans bloquer
-    setUserInfo({
-      user: currentUser,
-      role: currentUser.email === 'aurelien@gestionmax.fr' ? 'admin' : 'client',
-      userType: currentUser.email === 'aurelien@gestionmax.fr' ? 'internal' : 'external',
-      isInternal: currentUser.email === 'aurelien@gestionmax.fr',
+    console.log('Determining user role for:', currentUser.email);
+
+    // Détermination du rôle améliorée mais compatible
+
+    // Fallback: logique basée sur l'email (compatible avec toutes les configurations)
+    const isAdmin = currentUser.email === 'aurelien@gestionmax.fr';
+
+    console.log('📧 Email-based role assignment:', {
+      email: currentUser.email,
+      isAdmin,
+      role: isAdmin ? 'admin' : 'client'
     });
 
-    // Note: La récupération depuis la DB profiles sera ajoutée plus tard
-    // Pour l'instant, on se base sur l'email pour déterminer les rôles
+    setUserInfo({
+      user: currentUser,
+      role: isAdmin ? 'admin' : 'client',
+      userType: isAdmin ? 'internal' : 'external',
+      isInternal: isAdmin,
+    });
   };
 
   const refreshUserInfo = async () => {

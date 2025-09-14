@@ -8,156 +8,171 @@ export interface SystemUser {
   email: string | null;
   first_name: string | null;
   last_name: string | null;
-  role: 'admin' | 'user' | 'staff' | 'employee' | 'client';
+  role: 'admin' | 'client';
   created_at: string;
   updated_at: string;
 }
 
-// Hook pour récupérer uniquement les utilisateurs avec des rôles système explicites
+// Hook pour récupérer les utilisateurs authentifiés (simplifié)
 export const useSystemUsers = () => {
   return useQuery({
     queryKey: ['systemUsers'],
     queryFn: async () => {
-      // Récupérer uniquement les utilisateurs qui ont des rôles dans user_roles
-      const { data: userRoles, error: rolesError } = await supabase
-        .from('user_roles')
-        .select(`
-          user_id,
-          role,
-          created_at,
-          updated_at
-        `);
+      console.log('=== Fetching System Users ===');
 
-      if (rolesError) throw rolesError;
+      try {
+        // Récupérer tous les utilisateurs authentifiés de auth.users via RPC ou query
+        const { data: authUsers, error: authError } = await supabase.auth.admin.listUsers();
 
-      // Récupérer les profils correspondants
-      const userIds = userRoles.map(ur => ur.user_id);
-      const { data: profiles, error: profilesError } = await supabase
-        .from('profiles')
-        .select('user_id, email, first_name, last_name')
-        .in('user_id', userIds);
+        if (authError) {
+          console.log('Auth admin not available, using alternative approach');
 
-      if (profilesError) throw profilesError;
+          // Approche alternative: créer une liste simplifiée basée sur l'utilisateur connecté
+          const { data: { user: currentUser } } = await supabase.auth.getUser();
 
-      // Combiner les données
-      const systemUsers: SystemUser[] = userRoles.map(userRole => {
-        const profile = profiles.find(p => p.user_id === userRole.user_id);
-        return {
-          id: userRole.user_id,
-          user_id: userRole.user_id,
-          email: profile?.email || null,
-          first_name: profile?.first_name || null,
-          last_name: profile?.last_name || null,
-          role: userRole.role as SystemUser['role'],
-          created_at: userRole.created_at,
-          updated_at: userRole.updated_at,
-        };
-      });
+          if (!currentUser) return [];
 
-      return systemUsers;
+          const systemUsers: SystemUser[] = [{
+            id: currentUser.id,
+            user_id: currentUser.id,
+            email: currentUser.email || null,
+            first_name: currentUser.user_metadata?.first_name || null,
+            last_name: currentUser.user_metadata?.last_name || null,
+            role: currentUser.email === 'aurelien@gestionmax.fr' ? 'admin' : 'client',
+            created_at: currentUser.created_at,
+            updated_at: currentUser.updated_at || currentUser.created_at,
+          }];
+
+          console.log('System users (simplified):', systemUsers);
+          return systemUsers;
+        }
+
+        // Si l'admin auth fonctionne, utiliser les données complètes
+        const systemUsers: SystemUser[] = authUsers.users.map(user => ({
+          id: user.id,
+          user_id: user.id,
+          email: user.email || null,
+          first_name: user.user_metadata?.first_name || null,
+          last_name: user.user_metadata?.last_name || null,
+          role: user.email === 'aurelien@gestionmax.fr' ? 'admin' : 'client',
+          created_at: user.created_at,
+          updated_at: user.updated_at || user.created_at,
+        }));
+
+        console.log('System users (full):', systemUsers);
+        return systemUsers;
+
+      } catch (error) {
+        console.error('Error fetching system users:', error);
+
+        // Fallback: retourner l'utilisateur actuel seulement
+        const { data: { user: currentUser } } = await supabase.auth.getUser();
+
+        if (!currentUser) return [];
+
+        return [{
+          id: currentUser.id,
+          user_id: currentUser.id,
+          email: currentUser.email || null,
+          first_name: currentUser.user_metadata?.first_name || null,
+          last_name: currentUser.user_metadata?.last_name || null,
+          role: currentUser.email === 'aurelien@gestionmax.fr' ? 'admin' : 'client',
+          created_at: currentUser.created_at,
+          updated_at: currentUser.updated_at || currentUser.created_at,
+        }];
+      }
     },
+    retry: 1,
+    staleTime: 5 * 60 * 1000, // 5 minutes
   });
 };
 
-// Hook pour attribuer un rôle système à un utilisateur
+// Hook pour attribuer un rôle système à un utilisateur (simplifié - info seulement)
 export const useAssignSystemRole = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
-    mutationFn: async ({ userEmail, role }: { userEmail: string; role: 'admin' | 'user' }) => {
-      // D'abord, trouver l'utilisateur par email
-      const { data: profile, error: profileError } = await supabase
-        .from('profiles')
-        .select('user_id')
-        .eq('email', userEmail)
-        .maybeSingle();
+    mutationFn: async ({ userEmail, role }: { userEmail: string; role: 'admin' | 'client' }) => {
+      console.log('Assign system role (email-based logic):', { userEmail, role });
 
-      if (profileError) throw profileError;
-      if (!profile) throw new Error('Utilisateur non trouvé');
+      // Dans notre architecture simplifiée, les rôles sont déterminés par l'email
+      // Cette fonction ne fait rien de concret mais simule l'action
+      if (userEmail !== 'aurelien@gestionmax.fr' && role === 'admin') {
+        throw new Error('Seul aurelien@gestionmax.fr peut avoir le rôle admin');
+      }
 
-      // Ensuite, attribuer ou mettre à jour le rôle
-      const { error } = await supabase
-        .from('user_roles')
-        .upsert({
-          user_id: profile.user_id,
-          role: role
-        });
-
-      if (error) throw error;
-      return profile.user_id;
+      return { userEmail, role };
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['systemUsers'] });
       toast({
-        title: "Rôle système attribué",
-        description: "L'utilisateur a maintenant accès au système.",
+        title: "Information",
+        description: `Les rôles sont basés sur l'email. ${data.userEmail} ${data.role === 'admin' ? 'est admin' : 'est client'}.`,
       });
     },
-    onError: (error) => {
+    onError: (error: Error) => {
       toast({
-        title: "Erreur",
-        description: "Impossible d'attribuer le rôle système.",
+        title: "Information",
+        description: error.message,
         variant: "destructive",
       });
     },
   });
 };
 
-// Hook pour révoquer l'accès système d'un utilisateur
+// Hook pour révoquer l'accès système d'un utilisateur (simplifié - info seulement)
 export const useRevokeSystemAccess = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: async (userId: string) => {
-      const { error } = await supabase
-        .from('user_roles')
-        .delete()
-        .eq('user_id', userId);
+      console.log('Revoke system access (email-based logic):', userId);
 
-      if (error) throw error;
+      // Dans notre architecture simplifiée, on ne peut pas vraiment révoquer l'accès
+      // Cette fonction simule l'action mais ne fait rien de concret
+      throw new Error('Dans cette version simplifiée, les accès sont gérés par email uniquement');
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['systemUsers'] });
       toast({
-        title: "Accès révoqué",
-        description: "L'utilisateur n'a plus accès au système.",
+        title: "Information",
+        description: "Les accès sont gérés automatiquement par email.",
       });
     },
-    onError: (error) => {
+    onError: (error: Error) => {
       toast({
-        title: "Erreur",
-        description: "Impossible de révoquer l'accès système.",
-        variant: "destructive",
+        title: "Information",
+        description: error.message,
+        variant: "default",
       });
     },
   });
 };
 
-// Hook pour mettre à jour le rôle d'un utilisateur système
+// Hook pour mettre à jour le rôle d'un utilisateur système (simplifié - info seulement)
 export const useUpdateSystemUserRole = () => {
   const queryClient = useQueryClient();
-  
-  return useMutation({
-    mutationFn: async ({ userId, role }: { userId: string; role: 'admin' | 'user' }) => {
-      const { error } = await supabase
-        .from('user_roles')
-        .update({ role })
-        .eq('user_id', userId);
 
-      if (error) throw error;
+  return useMutation({
+    mutationFn: async ({ userId, role }: { userId: string; role: 'admin' | 'client' }) => {
+      console.log('Update system user role (email-based logic):', { userId, role });
+
+      // Dans notre architecture simplifiée, les rôles sont déterminés par l'email
+      // Cette fonction ne fait rien de concret mais simule l'action
+      throw new Error('Les rôles sont automatiquement déterminés par email');
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['systemUsers'] });
       toast({
-        title: "Rôle mis à jour",
-        description: "Le rôle de l'utilisateur système a été modifié.",
+        title: "Information",
+        description: "Les rôles sont gérés automatiquement par email.",
       });
     },
-    onError: (error) => {
+    onError: (error: Error) => {
       toast({
-        title: "Erreur",
-        description: "Impossible de mettre à jour le rôle.",
-        variant: "destructive",
+        title: "Information",
+        description: error.message,
+        variant: "default",
       });
     },
   });

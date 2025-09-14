@@ -70,7 +70,7 @@ CREATE TRIGGER on_auth_user_created
 -- 7. Créer les 2 comptes admin (remplacez les emails par les vôtres)
 INSERT INTO auth.users (id, email, encrypted_password, email_confirmed_at, created_at, updated_at)
 VALUES
-    (gen_random_uuid(), 'admin1@votresite.com', crypt('admin123', gen_salt('bf')), NOW(), NOW(), NOW()),
+    (gen_random_uuid(), 'aurelien@gestionmax.fr', crypt('admin123', gen_salt('bf')), NOW(), NOW(), NOW()),
     (gen_random_uuid(), 'admin2@votresite.com', crypt('admin123', gen_salt('bf')), NOW(), NOW(), NOW())
 ON CONFLICT (email) DO NOTHING;
 

@@ -103,6 +103,7 @@ export const useClientActions = () => {
 
   return {
     editingProfile,
+    setEditingProfile,
     profileForm,
     setProfileForm,
     selectedUser,

@@ -1,9 +1,9 @@
+import React, { useState } from 'react';
 import AdminLayout from '@/components/admin/AdminLayout';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Loader2 } from 'lucide-react';
 import {
   Dialog,
-  DialogTrigger,
 } from '@/components/ui/dialog';
 import { useAllClients, ClientWithRole } from '@/hooks/useClientData';
 import { useAdminOrders } from '@/hooks/useOrders';
@@ -22,10 +22,17 @@ import { useClientStats } from '@/hooks/useClientStats';
 import { useClientActions } from '@/hooks/useClientActions';
 
 const AdminUsers = () => {
+  console.log('=== AdminUsers component rendering ===');
+
   const { user: currentUser, loading: authLoading } = useAuth();
+  const [dialogOpen, setDialogOpen] = useState(false);
+
+  console.log('Auth state:', { currentUser: !!currentUser, authLoading });
 
   // Récupération des données
   const { data: clients = [], isLoading, error } = useAllClients() as { data: ClientWithRole[], isLoading: boolean, error: any };
+
+  console.log('Clients data:', { clients: clients?.length, isLoading, error: error?.message || error });
   const { data: orders = [] } = useAdminOrders();
   const { data: invoices = [] } = useInvoices();
 
@@ -46,6 +53,7 @@ const AdminUsers = () => {
 
   const {
     editingProfile,
+    setEditingProfile,
     profileForm,
     setProfileForm,
     selectedUser,
@@ -55,6 +63,11 @@ const AdminUsers = () => {
     handleSelectUser,
     updateClientData,
   } = useClientActions();
+
+  const handleViewClient = (client: ClientWithRole) => {
+    handleSelectUser(client);
+    setDialogOpen(true);
+  };
 
   // Vérifier l'authentification
   if (authLoading) {
@@ -109,27 +122,22 @@ const AdminUsers = () => {
           clients={filteredClients}
           getClientTotalSpent={getClientTotalSpent}
           getClientOrders={getClientOrders}
-          onViewClient={handleSelectUser}
+          onViewClient={handleViewClient}
           searchTerm={searchTerm}
         />
 
         {/* Dialog for client details */}
-        <Dialog>
-          <DialogTrigger asChild>
-            <div style={{ display: 'none' }}>
-              {/* Trigger invisible - le dialogue est ouvert programmatiquement */}
-            </div>
-          </DialogTrigger>
+        <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
           <ClientDetailDialog
             user={selectedUser}
             orders={orders}
             invoices={invoices}
             editingProfile={editingProfile}
-            setEditingProfile={() => {}} // Géré par les hooks
+            setEditingProfile={setEditingProfile}
             profileForm={profileForm}
             setProfileForm={setProfileForm}
             onEditProfile={handleEditProfile}
-            onSaveProfile={handleSaveProfile}
+            onSaveProfile={() => selectedUser ? handleSaveProfile(selectedUser.user_id) : Promise.resolve()}
             onCancelEdit={handleCancelEdit}
             updateClientData={updateClientData}
           />

@@ -23,6 +23,13 @@ const RoleProtectedRoute: React.FC<RoleProtectedRouteProps> = ({
 }) => {
   const { user, loading, userInfo } = useAuth();
 
+  console.log('=== RoleProtectedRoute Debug ===');
+  console.log('User:', !!user, user?.email);
+  console.log('Loading:', loading);
+  console.log('UserInfo:', userInfo);
+  console.log('AllowedRoles:', allowedRoles);
+  console.log('RequireInternal:', requireInternal);
+
   // Chargement en cours
   if (loading) {
     return (
