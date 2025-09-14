@@ -9,6 +9,7 @@ import { useAllClients, ClientWithRole } from '@/hooks/useClientData';
 import { useAdminOrders } from '@/hooks/useOrders';
 import { useInvoices } from '@/hooks/useInvoices';
 import { useAuth } from '@/contexts/AuthContext';
+// Simplification temporaire des types
 
 // Import des composants optimisés
 import { ClientStats } from '@/components/admin/users/ClientStats';
@@ -30,7 +31,7 @@ const AdminUsers = () => {
   console.log('Auth state:', { currentUser: !!currentUser, authLoading });
 
   // Récupération des données
-  const { data: clients = [], isLoading, error } = useAllClients() as { data: ClientWithRole[], isLoading: boolean, error: any };
+  const { data: clients = [], isLoading, error } = useAllClients() as { data: ClientWithRole[], isLoading: boolean, error: Error | null };
 
   console.log('Clients data:', { clients: clients?.length, isLoading, error: error?.message || error });
   const { data: orders = [] } = useAdminOrders();

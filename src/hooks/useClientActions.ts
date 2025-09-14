@@ -3,7 +3,7 @@ import { useUpdateClientData } from './useClientData';
 import { useQueryClient } from '@tanstack/react-query';
 import { toast } from './use-toast';
 
-interface ProfileForm {
+export interface ProfileForm {
   first_name: string;
   last_name: string;
   address: string;

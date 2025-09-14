@@ -4,19 +4,18 @@ export type Order = Database['public']['Tables']['orders']['Row'];
 export type Invoice = Database['public']['Tables']['invoices']['Row'];
 
 export interface ProfileFormData {
-  email: string;
   first_name: string;
   last_name: string;
-  phone: string;
   address: string;
+  address_complement: string;
   city: string;
   postal_code: string;
   country: string;
-  address_complement?: string;
-  preferred_shipping_address?: string;
-  marketing_phone?: boolean;
-  marketing_consent?: boolean;
-  notes?: string;
+  marketing_phone: string;
+  marketing_consent: boolean;
+  notes: string;
+  preferred_shipping_address: any;
+  preferred_billing_address: any;
 }
 
 export interface ClientData {
@@ -34,7 +33,9 @@ export interface ClientData {
 }
 
 export interface UpdateClientData {
-  updateProfile: (data: Partial<ProfileFormData>) => Promise<void>;
-  isUpdating: boolean;
+  mutate: (data: { userId: string; updates: Partial<ClientData> }) => void;
+  isLoading: boolean;
   isPending?: boolean;
+  isError: boolean;
+  error: Error | null;
 }
