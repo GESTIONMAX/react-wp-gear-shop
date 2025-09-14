@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { HelmetProvider } from "react-helmet-async";
 import { CartProvider } from "@/contexts/CartContext";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { lazy, Suspense } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Home from "./pages/Home";
@@ -17,19 +18,21 @@ import Blog from "./pages/Blog";
 import Sport from "./pages/categories/Sport";
 import Lifestyle from "./pages/categories/Lifestyle";
 import Prismatic from "./pages/categories/Prismatic";
-import AdminDashboard from "./pages/admin/AdminDashboard";
-import AdminUsers from "./pages/admin/AdminUsers";
-import AdminSystemUsers from "./pages/admin/AdminSystemUsers";
-import AdminSuppliers from "./pages/admin/AdminSuppliers";
-import AdminProducts from "./pages/admin/AdminProducts";
-import AdminCollections from "./pages/admin/AdminCollections";
-import AdminVariants from "./pages/admin/AdminVariants";
-import AdminCategories from "./pages/admin/AdminCategories";
-import AdminOrders from "./pages/admin/AdminOrders";
-import AdminInvoices from "./pages/admin/AdminInvoices";
-import AdminSettings from "./pages/admin/AdminSettings";
-import AdminAnalytics from "./pages/admin/AdminAnalytics";
 import ProtectedRoute from "./components/admin/ProtectedRoute";
+
+// Lazy load admin pages for better bundle splitting
+const AdminDashboard = lazy(() => import("./pages/admin/AdminDashboard"));
+const AdminUsers = lazy(() => import("./pages/admin/AdminUsers"));
+const AdminSystemUsers = lazy(() => import("./pages/admin/AdminSystemUsers"));
+const AdminSuppliers = lazy(() => import("./pages/admin/AdminSuppliers"));
+const AdminProducts = lazy(() => import("./pages/admin/AdminProducts"));
+const AdminCollections = lazy(() => import("./pages/admin/AdminCollections"));
+const AdminVariants = lazy(() => import("./pages/admin/AdminVariants"));
+const AdminCategories = lazy(() => import("./pages/admin/AdminCategories"));
+const AdminOrders = lazy(() => import("./pages/admin/AdminOrders"));
+const AdminInvoices = lazy(() => import("./pages/admin/AdminInvoices"));
+const AdminSettings = lazy(() => import("./pages/admin/AdminSettings"));
+const AdminAnalytics = lazy(() => import("./pages/admin/AdminAnalytics"));
 import Checkout from "./pages/Checkout";
 import OrderSuccess from "./pages/OrderSuccess";
 import NotFound from "./pages/NotFound";
@@ -61,62 +64,86 @@ const App = () => (
                 <Route path="/wishlist" element={<Wishlist />} />
               <Route path="/admin" element={
                 <ProtectedRoute>
-                  <AdminDashboard />
+                  <Suspense fallback={<div className="flex items-center justify-center min-h-screen"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div></div>}>
+                    <AdminDashboard />
+                  </Suspense>
                 </ProtectedRoute>
               } />
               <Route path="/admin/users" element={
                 <ProtectedRoute>
-                  <AdminUsers />
+                  <Suspense fallback={<div className="flex items-center justify-center min-h-screen"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div></div>}>
+                    <AdminUsers />
+                  </Suspense>
                 </ProtectedRoute>
               } />
               <Route path="/admin/system-users" element={
                 <ProtectedRoute>
-                  <AdminSystemUsers />
+                  <Suspense fallback={<div className="flex items-center justify-center min-h-screen"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div></div>}>
+                    <AdminSystemUsers />
+                  </Suspense>
                 </ProtectedRoute>
               } />
               <Route path="/admin/suppliers" element={
                 <ProtectedRoute>
-                  <AdminSuppliers />
+                  <Suspense fallback={<div className="flex items-center justify-center min-h-screen"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div></div>}>
+                    <AdminSuppliers />
+                  </Suspense>
                 </ProtectedRoute>
               } />
               <Route path="/admin/products" element={
                 <ProtectedRoute>
-                  <AdminProducts />
+                  <Suspense fallback={<div className="flex items-center justify-center min-h-screen"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div></div>}>
+                    <AdminProducts />
+                  </Suspense>
                 </ProtectedRoute>
               } />
               <Route path="/admin/collections" element={
                 <ProtectedRoute>
-                  <AdminCollections />
+                  <Suspense fallback={<div className="flex items-center justify-center min-h-screen"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div></div>}>
+                    <AdminCollections />
+                  </Suspense>
                 </ProtectedRoute>
               } />
               <Route path="/admin/variants" element={
                 <ProtectedRoute>
-                  <AdminVariants />
+                  <Suspense fallback={<div className="flex items-center justify-center min-h-screen"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div></div>}>
+                    <AdminVariants />
+                  </Suspense>
                 </ProtectedRoute>
               } />
               <Route path="/admin/categories" element={
                 <ProtectedRoute>
-                  <AdminCategories />
+                  <Suspense fallback={<div className="flex items-center justify-center min-h-screen"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div></div>}>
+                    <AdminCategories />
+                  </Suspense>
                 </ProtectedRoute>
               } />
               <Route path="/admin/orders" element={
                 <ProtectedRoute>
-                  <AdminOrders />
+                  <Suspense fallback={<div className="flex items-center justify-center min-h-screen"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div></div>}>
+                    <AdminOrders />
+                  </Suspense>
                 </ProtectedRoute>
               } />
               <Route path="/admin/invoices" element={
                 <ProtectedRoute>
-                  <AdminInvoices />
+                  <Suspense fallback={<div className="flex items-center justify-center min-h-screen"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div></div>}>
+                    <AdminInvoices />
+                  </Suspense>
                 </ProtectedRoute>
               } />
               <Route path="/admin/settings" element={
                 <ProtectedRoute>
-                  <AdminSettings />
+                  <Suspense fallback={<div className="flex items-center justify-center min-h-screen"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div></div>}>
+                    <AdminSettings />
+                  </Suspense>
                 </ProtectedRoute>
               } />
               <Route path="/admin/analytics" element={
                 <ProtectedRoute>
-                  <AdminAnalytics />
+                  <Suspense fallback={<div className="flex items-center justify-center min-h-screen"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div></div>}>
+                    <AdminAnalytics />
+                  </Suspense>
                 </ProtectedRoute>
               } />
               <Route path="/checkout" element={<Checkout />} />
