@@ -9,9 +9,10 @@ import { Input } from '@/components/ui/input';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { Loader2, Search, Package, Plus, MoreHorizontal, Edit, Trash2, Eye, EyeOff } from 'lucide-react';
+import { Loader2, Search, Package, Plus, MoreHorizontal, Edit, Trash2, Eye, EyeOff, Images } from 'lucide-react';
 import { useAdminProducts, useDeleteProduct, useToggleProductStatus, useCreateProduct, useUpdateProduct } from '@/hooks/useAdminProducts';
 import ProductForm from '@/components/admin/ProductForm';
+import ProductImageUploader from '@/components/admin/ProductImageUploader';
 import { toast } from '@/hooks/use-toast';
 
 // Page de gestion des produits
@@ -22,6 +23,11 @@ const AdminProducts = () => {
   const [selectedProduct, setSelectedProduct] = useState<any>(null);
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [showImageManager, setShowImageManager] = useState(false);
+  const [selectedProductForImages, setSelectedProductForImages] = useState<{
+    id: string;
+    name: string;
+  } | null>(null);
   
   const { data: products = [], isLoading, error } = useAdminProducts();
   const deleteProduct = useDeleteProduct();
@@ -127,6 +133,16 @@ const AdminProducts = () => {
         variant: "destructive",
       });
     }
+  };
+
+  const handleManageImages = (product: { id: string; name: string }) => {
+    setSelectedProductForImages(product);
+    setShowImageManager(true);
+  };
+
+  const handleImageManagerClose = () => {
+    setShowImageManager(false);
+    setSelectedProductForImages(null);
   };
 
   // Get unique categories for filter
@@ -370,6 +386,10 @@ const AdminProducts = () => {
                             </Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end">
+                            <DropdownMenuItem onClick={() => handleManageImages({ id: product.id, name: product.name })}>
+                              <Images className="mr-2 h-4 w-4" />
+                              Gérer Images
+                            </DropdownMenuItem>
                             <DropdownMenuItem onClick={() => handleEdit(product)}>
                               <Edit className="mr-2 h-4 w-4" />
                               Modifier
@@ -440,6 +460,34 @@ const AdminProducts = () => {
             )}
           </DialogContent>
         </Dialog>
+
+        {/* Image Management Section */}
+        {showImageManager && selectedProductForImages && (
+          <Card className="mt-6">
+            <CardHeader>
+              <div className="flex justify-between items-center">
+                <div>
+                  <CardTitle>Gestion des images - {selectedProductForImages.name}</CardTitle>
+                  <CardDescription>
+                    Téléchargez et gérez les images pour ce produit
+                  </CardDescription>
+                </div>
+                <Button variant="outline" onClick={handleImageManagerClose}>
+                  Fermer
+                </Button>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <ProductImageUploader
+                productId={selectedProductForImages.id}
+                productName={selectedProductForImages.name}
+                onImagesUploaded={() => {
+                  // Optionnel: vous pouvez ajouter une logique de refresh ici
+                }}
+              />
+            </CardContent>
+          </Card>
+        )}
       </div>
     </AdminLayout>
   );

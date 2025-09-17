@@ -6,7 +6,9 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import ProductImageCarousel from '@/components/ProductImageCarousel';
 import { useProductBySlug } from '@/hooks/useProducts';
+import { useProductImages } from '@/hooks/useProductImages';
 import { useCart } from '@/contexts/CartContext';
 import { toast } from '@/hooks/use-toast';
 
@@ -19,12 +21,25 @@ const ProductDetail = () => {
 
   const { data: product, isLoading, error } = useProductBySlug(slug || '');
 
+  // Get product images from database
+  const { images: productImages } = useProductImages({
+    productId: product?.id
+  });
+
   // Get current variant and its images
-  const currentVariant = selectedVariant 
+  const currentVariant = selectedVariant
     ? product?.variants?.find(v => v.id === selectedVariant)
     : null;
-  
-  const currentImages = currentVariant?.images || product?.images || [];
+
+  // Prefer database images, fallback to product.images array
+  const fallbackImages = currentVariant?.images || product?.images || [];
+  const databaseImages = productImages.map(img => ({
+    url: img.image_url,
+    alt: img.alt_text,
+    type: img.type
+  }));
+
+  const currentImages = databaseImages.length > 0 ? databaseImages : fallbackImages.map(url => ({ url }));
 
   // Reset image index when variant changes
   React.useEffect(() => {
@@ -85,44 +100,21 @@ const ProductDetail = () => {
         </Button>
 
         <div className="grid lg:grid-cols-2 gap-12">
-          {/* Image Gallery */}
+          {/* Enhanced Image Gallery with Carousel */}
           <div className="space-y-4">
-            {/* Main Image */}
-            <Card className="overflow-hidden">
-              <CardContent className="p-0 relative group">
-                <img
-                  src={currentImages[selectedImageIndex] || 'https://images.unsplash.com/photo-1572635196237-14b3f281503f?w=600&h=600&fit=crop&crop=center'}
-                  alt={currentVariant ? `${product.name} - ${currentVariant.name}` : product.name}
-                  className="w-full h-96 lg:h-[500px] object-cover transition-transform duration-300 group-hover:scale-105"
-                />
-                {product.salePrice && (
-                  <Badge className="absolute top-4 left-4 bg-accent text-accent-foreground">
-                    -{Math.round(((product.price - product.salePrice) / product.price) * 100)}%
-                  </Badge>
-                )}
-              </CardContent>
-            </Card>
+            <ProductImageCarousel
+              images={currentImages}
+              productName={currentVariant ? `${product.name} - ${currentVariant.name}` : product.name}
+              autoPlay={true}
+              autoPlayInterval={5000}
+            />
 
-            {/* Thumbnail Images */}
-            {currentImages && currentImages.length > 1 && (
-              <div className="grid grid-cols-4 gap-2">
-                {currentImages.map((image, index) => (
-                  <Card
-                    key={index}
-                    className={`cursor-pointer overflow-hidden transition-all ${
-                      selectedImageIndex === index ? 'ring-2 ring-primary' : ''
-                    }`}
-                    onClick={() => setSelectedImageIndex(index)}
-                  >
-                    <CardContent className="p-0">
-                      <img
-                        src={image}
-                        alt={`${currentVariant ? currentVariant.name : product.name} ${index + 1}`}
-                        className="w-full h-20 object-cover"
-                      />
-                    </CardContent>
-                  </Card>
-                ))}
+            {/* Sale Badge overlay */}
+            {product.salePrice && (
+              <div className="absolute top-4 left-4 z-10">
+                <Badge className="bg-accent text-accent-foreground">
+                  -{Math.round(((product.price - product.salePrice) / product.price) * 100)}%
+                </Badge>
               </div>
             )}
           </div>
