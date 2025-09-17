@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { Product, ProductVariant } from '@/types';
 import { useCart } from '@/contexts/CartContext';
 import { WishlistButton } from '@/components/WishlistButton';
+import { useVariantMainImage } from '@/hooks/useVariantImages';
 
 interface ProductVariantCardProps {
   product: Product;
@@ -14,12 +15,14 @@ interface ProductVariantCardProps {
   className?: string;
 }
 
-export const ProductVariantCard: React.FC<ProductVariantCardProps> = ({ 
-  product, 
-  variant, 
-  className 
+export const ProductVariantCard: React.FC<ProductVariantCardProps> = ({
+  product,
+  variant,
+  className
 }) => {
   const { addItem } = useCart();
+  const { mainImage, loading: imageLoading } = useVariantMainImage(variant.id);
+  const [imageError, setImageError] = useState(false);
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('fr-FR', {
@@ -39,15 +42,28 @@ export const ProductVariantCard: React.FC<ProductVariantCardProps> = ({
   // Create a display name combining product name and variant name
   const displayName = `${product.name} - ${variant.name}`;
 
+  // Image à afficher (variante depuis Supabase ou fallback)
+  const displayImage = !imageLoading && mainImage && !imageError
+    ? mainImage.image_url
+    : variant.images?.[0] || product.images[0] || '/placeholder-product.jpg';
+
   return (
     <Link to={`/product/${product.slug}?variant=${variant.id}`}>
       <Card className={`group overflow-hidden transition-all duration-300 hover:shadow-elegant hover:-translate-y-1 ${className}`}>
         <div className="relative aspect-square overflow-hidden">
           <img
-            src={variant.images?.[0] || product.images[0]}
+            src={displayImage}
             alt={displayName}
             className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+            onError={() => setImageError(true)}
           />
+
+          {/* Loading overlay pour les images */}
+          {imageLoading && (
+            <div className="absolute inset-0 bg-muted animate-pulse flex items-center justify-center">
+              <div className="text-muted-foreground text-xs">Chargement...</div>
+            </div>
+          )}
           
           {/* Sale badge */}
           {isOnSale && (

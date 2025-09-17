@@ -6,6 +6,7 @@ import { Card, CardContent, CardFooter } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Product } from '@/types';
 import { useCart } from '@/contexts/CartContext';
+import { useProductImage } from '@/hooks/useProductImage';
 
 interface ProductCardProps {
   product: Product;
@@ -15,6 +16,7 @@ interface ProductCardProps {
 export const ProductCard: React.FC<ProductCardProps> = ({ product, className }) => {
   const [isLiked, setIsLiked] = useState(false);
   const { addItem } = useCart();
+  const { imageUrl, loading: imageLoading } = useProductImage(product.id, product.images?.[0]);
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('fr-FR', {
@@ -40,11 +42,21 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, className }) 
     <Link to={`/product/${product.slug}`}>
       <Card className={`group overflow-hidden transition-all duration-300 hover:shadow-elegant hover:-translate-y-1 ${className}`}>
         <div className="relative aspect-square overflow-hidden">
-          <img
-            src={product.images[0]}
-            alt={product.name}
-            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-          />
+          {imageLoading ? (
+            <div className="w-full h-full bg-muted animate-pulse flex items-center justify-center">
+              <span className="text-muted-foreground text-sm">Chargement...</span>
+            </div>
+          ) : (
+            <img
+              src={imageUrl || '/placeholder-product.jpg'}
+              alt={product.name}
+              className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+              onError={(e) => {
+                const target = e.target as HTMLImageElement;
+                target.src = '/placeholder-product.jpg';
+              }}
+            />
+          )}
           
           {/* Sale badge */}
           {isOnSale && (

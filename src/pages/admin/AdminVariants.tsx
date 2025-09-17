@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import AdminLayout from '@/components/admin/AdminLayout';
 import { Layers3, Plus, Package, Edit, Trash2, Eye, EyeOff } from 'lucide-react';
@@ -13,13 +13,15 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { formatDistanceToNow } from 'date-fns';
-import { fr } from 'date-fns/locale';
+import CreateVariantForm from '@/components/admin/CreateVariantForm';
+import ImageUploadDebug from '@/components/admin/ImageUploadDebug';
 
 const AdminVariants: React.FC = () => {
   const { data: variants, isLoading, error } = useVariants();
   const toggleStock = useToggleVariantStock();
   const deleteVariant = useDeleteVariant();
+  const [showCreateForm, setShowCreateForm] = useState(false);
+  const [editingVariant, setEditingVariant] = useState<any>(null);
 
   const handleToggleStock = (id: string) => {
     toggleStock.mutate(id);
@@ -32,6 +34,26 @@ const AdminVariants: React.FC = () => {
   };
 
   const formatPrice = (price: number) => `${(price / 100).toFixed(2)} €`;
+
+  const handleCreateVariant = () => {
+    setEditingVariant(null);
+    setShowCreateForm(true);
+  };
+
+  const handleEditVariant = (variant: any) => {
+    setEditingVariant(variant);
+    setShowCreateForm(true);
+  };
+
+  const handleFormClose = () => {
+    setShowCreateForm(false);
+    setEditingVariant(null);
+  };
+
+  const handleCreateSuccess = () => {
+    // Recharger les données des variantes
+    window.location.reload();
+  };
 
   if (isLoading) {
     return (
@@ -61,8 +83,8 @@ const AdminVariants: React.FC = () => {
   const uniqueAttributes = new Set(variants?.flatMap(v => Object.keys(v.attributes || {}))).size || 0;
 
   return (
-    <AdminLayout 
-      title="Gestion des Variantes" 
+    <AdminLayout
+      title="Gestion des Variantes"
       description="Gérez les différentes variantes de vos produits"
     >
       <div className="space-y-6">
@@ -74,7 +96,7 @@ const AdminVariants: React.FC = () => {
               Créez et gérez les différentes options de vos produits
             </p>
           </div>
-          <Button className="gap-2">
+          <Button className="gap-2" onClick={handleCreateVariant}>
             <Plus className="h-4 w-4" />
             Nouvelle Variante
           </Button>
@@ -135,15 +157,26 @@ const AdminVariants: React.FC = () => {
           </Card>
         </div>
 
-        {/* Liste des variantes */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Variantes de Produits</CardTitle>
-            <CardDescription>
-              Gérez toutes vos variantes de produits existantes
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
+        {/* Gestion des variantes */}
+        <div className="space-y-6">
+          {/* Formulaire de création */}
+          {showCreateForm && (
+            <CreateVariantForm
+              onClose={handleFormClose}
+              onSuccess={handleCreateSuccess}
+              editingVariant={editingVariant}
+            />
+          )}
+
+          {/* Liste des variantes */}
+          <Card>
+              <CardHeader>
+                <CardTitle>Variantes de Produits</CardTitle>
+                <CardDescription>
+                  Gérez toutes vos variantes de produits existantes
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
             {variants && variants.length > 0 ? (
               <Table>
                 <TableHeader>
@@ -219,7 +252,11 @@ const AdminVariants: React.FC = () => {
                               <Eye className="h-4 w-4" />
                             )}
                           </Button>
-                          <Button variant="ghost" size="sm">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleEditVariant(variant)}
+                          >
                             <Edit className="h-4 w-4" />
                           </Button>
                           <Button 
@@ -250,50 +287,51 @@ const AdminVariants: React.FC = () => {
                 </Button>
               </div>
             )}
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
 
-        {/* Section informative */}
-        {variants && variants.length > 0 && (
-          <div className="grid gap-4 md:grid-cols-2">
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-base">Exemples de Variantes</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-2">
-                <div className="text-sm">
-                  <strong>Vêtements :</strong> Taille, Couleur, Matière
-                </div>
-                <div className="text-sm">
-                  <strong>Électronique :</strong> Capacité, Couleur, Version
-                </div>
-                <div className="text-sm">
-                  <strong>Accessoires :</strong> Couleur, Style, Compatibilité
-                </div>
-              </CardContent>
-            </Card>
+          {/* Section informative */}
+          {variants && variants.length > 0 && (
+            <div className="grid gap-4 md:grid-cols-2">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-base">Exemples de Variantes</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-2">
+                  <div className="text-sm">
+                    <strong>Vêtements :</strong> Taille, Couleur, Matière
+                  </div>
+                  <div className="text-sm">
+                    <strong>Électronique :</strong> Capacité, Couleur, Version
+                  </div>
+                  <div className="text-sm">
+                    <strong>Accessoires :</strong> Couleur, Style, Compatibilité
+                  </div>
+                </CardContent>
+              </Card>
 
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-base">Avantages des Variantes</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-2">
-                <div className="text-sm">
-                  ✓ Gestion séparée des stocks par option
-                </div>
-                <div className="text-sm">
-                  ✓ Prix différenciés par variante
-                </div>
-                <div className="text-sm">
-                  ✓ Images spécifiques à chaque option
-                </div>
-                <div className="text-sm">
-                  ✓ Meilleure expérience client
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        )}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-base">Avantages des Variantes</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-2">
+                  <div className="text-sm">
+                    ✓ Gestion séparée des stocks par option
+                  </div>
+                  <div className="text-sm">
+                    ✓ Prix différenciés par variante
+                  </div>
+                  <div className="text-sm">
+                    ✓ Images spécifiques à chaque option
+                  </div>
+                  <div className="text-sm">
+                    ✓ Meilleure expérience client
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          )}
+        </div>
       </div>
     </AdminLayout>
   );

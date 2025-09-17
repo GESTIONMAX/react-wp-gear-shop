@@ -10,7 +10,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Loader2, Search, Package, Plus, MoreHorizontal, Edit, Trash2, Eye, EyeOff } from 'lucide-react';
-import { useAdminProducts, useDeleteProduct, useToggleProductStatus } from '@/hooks/useAdminProducts';
+import { useAdminProducts, useDeleteProduct, useToggleProductStatus, useCreateProduct, useUpdateProduct } from '@/hooks/useAdminProducts';
 import ProductForm from '@/components/admin/ProductForm';
 import { toast } from '@/hooks/use-toast';
 
@@ -26,6 +26,8 @@ const AdminProducts = () => {
   const { data: products = [], isLoading, error } = useAdminProducts();
   const deleteProduct = useDeleteProduct();
   const toggleProductStatus = useToggleProductStatus();
+  const createProduct = useCreateProduct();
+  const updateProduct = useUpdateProduct();
 
   const handleDelete = async (productId: string) => {
     if (window.confirm('Êtes-vous sûr de vouloir supprimer ce produit ?')) {
@@ -64,6 +66,67 @@ const AdminProducts = () => {
   const handleEdit = (product: any) => {
     setSelectedProduct(product);
     setIsEditDialogOpen(true);
+  };
+
+  const handleCreateProduct = async (productData: any) => {
+    try {
+      // Le ProductForm envoie les prix en euros, on les convertit en centimes ici
+      const cleanData = {
+        ...productData,
+        // Convertir euros en centimes pour la base de données
+        price: Math.round(parseFloat(productData.price) * 100),
+        sale_price: productData.sale_price ? Math.round(parseFloat(productData.sale_price) * 100) : null,
+        // S'assurer des types corrects
+        stock_quantity: parseInt(productData.stock_quantity.toString()) || 0,
+        in_stock: Boolean(productData.in_stock),
+      };
+
+      console.log('Données à créer (prix convertis en centimes):', cleanData);
+      await createProduct.mutateAsync(cleanData);
+      toast({
+        title: "Produit créé",
+        description: "Le produit a été créé avec succès.",
+      });
+      setIsCreateDialogOpen(false);
+    } catch (error) {
+      console.error('Erreur création produit:', error);
+      toast({
+        title: "Erreur",
+        description: `Impossible de créer le produit: ${error.message}`,
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleUpdateProduct = async (productData: any) => {
+    try {
+      // Le ProductForm envoie les prix en euros, on les convertit en centimes ici
+      const cleanData = {
+        ...productData,
+        // Convertir euros en centimes pour la base de données
+        price: Math.round(parseFloat(productData.price) * 100),
+        sale_price: productData.sale_price ? Math.round(parseFloat(productData.sale_price) * 100) : null,
+        // S'assurer des types corrects
+        stock_quantity: parseInt(productData.stock_quantity.toString()) || 0,
+        in_stock: Boolean(productData.in_stock),
+      };
+
+      console.log('Données à modifier (prix convertis en centimes):', cleanData);
+      await updateProduct.mutateAsync(cleanData);
+      toast({
+        title: "Produit modifié",
+        description: "Le produit a été modifié avec succès.",
+      });
+      setIsEditDialogOpen(false);
+      setSelectedProduct(null);
+    } catch (error) {
+      console.error('Erreur mise à jour produit:', error);
+      toast({
+        title: "Erreur",
+        description: `Impossible de modifier le produit: ${error.message}`,
+        variant: "destructive",
+      });
+    }
   };
 
   // Get unique categories for filter
@@ -180,9 +243,10 @@ const AdminProducts = () => {
                       Ajoutez un nouveau produit à votre catalogue
                     </DialogDescription>
                   </DialogHeader>
-                  <ProductForm 
-                    onSubmit={() => {}}
+                  <ProductForm
+                    onSubmit={handleCreateProduct}
                     onCancel={() => setIsCreateDialogOpen(false)}
+                    isLoading={createProduct.isPending}
                   />
                 </DialogContent>
               </Dialog>
@@ -363,13 +427,14 @@ const AdminProducts = () => {
               </DialogDescription>
             </DialogHeader>
             {selectedProduct && (
-              <ProductForm 
+              <ProductForm
                 product={selectedProduct}
-                onSubmit={() => {}}
+                onSubmit={handleUpdateProduct}
                 onCancel={() => {
                   setIsEditDialogOpen(false);
                   setSelectedProduct(null);
                 }}
+                isLoading={updateProduct.isPending}
                 isEditing={true}
               />
             )}

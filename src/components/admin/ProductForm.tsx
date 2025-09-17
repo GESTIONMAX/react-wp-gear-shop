@@ -75,8 +75,9 @@ const ProductForm: React.FC<ProductFormProps> = ({
       slug: product?.slug || '',
       description: product?.description || '',
       short_description: product?.short_description || '',
-      price: product?.price || 0,
-      sale_price: product?.sale_price || undefined,
+      // Convertir centimes en euros pour l'affichage
+      price: product?.price ? (product.price / 100) : 0,
+      sale_price: product?.sale_price ? (product.sale_price / 100) : undefined,
       category_id: product?.category_id || '',
       in_stock: product?.in_stock ?? true,
       stock_quantity: product?.stock_quantity || 0,
@@ -253,11 +254,13 @@ const ProductForm: React.FC<ProductFormProps> = ({
         <CardContent className="space-y-4">
           <div className="grid gap-4 md:grid-cols-3">
             <div className="space-y-2">
-              <Label htmlFor="price">Prix (en centimes) *</Label>
+              <Label htmlFor="price">Prix (€) *</Label>
               <Input
                 id="price"
                 type="number"
-                {...register('price', { 
+                step="0.01"
+                placeholder="29.99"
+                {...register('price', {
                   required: 'Le prix est requis',
                   min: { value: 0, message: 'Le prix doit être positif' }
                 })}
@@ -266,18 +269,23 @@ const ProductForm: React.FC<ProductFormProps> = ({
                 <p className="text-sm text-destructive">{String(errors.price.message)}</p>
               )}
               <p className="text-xs text-muted-foreground">
-                Ex: 1999 pour 19,99€
+                Prix en euros (ex: 19.99)
               </p>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="sale_price">Prix promotionnel (en centimes)</Label>
+              <Label htmlFor="sale_price">Prix promotionnel (€)</Label>
               <Input
                 id="sale_price"
                 type="number"
+                step="0.01"
+                placeholder="19.99"
                 {...register('sale_price', {
                   min: { value: 0, message: 'Le prix doit être positif' }
                 })}
               />
+              <p className="text-xs text-muted-foreground">
+                Prix promo en euros (optionnel)
+              </p>
             </div>
             <div className="space-y-2">
               <Label htmlFor="stock_quantity">Quantité en stock</Label>

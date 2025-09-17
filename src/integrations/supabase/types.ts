@@ -196,6 +196,44 @@ export type Database = {
         }
         Relationships: []
       }
+      category_images: {
+        Row: {
+          alt_text: string | null
+          bucket_name: string
+          category_id: string | null
+          id: string
+          image_url: string
+          storage_path: string
+          type: string
+        }
+        Insert: {
+          alt_text?: string | null
+          bucket_name: string
+          category_id?: string | null
+          id?: string
+          image_url: string
+          storage_path: string
+          type: string
+        }
+        Update: {
+          alt_text?: string | null
+          bucket_name?: string
+          category_id?: string | null
+          id?: string
+          image_url?: string
+          storage_path?: string
+          type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "category_images_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       clients: {
         Row: {
           address: string | null
@@ -614,64 +652,31 @@ export type Database = {
       }
       profiles: {
         Row: {
-          avatar_url: string | null
-          created_at: string
-          email: string | null
-          first_name: string | null
+          created_at: string | null
+          email: string
+          full_name: string | null
           id: string
-          last_name: string | null
           phone: string | null
-          updated_at: string
-          user_id: string
+          role: Database["public"]["Enums"]["app_role"]
+          updated_at: string | null
         }
         Insert: {
-          avatar_url?: string | null
-          created_at?: string
-          email?: string | null
-          first_name?: string | null
-          id?: string
-          last_name?: string | null
-          phone?: string | null
-          updated_at?: string
-          user_id: string
-        }
-        Update: {
-          avatar_url?: string | null
-          created_at?: string
-          email?: string | null
-          first_name?: string | null
-          id?: string
-          last_name?: string | null
-          phone?: string | null
-          updated_at?: string
-          user_id?: string
-        }
-        Relationships: []
-      }
-      profiles_audit_log: {
-        Row: {
-          action: string | null
+          created_at?: string | null
+          email: string
+          full_name?: string | null
           id: string
-          ip_address: unknown | null
-          timestamp: string | null
-          user_agent: string | null
-          user_id: string | null
-        }
-        Insert: {
-          action?: string | null
-          id?: string
-          ip_address?: unknown | null
-          timestamp?: string | null
-          user_agent?: string | null
-          user_id?: string | null
+          phone?: string | null
+          role?: Database["public"]["Enums"]["app_role"]
+          updated_at?: string | null
         }
         Update: {
-          action?: string | null
+          created_at?: string | null
+          email?: string
+          full_name?: string | null
           id?: string
-          ip_address?: unknown | null
-          timestamp?: string | null
-          user_agent?: string | null
-          user_id?: string | null
+          phone?: string | null
+          role?: Database["public"]["Enums"]["app_role"]
+          updated_at?: string | null
         }
         Relationships: []
       }
@@ -750,32 +755,108 @@ export type Database = {
         }
         Relationships: []
       }
-      user_roles: {
+      variant_images: {
         Row: {
-          created_at: string
+          alt_text: string | null
+          context: string | null
+          created_at: string | null
           id: string
-          role: Database["public"]["Enums"]["app_role"]
-          updated_at: string
-          user_id: string
-          user_type: Database["public"]["Enums"]["user_type"] | null
+          image_url: string
+          sort_order: number | null
+          storage_path: string
+          type: string
+          updated_at: string | null
+          variant_id: string | null
         }
         Insert: {
-          created_at?: string
+          alt_text?: string | null
+          context?: string | null
+          created_at?: string | null
           id?: string
-          role?: Database["public"]["Enums"]["app_role"]
-          updated_at?: string
-          user_id: string
-          user_type?: Database["public"]["Enums"]["user_type"] | null
+          image_url: string
+          sort_order?: number | null
+          storage_path: string
+          type: string
+          updated_at?: string | null
+          variant_id?: string | null
         }
         Update: {
-          created_at?: string
+          alt_text?: string | null
+          context?: string | null
+          created_at?: string | null
           id?: string
-          role?: Database["public"]["Enums"]["app_role"]
-          updated_at?: string
-          user_id?: string
-          user_type?: Database["public"]["Enums"]["user_type"] | null
+          image_url?: string
+          sort_order?: number | null
+          storage_path?: string
+          type?: string
+          updated_at?: string | null
+          variant_id?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "variant_images_variant_id_fkey"
+            columns: ["variant_id"]
+            isOneToOne: false
+            referencedRelation: "variants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      variants: {
+        Row: {
+          created_at: string | null
+          id: string
+          in_stock: boolean | null
+          name: string
+          price: number | null
+          price_modifier: number | null
+          product_id: string | null
+          properties: Json
+          sale_price: number | null
+          sku: string
+          sort_order: number | null
+          stock_quantity: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          in_stock?: boolean | null
+          name: string
+          price?: number | null
+          price_modifier?: number | null
+          product_id?: string | null
+          properties: Json
+          sale_price?: number | null
+          sku: string
+          sort_order?: number | null
+          stock_quantity?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          in_stock?: boolean | null
+          name?: string
+          price?: number | null
+          price_modifier?: number | null
+          product_id?: string | null
+          properties?: Json
+          sale_price?: number | null
+          sku?: string
+          sort_order?: number | null
+          stock_quantity?: number | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "variants_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       wishlist: {
         Row: {
@@ -817,30 +898,8 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: string
       }
-      get_user_role: {
-        Args: { _user_id: string }
-        Returns: Database["public"]["Enums"]["app_role"]
-      }
-      get_user_type: {
-        Args: { _user_id: string }
-        Returns: Database["public"]["Enums"]["user_type"]
-      }
-      has_any_role: {
-        Args: {
-          _roles: Database["public"]["Enums"]["app_role"][]
-          _user_id: string
-        }
-        Returns: boolean
-      }
-      has_role: {
-        Args: {
-          _role: Database["public"]["Enums"]["app_role"]
-          _user_id: string
-        }
-        Returns: boolean
-      }
-      is_internal_user: {
-        Args: { _user_id: string }
+      is_admin: {
+        Args: { _user_id?: string }
         Returns: boolean
       }
       validate_profile_access: {
@@ -849,8 +908,7 @@ export type Database = {
       }
     }
     Enums: {
-      app_role: "admin" | "user" | "staff" | "employee" | "client"
-      user_type: "internal" | "external"
+      app_role: "admin" | "client"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -978,8 +1036,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      app_role: ["admin", "user", "staff", "employee", "client"],
-      user_type: ["internal", "external"],
+      app_role: ["admin", "client"],
     },
   },
 } as const
