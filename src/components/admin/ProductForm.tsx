@@ -11,7 +11,7 @@ import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { CreateProductData, UpdateProductData, useAdminCategories } from '@/hooks/useAdminProducts';
 import ImageUploader from './ImageUploader';
-import { UploadedImage } from '@/hooks/useImageUpload';
+import { UploadedImage } from '@/types/storage';
 import { X, Plus } from 'lucide-react';
 import type { Database } from '@/integrations/supabase/types';
 
@@ -106,7 +106,10 @@ const ProductForm: React.FC<ProductFormProps> = ({
       const initialImages: UploadedImage[] = product.images?.map((img) => ({
         url: img.image_url,
         path: img.image_url.split('/').pop() || '',
-        name: img.alt_text || 'Image produit'
+        name: img.alt_text || 'Image produit',
+        bucket: 'product-images',
+        size: 0,
+        type: 'image/jpeg'
       }));
       setImages(initialImages);
     }
@@ -227,10 +230,17 @@ const ProductForm: React.FC<ProductFormProps> = ({
         </CardHeader>
         <CardContent>
           <ImageUploader
-            bucket="products"
+            bucket="product-images"
             onImagesUploaded={setImages}
             initialImages={images}
             maxImages={5}
+            uploadOptions={{
+              generatePath: true,
+              pathOptions: {
+                productId: product?.id,
+                type: 'main'
+              }
+            }}
           />
         </CardContent>
       </Card>

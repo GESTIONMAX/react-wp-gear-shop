@@ -3,16 +3,18 @@ import { useDropzone } from 'react-dropzone';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Card, CardContent } from '@/components/ui/card';
-import { useImageUpload, UploadedImage } from '@/hooks/useImageUpload';
+import { useImageUpload } from '@/hooks/useImageUpload';
+import { StorageBucket, UploadedImage, StorageUploadOptions } from '@/types/storage';
 import { X, Upload, Image as ImageIcon } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 
 interface ImageUploaderProps {
-  bucket: 'products' | 'categories';
+  bucket: StorageBucket;
   onImagesUploaded: (images: UploadedImage[]) => void;
   initialImages?: UploadedImage[];
   maxImages?: number;
   className?: string;
+  uploadOptions?: StorageUploadOptions;
 }
 
 const ImageUploader: React.FC<ImageUploaderProps> = ({
@@ -20,10 +22,12 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
   onImagesUploaded,
   initialImages = [],
   maxImages = 5,
-  className
+  className,
+  uploadOptions
 }) => {
   const [images, setImages] = useState<UploadedImage[]>(initialImages);
-  const { uploadImage, deleteImage, uploading, progress } = useImageUpload(bucket);
+  const { uploadImage, deleteImage, getBucketInfo, uploading, progress } = useImageUpload(bucket);
+  const bucketConfig = getBucketInfo();
 
   const onDrop = useCallback(async (acceptedFiles: File[]) => {
     const remainingSlots = maxImages - images.length;
@@ -38,7 +42,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
     }
 
     for (const file of filesToUpload) {
-      const uploadedImage = await uploadImage(file);
+      const uploadedImage = await uploadImage(file, uploadOptions);
       if (uploadedImage) {
         const newImages = [...images, uploadedImage];
         setImages(newImages);
@@ -47,12 +51,17 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
     }
   }, [images, maxImages, uploadImage, onImagesUploaded]);
 
+  const allowedExtensions = bucketConfig.allowedTypes.map(type => {
+    const ext = type.split('/')[1];
+    return ext === 'jpeg' ? '.jpg' : `.${ext}`;
+  });
+
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
     accept: {
-      'image/*': ['.jpeg', '.jpg', '.png', '.webp']
+      'image/*': allowedExtensions
     },
-    maxSize: 5242880, // 5MB
+    maxSize: bucketConfig.maxFileSize,
     disabled: uploading || images.length >= maxImages
   });
 
@@ -93,7 +102,10 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
                   }
                 </p>
                 <p className="text-xs text-muted-foreground mt-1">
-                  JPEG, PNG, WebP jusqu'à 5MB • {images.length}/{maxImages} images
+                  {bucketConfig.allowedTypes.map(type => type.split('/')[1].toUpperCase()).join(', ')} jusqu'à {Math.round(bucketConfig.maxFileSize / (1024 * 1024))}MB • {images.length}/{maxImages} images
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  {bucketConfig.description}
                 </p>
               </div>
             </div>

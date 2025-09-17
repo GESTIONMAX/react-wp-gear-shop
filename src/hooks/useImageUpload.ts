@@ -1,46 +1,36 @@
 import { useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
+import { StorageBucket, StoragePathOptions, UploadedImage, StorageUploadOptions } from '@/types/storage';
+import { StorageService } from '@/services/storageService';
 
-export interface UploadedImage {
-  url: string;
-  path: string;
-  name: string;
-}
-
-export const useImageUpload = (bucket: 'products' | 'categories') => {
+export const useImageUpload = (bucket: StorageBucket) => {
   const [uploading, setUploading] = useState(false);
   const [progress, setProgress] = useState(0);
 
-  const uploadImage = async (file: File, path?: string): Promise<UploadedImage | null> => {
+  const uploadImage = async (
+    file: File,
+    options?: StorageUploadOptions
+  ): Promise<UploadedImage | null> => {
     try {
       setUploading(true);
       setProgress(0);
 
-      // Générer un nom de fichier unique
-      const fileExt = file.name.split('.').pop();
-      const fileName = path || `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
-
-      // Vérifier la taille du fichier (5MB max)
-      if (file.size > 5242880) {
+      // Valider le fichier avec le service de stockage
+      const validation = StorageService.validateFile(file, bucket);
+      if (!validation.isValid) {
         toast({
-          title: "Fichier trop volumineux",
-          description: "La taille maximale autorisée est de 5MB.",
+          title: "Fichier invalide",
+          description: validation.error,
           variant: "destructive",
         });
         return null;
       }
 
-      // Vérifier le type de fichier
-      const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
-      if (!allowedTypes.includes(file.type)) {
-        toast({
-          title: "Format non supporté",
-          description: "Seuls les formats JPEG, PNG et WebP sont autorisés.",
-          variant: "destructive",
-        });
-        return null;
-      }
+      // Générer le chemin de fichier
+      const fileName = options?.generatePath
+        ? StorageService.generateFilePath(bucket, file.name, options.pathOptions)
+        : `${Date.now()}-${Math.random().toString(36).substring(7)}.${file.name.split('.').pop()}`;
 
       // Simuler le progrès d'upload
       const progressInterval = setInterval(() => {
@@ -51,8 +41,8 @@ export const useImageUpload = (bucket: 'products' | 'categories') => {
       const { data, error } = await supabase.storage
         .from(bucket)
         .upload(fileName, file, {
-          cacheControl: '3600',
-          upsert: false
+          cacheControl: options?.cacheControl || '3600',
+          upsert: options?.upsert || false
         });
 
       clearInterval(progressInterval);
@@ -82,7 +72,10 @@ export const useImageUpload = (bucket: 'products' | 'categories') => {
       return {
         url: publicUrl,
         path: data.path,
-        name: file.name
+        name: file.name,
+        bucket,
+        size: file.size,
+        type: file.type
       };
 
     } catch (error) {
@@ -126,23 +119,31 @@ export const useImageUpload = (bucket: 'products' | 'categories') => {
     }
   };
 
-  const uploadMultipleImages = async (files: File[]): Promise<UploadedImage[]> => {
+  const uploadMultipleImages = async (
+    files: File[],
+    options?: StorageUploadOptions
+  ): Promise<UploadedImage[]> => {
     const results: UploadedImage[] = [];
-    
+
     for (const file of files) {
-      const result = await uploadImage(file);
+      const result = await uploadImage(file, options);
       if (result) {
         results.push(result);
       }
     }
-    
+
     return results;
+  };
+
+  const getBucketInfo = () => {
+    return StorageService.getBucketConfig(bucket);
   };
 
   return {
     uploadImage,
     deleteImage,
     uploadMultipleImages,
+    getBucketInfo,
     uploading,
     progress
   };
