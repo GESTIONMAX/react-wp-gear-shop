@@ -130,13 +130,13 @@ const Footer = () => {
         <div className="py-6 flex flex-col md:flex-row justify-between items-center text-sm text-muted-foreground">
           <p>© 2024 MyTechGear.eu. Tous droits réservés.</p>
           <div className="flex space-x-4 mt-4 md:mt-0">
-            <a href="#" className="hover:text-primary transition-colors">
+            <a href="/mentions-legales" className="hover:text-primary transition-colors">
               Mentions légales
             </a>
-            <a href="#" className="hover:text-primary transition-colors">
+            <a href="/politique-confidentialite" className="hover:text-primary transition-colors">
               Politique de confidentialité
             </a>
-            <a href="#" className="hover:text-primary transition-colors">
+            <a href="/conditions-generales-vente" className="hover:text-primary transition-colors">
               CGV
             </a>
           </div>

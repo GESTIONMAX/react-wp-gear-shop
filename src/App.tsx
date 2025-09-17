@@ -35,6 +35,9 @@ const AdminSettings = lazy(() => import("./pages/admin/AdminSettings"));
 const AdminAnalytics = lazy(() => import("./pages/admin/AdminAnalytics"));
 import Checkout from "./pages/Checkout";
 import OrderSuccess from "./pages/OrderSuccess";
+import LegalNotice from "./pages/LegalNotice";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import TermsOfSale from "./pages/TermsOfSale";
 import NotFound from "./pages/NotFound";
 
 // Import i18n configuration
@@ -148,6 +151,9 @@ const App = () => (
               } />
               <Route path="/checkout" element={<Checkout />} />
               <Route path="/order-success/:orderId" element={<OrderSuccess />} />
+              <Route path="/mentions-legales" element={<LegalNotice />} />
+              <Route path="/politique-confidentialite" element={<PrivacyPolicy />} />
+              <Route path="/conditions-generales-vente" element={<TermsOfSale />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
             <Footer />
