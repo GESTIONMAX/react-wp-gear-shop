@@ -200,28 +200,118 @@ export const useUpdateProduct = () => {
 // Hook pour supprimer un produit
 export const useDeleteProduct = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: async (productId: string) => {
-      const { error } = await supabase
-        .from('products')
-        .delete()
-        .eq('id', productId);
+      try {
+        // 1. Supprimer les images du produit depuis Supabase Storage et la DB
+        const { data: productImages } = await supabase
+          .from('product_images')
+          .select('storage_path')
+          .eq('product_id', productId);
 
-      if (error) throw error;
+        if (productImages && productImages.length > 0) {
+          // Supprimer les fichiers du storage
+          const storagePaths = productImages.map(img => img.storage_path);
+          const { error: storageError } = await supabase.storage
+            .from('product-images')
+            .remove(storagePaths);
+
+          if (storageError) {
+            console.warn('Erreur suppression storage:', storageError);
+            // Ne pas échouer si les fichiers n'existent pas
+          }
+
+          // Supprimer les entrées de la table product_images
+          const { error: imagesError } = await supabase
+            .from('product_images')
+            .delete()
+            .eq('product_id', productId);
+
+          if (imagesError) throw imagesError;
+        }
+
+        // 2. Supprimer les variantes du produit si elles existent
+        const { error: variantsError } = await supabase
+          .from('product_variants')
+          .delete()
+          .eq('product_id', productId);
+
+        if (variantsError && variantsError.code !== 'PGRST116') { // PGRST116 = no rows found
+          console.warn('Erreur suppression variantes:', variantsError);
+        }
+
+        // 3. Supprimer les images de variantes si elles existent
+        const { data: variantImages } = await supabase
+          .from('variant_images')
+          .select('storage_path, variant_id')
+          .in('variant_id',
+            (await supabase
+              .from('variants')
+              .select('id')
+              .eq('product_id', productId)
+            ).data?.map(v => v.id) || []
+          );
+
+        if (variantImages && variantImages.length > 0) {
+          // Supprimer les fichiers du storage
+          const variantStoragePaths = variantImages.map(img => img.storage_path);
+          const { error: variantStorageError } = await supabase.storage
+            .from('variant-images')
+            .remove(variantStoragePaths);
+
+          if (variantStorageError) {
+            console.warn('Erreur suppression variant storage:', variantStorageError);
+          }
+
+          // Supprimer les entrées de la table variant_images
+          const { error: variantImagesError } = await supabase
+            .from('variant_images')
+            .delete()
+            .in('variant_id', variantImages.map(img => img.variant_id));
+
+          if (variantImagesError) {
+            console.warn('Erreur suppression variant images:', variantImagesError);
+          }
+        }
+
+        // 4. Supprimer les variantes du produit
+        const { error: productVariantsError } = await supabase
+          .from('variants')
+          .delete()
+          .eq('product_id', productId);
+
+        if (productVariantsError && productVariantsError.code !== 'PGRST116') {
+          console.warn('Erreur suppression variants:', productVariantsError);
+        }
+
+        // 5. Finalement, supprimer le produit
+        const { error: productError } = await supabase
+          .from('products')
+          .delete()
+          .eq('id', productId);
+
+        if (productError) throw productError;
+
+        return productId;
+      } catch (error) {
+        console.error('Erreur lors de la suppression complète:', error);
+        throw error;
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['adminProducts'] });
       toast({
         title: "Produit supprimé",
-        description: "Le produit a été supprimé avec succès.",
+        description: "Le produit et toutes ses données associées ont été supprimés avec succès.",
       });
     },
     onError: (error) => {
       console.error('Erreur lors de la suppression du produit:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Erreur inconnue';
       toast({
-        title: "Erreur",  
-        description: "Impossible de supprimer le produit. Veuillez réessayer.",
+        title: "Erreur de suppression",
+        description: `Impossible de supprimer le produit: ${errorMessage}`,
         variant: "destructive",
       });
     },

@@ -35,18 +35,20 @@ const AdminProducts = () => {
   const createProduct = useCreateProduct();
   const updateProduct = useUpdateProduct();
 
-  const handleDelete = async (productId: string) => {
-    if (window.confirm('Êtes-vous sûr de vouloir supprimer ce produit ?')) {
+  const handleDelete = async (productId: string, productName?: string) => {
+    const confirmMessage = `Êtes-vous sûr de vouloir supprimer le produit ${productName ? `"${productName}"` : ''} ?\n\nCette action supprimera définitivement :\n- Le produit\n- Toutes ses images\n- Toutes ses variantes\n- Toutes les images des variantes\n\nCette action ne peut pas être annulée.`;
+
+    if (window.confirm(confirmMessage)) {
       try {
+        console.log(`Tentative de suppression du produit ${productId}...`);
         await deleteProduct.mutateAsync(productId);
-        toast({
-          title: "Produit supprimé",
-          description: "Le produit a été supprimé avec succès.",
-        });
+        console.log(`Produit ${productId} supprimé avec succès`);
       } catch (error) {
+        console.error('Erreur détaillée lors de la suppression:', error);
+        const errorMessage = error instanceof Error ? error.message : 'Erreur inconnue';
         toast({
-          title: "Erreur",
-          description: "Impossible de supprimer le produit.",
+          title: "Erreur de suppression",
+          description: `Impossible de supprimer le produit: ${errorMessage}`,
           variant: "destructive",
         });
       }
@@ -410,7 +412,7 @@ const AdminProducts = () => {
                               )}
                             </DropdownMenuItem>
                             <DropdownMenuItem 
-                              onClick={() => handleDelete(product.id)}
+                              onClick={() => handleDelete(product.id, product.name)}
                               className="text-destructive"
                             >
                               <Trash2 className="mr-2 h-4 w-4" />
