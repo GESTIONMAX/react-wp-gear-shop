@@ -21,6 +21,7 @@ export interface Product {
 export interface ProductVariant {
   id: string;
   name: string;
+  sku?: string; // Stock Keeping Unit - identifiant unique pour la variante
   price: number;
   salePrice?: number;
   inStock: boolean;

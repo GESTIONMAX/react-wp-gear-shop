@@ -16,6 +16,7 @@ import {
 import CreateVariantForm from '@/components/admin/CreateVariantForm';
 import ImageUploadDebug from '@/components/admin/ImageUploadDebug';
 import VariantImageUploader from '@/components/admin/VariantImageUploader';
+import SKUMigrationTest from '@/components/admin/SKUMigrationTest';
 
 const AdminVariants: React.FC = () => {
   const { data: variants, isLoading, error } = useVariants();
@@ -174,6 +175,9 @@ const AdminVariants: React.FC = () => {
           </Card>
         </div>
 
+        {/* Test Migration SKU */}
+        <SKUMigrationTest />
+
         {/* Gestion des variantes */}
         <div className="space-y-6">
           {/* Formulaire de création */}
@@ -199,6 +203,7 @@ const AdminVariants: React.FC = () => {
                 <TableHeader>
                   <TableRow>
                     <TableHead>Variante</TableHead>
+                    <TableHead>SKU</TableHead>
                     <TableHead>Produit</TableHead>
                     <TableHead>Attributs</TableHead>
                     <TableHead>Prix</TableHead>
@@ -222,6 +227,17 @@ const AdminVariants: React.FC = () => {
                             </div>
                           </div>
                         </div>
+                      </TableCell>
+                      <TableCell>
+                        {variant.sku ? (
+                          <code className="bg-muted px-2 py-1 rounded text-sm font-mono">
+                            {variant.sku}
+                          </code>
+                        ) : (
+                          <span className="text-muted-foreground text-sm italic">
+                            Aucun SKU
+                          </span>
+                        )}
                       </TableCell>
                       <TableCell>
                         <div className="font-medium">{variant.products?.name}</div>

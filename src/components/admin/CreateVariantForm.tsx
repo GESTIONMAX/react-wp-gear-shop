@@ -23,6 +23,7 @@ const CreateVariantForm: React.FC<CreateVariantFormProps> = ({ onClose, onSucces
   const [formData, setFormData] = useState({
     product_id: editingVariant?.product_id || '',
     name: editingVariant?.name || '',
+    sku: editingVariant?.sku || '',
     price: editingVariant ? (editingVariant.price / 100).toString() : '',
     stock_quantity: editingVariant?.stock_quantity?.toString() || '10',
     attributes: {
@@ -109,7 +110,7 @@ const CreateVariantForm: React.FC<CreateVariantFormProps> = ({ onClose, onSucces
     if (!formData.product_id || !formData.name || !formData.price) {
       toast({
         title: "Erreur",
-        description: "Veuillez remplir tous les champs obligatoires",
+        description: "Veuillez remplir tous les champs obligatoires (produit, nom, prix)",
         variant: "destructive",
       });
       return;
@@ -126,15 +127,22 @@ const CreateVariantForm: React.FC<CreateVariantFormProps> = ({ onClose, onSucces
 
       if (editingVariant) {
         // Mettre à jour la variante existante
+        const updateData: any = {
+          product_id: formData.product_id,
+          name: formData.name,
+          price: Math.round(parseFloat(formData.price) * 100),
+          stock_quantity: parseInt(formData.stock_quantity),
+          attributes: cleanAttributes
+        };
+
+        // Ajouter le SKU seulement s'il est fourni
+        if (formData.sku && formData.sku.trim()) {
+          updateData.sku = formData.sku.trim().toUpperCase();
+        }
+
         const { data: updatedVariant, error } = await supabase
           .from('product_variants')
-          .update({
-            product_id: formData.product_id,
-            name: formData.name,
-            price: Math.round(parseFloat(formData.price) * 100),
-            stock_quantity: parseInt(formData.stock_quantity),
-            attributes: cleanAttributes
-          })
+          .update(updateData)
           .eq('id', editingVariant.id)
           .select()
           .single();
@@ -143,16 +151,23 @@ const CreateVariantForm: React.FC<CreateVariantFormProps> = ({ onClose, onSucces
         variantResult = updatedVariant;
       } else {
         // Créer une nouvelle variante
+        const insertData: any = {
+          product_id: formData.product_id,
+          name: formData.name,
+          price: Math.round(parseFloat(formData.price) * 100),
+          stock_quantity: parseInt(formData.stock_quantity),
+          in_stock: true,
+          attributes: cleanAttributes
+        };
+
+        // Ajouter le SKU seulement s'il est fourni
+        if (formData.sku && formData.sku.trim()) {
+          insertData.sku = formData.sku.trim().toUpperCase();
+        }
+
         const { data: newVariant, error } = await supabase
           .from('product_variants')
-          .insert({
-            product_id: formData.product_id,
-            name: formData.name,
-            price: Math.round(parseFloat(formData.price) * 100),
-            stock_quantity: parseInt(formData.stock_quantity),
-            in_stock: true,
-            attributes: cleanAttributes
-          })
+          .insert(insertData)
           .select()
           .single();
 
@@ -177,9 +192,17 @@ const CreateVariantForm: React.FC<CreateVariantFormProps> = ({ onClose, onSucces
       onClose();
     } catch (error) {
       console.error('Erreur création variante:', error);
+
+      // Gestion spécifique des erreurs de SKU dupliqué
+      let errorMessage = `Erreur lors de la ${editingVariant ? 'modification' : 'création'}: ${error.message}`;
+
+      if (error.message && error.message.includes('unique_product_variant_sku')) {
+        errorMessage = `Le SKU "${formData.sku.toUpperCase()}" existe déjà. Veuillez choisir un SKU unique.`;
+      }
+
       toast({
         title: "Erreur",
-        description: `Erreur lors de la création: ${error.message}`,
+        description: errorMessage,
         variant: "destructive",
       });
     } finally {
@@ -260,6 +283,21 @@ const CreateVariantForm: React.FC<CreateVariantFormProps> = ({ onClose, onSucces
               onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
               placeholder="Ex: Music Shield - Monture Noire, Verres Bleus"
             />
+          </div>
+
+          {/* SKU */}
+          <div className="space-y-2">
+            <Label htmlFor="sku">SKU (Code produit)</Label>
+            <Input
+              id="sku"
+              value={formData.sku}
+              onChange={(e) => setFormData(prev => ({ ...prev, sku: e.target.value }))}
+              placeholder="Ex: MGS-BLK-M-AUD (optionnel)"
+              className="font-mono"
+            />
+            <p className="text-xs text-muted-foreground">
+              Identifiant unique pour cette variante (optionnel, sera converti en majuscules)
+            </p>
           </div>
 
           {/* Prix */}

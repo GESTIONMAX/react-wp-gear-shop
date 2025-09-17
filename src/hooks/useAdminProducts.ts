@@ -204,11 +204,85 @@ export const useDeleteProduct = () => {
   return useMutation({
     mutationFn: async (productId: string) => {
       try {
-        // 1. Supprimer les images du produit depuis Supabase Storage et la DB
-        const { data: productImages } = await supabase
+        console.log(`Début de la suppression du produit ${productId}`);
+
+        // 1. Récupérer d'abord les variantes pour obtenir leurs IDs
+        const { data: productVariants, error: variantsQueryError } = await supabase
+          .from('product_variants')
+          .select('id')
+          .eq('product_id', productId);
+
+        if (variantsQueryError) {
+          console.error('Erreur lors de la récupération des variantes:', variantsQueryError);
+          throw variantsQueryError;
+        }
+
+        console.log(`Trouvé ${productVariants?.length || 0} variantes à supprimer`);
+
+        // 2. Supprimer les images de variantes si elles existent
+        if (productVariants && productVariants.length > 0) {
+          const variantIds = productVariants.map(v => v.id);
+
+          // Récupérer les images de variantes
+          const { data: variantImages, error: variantImagesQueryError } = await supabase
+            .from('variant_images')
+            .select('storage_path, variant_id')
+            .in('variant_id', variantIds);
+
+          if (variantImagesQueryError) {
+            console.error('Erreur lors de la récupération des images de variantes:', variantImagesQueryError);
+            throw variantImagesQueryError;
+          }
+
+          console.log(`Trouvé ${variantImages?.length || 0} images de variantes à supprimer`);
+
+          if (variantImages && variantImages.length > 0) {
+            // Supprimer les fichiers du storage
+            const variantStoragePaths = variantImages.map(img => img.storage_path);
+            const { error: variantStorageError } = await supabase.storage
+              .from('variant-images')
+              .remove(variantStoragePaths);
+
+            if (variantStorageError) {
+              console.warn('Erreur suppression variant storage (non-critique):', variantStorageError);
+            }
+
+            // Supprimer les entrées de la table variant_images
+            const { error: variantImagesError } = await supabase
+              .from('variant_images')
+              .delete()
+              .in('variant_id', variantIds);
+
+            if (variantImagesError) {
+              console.error('Erreur suppression variant images:', variantImagesError);
+              throw variantImagesError;
+            }
+          }
+
+          // 3. Supprimer les variantes elles-mêmes
+          const { error: variantsDeleteError } = await supabase
+            .from('product_variants')
+            .delete()
+            .eq('product_id', productId);
+
+          if (variantsDeleteError) {
+            console.error('Erreur suppression variantes:', variantsDeleteError);
+            throw variantsDeleteError;
+          }
+        }
+
+        // 4. Supprimer les images du produit depuis Supabase Storage et la DB
+        const { data: productImages, error: productImagesQueryError } = await supabase
           .from('product_images')
           .select('storage_path')
           .eq('product_id', productId);
+
+        if (productImagesQueryError) {
+          console.error('Erreur lors de la récupération des images de produit:', productImagesQueryError);
+          throw productImagesQueryError;
+        }
+
+        console.log(`Trouvé ${productImages?.length || 0} images de produit à supprimer`);
 
         if (productImages && productImages.length > 0) {
           // Supprimer les fichiers du storage
@@ -218,8 +292,7 @@ export const useDeleteProduct = () => {
             .remove(storagePaths);
 
           if (storageError) {
-            console.warn('Erreur suppression storage:', storageError);
-            // Ne pas échouer si les fichiers n'existent pas
+            console.warn('Erreur suppression storage (non-critique):', storageError);
           }
 
           // Supprimer les entrées de la table product_images
@@ -228,61 +301,10 @@ export const useDeleteProduct = () => {
             .delete()
             .eq('product_id', productId);
 
-          if (imagesError) throw imagesError;
-        }
-
-        // 2. Supprimer les variantes du produit si elles existent
-        const { error: variantsError } = await supabase
-          .from('product_variants')
-          .delete()
-          .eq('product_id', productId);
-
-        if (variantsError && variantsError.code !== 'PGRST116') { // PGRST116 = no rows found
-          console.warn('Erreur suppression variantes:', variantsError);
-        }
-
-        // 3. Supprimer les images de variantes si elles existent
-        const { data: variantImages } = await supabase
-          .from('variant_images')
-          .select('storage_path, variant_id')
-          .in('variant_id',
-            (await supabase
-              .from('variants')
-              .select('id')
-              .eq('product_id', productId)
-            ).data?.map(v => v.id) || []
-          );
-
-        if (variantImages && variantImages.length > 0) {
-          // Supprimer les fichiers du storage
-          const variantStoragePaths = variantImages.map(img => img.storage_path);
-          const { error: variantStorageError } = await supabase.storage
-            .from('variant-images')
-            .remove(variantStoragePaths);
-
-          if (variantStorageError) {
-            console.warn('Erreur suppression variant storage:', variantStorageError);
+          if (imagesError) {
+            console.error('Erreur suppression images produit:', imagesError);
+            throw imagesError;
           }
-
-          // Supprimer les entrées de la table variant_images
-          const { error: variantImagesError } = await supabase
-            .from('variant_images')
-            .delete()
-            .in('variant_id', variantImages.map(img => img.variant_id));
-
-          if (variantImagesError) {
-            console.warn('Erreur suppression variant images:', variantImagesError);
-          }
-        }
-
-        // 4. Supprimer les variantes du produit
-        const { error: productVariantsError } = await supabase
-          .from('variants')
-          .delete()
-          .eq('product_id', productId);
-
-        if (productVariantsError && productVariantsError.code !== 'PGRST116') {
-          console.warn('Erreur suppression variants:', productVariantsError);
         }
 
         // 5. Finalement, supprimer le produit
@@ -291,8 +313,12 @@ export const useDeleteProduct = () => {
           .delete()
           .eq('id', productId);
 
-        if (productError) throw productError;
+        if (productError) {
+          console.error('Erreur suppression produit:', productError);
+          throw productError;
+        }
 
+        console.log(`Produit ${productId} supprimé avec succès`);
         return productId;
       } catch (error) {
         console.error('Erreur lors de la suppression complète:', error);
@@ -308,7 +334,23 @@ export const useDeleteProduct = () => {
     },
     onError: (error) => {
       console.error('Erreur lors de la suppression du produit:', error);
-      const errorMessage = error instanceof Error ? error.message : 'Erreur inconnue';
+
+      // Déterminer le message d'erreur le plus spécifique possible
+      let errorMessage = 'Erreur inconnue';
+
+      if (error instanceof Error) {
+        errorMessage = error.message;
+
+        // Messages d'erreur spécifiques selon le type d'erreur Supabase
+        if (error.message.includes('foreign key constraint')) {
+          errorMessage = 'Le produit a des dépendances qui empêchent sa suppression';
+        } else if (error.message.includes('PGRST301')) {
+          errorMessage = 'Erreur de permission - vérifiez vos droits d\'accès';
+        } else if (error.message.includes('PGRST116')) {
+          errorMessage = 'Produit non trouvé';
+        }
+      }
+
       toast({
         title: "Erreur de suppression",
         description: `Impossible de supprimer le produit: ${errorMessage}`,
