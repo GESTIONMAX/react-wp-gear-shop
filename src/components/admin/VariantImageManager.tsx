@@ -31,7 +31,7 @@ const VariantImageManager: React.FC = () => {
     try {
       // Cherchons toutes les variantes Music Shield (plusieurs stratégies de recherche)
       let variants = null;
-      let variantError = null;
+      const variantError = null;
 
       // Stratégie 1: par nom
       const { data: variantsByName } = await supabase

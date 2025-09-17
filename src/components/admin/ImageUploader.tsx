@@ -26,7 +26,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
   uploadOptions
 }) => {
   const [images, setImages] = useState<UploadedImage[]>(initialImages);
-  const { uploadImage, deleteImage, getBucketInfo, uploading, progress } = useImageUpload(bucket);
+  const { uploadImage, deleteImage, getBucketInfo, uploading, compressing, progress } = useImageUpload(bucket);
   const bucketConfig = getBucketInfo();
 
   const onDrop = useCallback(async (acceptedFiles: File[]) => {
@@ -62,7 +62,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
       'image/*': allowedExtensions
     },
     maxSize: bucketConfig.maxFileSize,
-    disabled: uploading || images.length >= maxImages
+    disabled: uploading || compressing || images.length >= maxImages
   });
 
   const handleRemoveImage = async (index: number) => {
@@ -86,7 +86,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
             isDragActive 
               ? 'border-primary bg-primary/5' 
               : 'border-muted-foreground/25 hover:border-primary/50'
-          } ${uploading ? 'pointer-events-none opacity-50' : ''}`}
+          } ${uploading || compressing ? 'pointer-events-none opacity-50' : ''}`}
         >
           <CardContent className="p-8 text-center">
             <input {...getInputProps()} />
@@ -114,13 +114,15 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
       )}
 
       {/* Barre de progression */}
-      {uploading && (
+      {(uploading || compressing) && (
         <div className="mt-4 space-y-2">
           <div className="flex items-center justify-between">
-            <span className="text-sm text-muted-foreground">Upload en cours...</span>
+            <span className="text-sm text-muted-foreground">
+              {compressing ? 'Compression en cours...' : 'Upload en cours...'}
+            </span>
             <span className="text-sm font-medium">{progress}%</span>
           </div>
-          <Progress value={progress} className="w-full" />
+          <Progress value={compressing ? 50 : progress} className="w-full" />
         </div>
       )}
 
@@ -156,7 +158,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
       )}
 
       {/* État vide */}
-      {images.length === 0 && !uploading && (
+      {images.length === 0 && !uploading && !compressing && (
         <div className="mt-4 text-center text-muted-foreground">
           <ImageIcon className="h-8 w-8 mx-auto mb-2 opacity-50" />
           <p className="text-sm">Aucune image uploadée</p>

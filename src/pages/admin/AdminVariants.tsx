@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import AdminLayout from '@/components/admin/AdminLayout';
-import { Layers3, Plus, Package, Edit, Trash2, Eye, EyeOff } from 'lucide-react';
+import { Layers3, Plus, Package, Edit, Trash2, Eye, EyeOff, Images } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useVariants, useToggleVariantStock, useDeleteVariant } from '@/hooks/useVariants';
@@ -15,6 +15,7 @@ import {
 } from '@/components/ui/table';
 import CreateVariantForm from '@/components/admin/CreateVariantForm';
 import ImageUploadDebug from '@/components/admin/ImageUploadDebug';
+import VariantImageUploader from '@/components/admin/VariantImageUploader';
 
 const AdminVariants: React.FC = () => {
   const { data: variants, isLoading, error } = useVariants();
@@ -22,6 +23,12 @@ const AdminVariants: React.FC = () => {
   const deleteVariant = useDeleteVariant();
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [editingVariant, setEditingVariant] = useState<any>(null);
+  const [showImageManager, setShowImageManager] = useState(false);
+  const [selectedVariantForImages, setSelectedVariantForImages] = useState<{
+    id: string;
+    name: string;
+    product_id: string;
+  } | null>(null);
 
   const handleToggleStock = (id: string) => {
     toggleStock.mutate(id);
@@ -48,6 +55,16 @@ const AdminVariants: React.FC = () => {
   const handleFormClose = () => {
     setShowCreateForm(false);
     setEditingVariant(null);
+  };
+
+  const handleManageImages = (variant: { id: string; name: string; product_id: string }) => {
+    setSelectedVariantForImages(variant);
+    setShowImageManager(true);
+  };
+
+  const handleImageManagerClose = () => {
+    setShowImageManager(false);
+    setSelectedVariantForImages(null);
   };
 
   const handleCreateSuccess = () => {
@@ -243,8 +260,17 @@ const AdminVariants: React.FC = () => {
                           <Button
                             variant="ghost"
                             size="sm"
+                            onClick={() => handleManageImages(variant)}
+                            title="Gérer les images"
+                          >
+                            <Images className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
                             onClick={() => handleToggleStock(variant.id)}
                             disabled={toggleStock.isPending}
+                            title={variant.in_stock ? "Masquer" : "Afficher"}
                           >
                             {variant.in_stock ? (
                               <EyeOff className="h-4 w-4" />
@@ -256,14 +282,16 @@ const AdminVariants: React.FC = () => {
                             variant="ghost"
                             size="sm"
                             onClick={() => handleEditVariant(variant)}
+                            title="Modifier"
                           >
                             <Edit className="h-4 w-4" />
                           </Button>
-                          <Button 
-                            variant="ghost" 
-                            size="sm" 
+                          <Button
+                            variant="ghost"
+                            size="sm"
                             onClick={() => handleDelete(variant.id, variant.name)}
                             disabled={deleteVariant.isPending}
+                            title="Supprimer"
                           >
                             <Trash2 className="h-4 w-4" />
                           </Button>
@@ -289,6 +317,35 @@ const AdminVariants: React.FC = () => {
             )}
             </CardContent>
           </Card>
+
+          {/* Gestionnaire d'images de variantes */}
+          {showImageManager && selectedVariantForImages && (
+            <Card>
+              <CardHeader>
+                <div className="flex justify-between items-center">
+                  <div>
+                    <CardTitle>Gestion des images - {selectedVariantForImages.name}</CardTitle>
+                    <CardDescription>
+                      Téléchargez et gérez les images pour cette variante
+                    </CardDescription>
+                  </div>
+                  <Button variant="outline" onClick={handleImageManagerClose}>
+                    Fermer
+                  </Button>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <VariantImageUploader
+                  productId={selectedVariantForImages.product_id}
+                  variantId={selectedVariantForImages.id}
+                  variantName={selectedVariantForImages.name}
+                  onImagesUploaded={() => {
+                    // Optionnel: vous pouvez ajouter une logique de refresh ici
+                  }}
+                />
+              </CardContent>
+            </Card>
+          )}
 
           {/* Section informative */}
           {variants && variants.length > 0 && (

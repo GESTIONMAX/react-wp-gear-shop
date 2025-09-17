@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
 
@@ -25,7 +25,7 @@ export const useVariantImages = (filters?: VariantImageFilters) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchImages = async () => {
+  const fetchImages = useCallback(async () => {
     setLoading(true);
     setError(null);
 
@@ -59,11 +59,11 @@ export const useVariantImages = (filters?: VariantImageFilters) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [filters?.variantId, filters?.type, filters?.context]);
 
   useEffect(() => {
     fetchImages();
-  }, [filters?.variantId, filters?.type, filters?.context]);
+  }, [fetchImages]);
 
   return {
     images,

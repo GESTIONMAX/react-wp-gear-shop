@@ -3,10 +3,12 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
 import { StorageBucket, StoragePathOptions, UploadedImage, StorageUploadOptions } from '@/types/storage';
 import { StorageService } from '@/services/storageService';
+import { ImageCompressor } from '@/utils/imageCompression';
 
 export const useImageUpload = (bucket: StorageBucket) => {
   const [uploading, setUploading] = useState(false);
   const [progress, setProgress] = useState(0);
+  const [compressing, setCompressing] = useState(false);
 
   const uploadImage = async (
     file: File,
@@ -14,6 +16,7 @@ export const useImageUpload = (bucket: StorageBucket) => {
   ): Promise<UploadedImage | null> => {
     try {
       setUploading(true);
+      setCompressing(true);
       setProgress(0);
 
       // Valider le fichier avec le service de stockage
@@ -27,20 +30,51 @@ export const useImageUpload = (bucket: StorageBucket) => {
         return null;
       }
 
+      // Compression automatique selon le bucket
+      let fileToUpload = file;
+      const originalSize = file.size;
+
+      if (file.type.startsWith('image/')) {
+        try {
+          let compressionResult;
+
+          // Choisir la compression selon le bucket
+          if (bucket === 'variant-images') {
+            compressionResult = await ImageCompressor.compressForVariant(file);
+          } else {
+            compressionResult = await ImageCompressor.compressImage(file,
+              ImageCompressor.PRESETS.product);
+          }
+
+          fileToUpload = compressionResult.file;
+
+          if (compressionResult.wasCompressed) {
+            toast({
+              title: "Image optimisée",
+              description: `Taille réduite de ${ImageCompressor.formatFileSize(originalSize)} à ${ImageCompressor.formatFileSize(compressionResult.compressedSize)} (${Math.round((1 - 1/compressionResult.compressionRatio) * 100)}% de réduction)`,
+            });
+          }
+        } catch (compressionError) {
+          console.warn('Compression échouée, utilisation du fichier original:', compressionError);
+        }
+      }
+
+      setCompressing(false);
+
       // Générer le chemin de fichier
       const fileName = options?.generatePath
-        ? StorageService.generateFilePath(bucket, file.name, options.pathOptions)
-        : `${Date.now()}-${Math.random().toString(36).substring(7)}.${file.name.split('.').pop()}`;
+        ? StorageService.generateFilePath(bucket, fileToUpload.name, options.pathOptions)
+        : `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileToUpload.name.split('.').pop()}`;
 
       // Simuler le progrès d'upload
       const progressInterval = setInterval(() => {
         setProgress(prev => Math.min(prev + 10, 90));
       }, 100);
 
-      // Upload vers Supabase Storage
+      // Upload vers Supabase Storage avec le fichier optimisé
       const { data, error } = await supabase.storage
         .from(bucket)
-        .upload(fileName, file, {
+        .upload(fileName, fileToUpload, {
           cacheControl: options?.cacheControl || '3600',
           upsert: options?.upsert || false
         });
@@ -51,7 +85,7 @@ export const useImageUpload = (bucket: StorageBucket) => {
         console.error('Erreur upload:', error);
         toast({
           title: "Erreur d'upload",
-          description: error.message,
+          description: `${error.message}${fileToUpload.size > 50 * 1024 * 1024 ? ' (Fichier trop volumineux)' : ''}`,
           variant: "destructive",
         });
         return null;
@@ -72,10 +106,10 @@ export const useImageUpload = (bucket: StorageBucket) => {
       return {
         url: publicUrl,
         path: data.path,
-        name: file.name,
+        name: fileToUpload.name,
         bucket,
-        size: file.size,
-        type: file.type
+        size: fileToUpload.size,
+        type: fileToUpload.type
       };
 
     } catch (error) {
@@ -88,6 +122,7 @@ export const useImageUpload = (bucket: StorageBucket) => {
       return null;
     } finally {
       setUploading(false);
+      setCompressing(false);
       setProgress(0);
     }
   };
@@ -145,6 +180,7 @@ export const useImageUpload = (bucket: StorageBucket) => {
     uploadMultipleImages,
     getBucketInfo,
     uploading,
+    compressing,
     progress
   };
 };

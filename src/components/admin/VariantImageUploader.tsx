@@ -4,7 +4,9 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Separator } from '@/components/ui/separator';
 import ImageUploader from './ImageUploader';
+import VariantImageGallery from './VariantImageGallery';
 import { UploadedImage } from '@/types/storage';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
@@ -38,6 +40,7 @@ const VariantImageUploader: React.FC<VariantImageUploaderProps> = ({
   const [imageContext, setImageContext] = useState<string>('studio');
   const [altText, setAltText] = useState<string>('');
   const [saving, setSaving] = useState(false);
+  const [refreshGallery, setRefreshGallery] = useState(0);
 
   const imageTypes = [
     { value: 'main', label: 'Image principale' },
@@ -69,8 +72,19 @@ const VariantImageUploader: React.FC<VariantImageUploaderProps> = ({
       return;
     }
 
+    // Validation supplémentaire
+    if (!variantId || !productId) {
+      toast({
+        title: "Erreur de configuration",
+        description: "ID de produit ou variante manquant.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setSaving(true);
     const savedImages: VariantImageData[] = [];
+    let uploadedCount = 0;
 
     try {
       for (let i = 0; i < uploadedImages.length; i++) {
@@ -93,15 +107,17 @@ const VariantImageUploader: React.FC<VariantImageUploaderProps> = ({
           .single();
 
         if (error) {
-          throw error;
+          console.error('Erreur insertion base de données:', error);
+          throw new Error(`Erreur base de données: ${error.message}${error.code ? ` (${error.code})` : ''}`);
         }
 
         savedImages.push(data);
+        uploadedCount++;
       }
 
       toast({
         title: "Images sauvegardées",
-        description: `${savedImages.length} image(s) ajoutée(s) à la variante.`,
+        description: `${uploadedCount}/${uploadedImages.length} image(s) ajoutée(s) à la variante ${variantName || 'sélectionnée'}.`,
       });
 
       // Reset form
@@ -110,11 +126,15 @@ const VariantImageUploader: React.FC<VariantImageUploaderProps> = ({
 
       onImagesUploaded?.(savedImages);
 
+      // Force refresh of the gallery
+      setRefreshGallery(prev => prev + 1);
+
     } catch (error) {
       console.error('Erreur lors de la sauvegarde:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Erreur inconnue';
       toast({
-        title: "Erreur",
-        description: "Erreur lors de la sauvegarde en base de données.",
+        title: `Erreur de sauvegarde (${uploadedCount}/${uploadedImages.length} réussies)`,
+        description: errorMessage,
         variant: "destructive",
       });
     } finally {
@@ -130,14 +150,30 @@ const VariantImageUploader: React.FC<VariantImageUploaderProps> = ({
     }
   };
 
+  const handleImageDeleted = () => {
+    setRefreshGallery(prev => prev + 1);
+  };
+
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>
-          Upload images variante
-          {variantName && <span className="text-sm font-normal text-muted-foreground"> - {variantName}</span>}
-        </CardTitle>
-      </CardHeader>
+    <div className="space-y-6">
+      {/* Gallery of existing images */}
+      <VariantImageGallery
+        key={refreshGallery} // Force re-render when images change
+        variantId={variantId}
+        variantName={variantName}
+        onImageDeleted={handleImageDeleted}
+      />
+
+      <Separator />
+
+      {/* Upload new images */}
+      <Card>
+        <CardHeader>
+          <CardTitle>
+            Ajouter de nouvelles images
+            {variantName && <span className="text-sm font-normal text-muted-foreground"> - {variantName}</span>}
+          </CardTitle>
+        </CardHeader>
       <CardContent className="space-y-6">
         {/* Configuration des métadonnées */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -216,7 +252,8 @@ const VariantImageUploader: React.FC<VariantImageUploaderProps> = ({
           <strong>Chemin de stockage :</strong> variant-images/products/{productId}/variants/{variantId}/
         </div>
       </CardContent>
-    </Card>
+      </Card>
+    </div>
   );
 };
 
