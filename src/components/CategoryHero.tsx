@@ -2,12 +2,16 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ArrowRight, Star, Clock, Shield } from 'lucide-react';
+import { useCollectionBySlug } from '@/hooks/useCollections';
 
 interface CategoryHeroProps {
   category: string;
 }
 
 const CategoryHero: React.FC<CategoryHeroProps> = ({ category }) => {
+  // Récupérer la collection depuis la base de données
+  const { data: collection, isLoading } = useCollectionBySlug(category.toLowerCase());
+
   const getCategoryData = (cat: string) => {
     const categoryLower = cat.toLowerCase();
     
@@ -53,14 +57,38 @@ const CategoryHero: React.FC<CategoryHeroProps> = ({ category }) => {
 
   const data = getCategoryData(category);
 
+  // Utiliser l'image de la collection si disponible, sinon fallback sur l'image par défaut
+  const heroImage = collection?.image_url || data.image;
+  const heroTitle = collection?.name || data.title;
+  const heroDescription = collection?.description || data.description;
+
+  // Loading state
+  if (isLoading) {
+    return (
+      <section className="relative h-[70vh] min-h-[500px] overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-gray-900 to-gray-700" />
+        <div className="relative z-10 h-full flex items-center justify-center">
+          <div className="text-white text-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white mx-auto mb-4"></div>
+            <p>Chargement...</p>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section className="relative h-[70vh] min-h-[500px] overflow-hidden">
       {/* Background Image */}
       <div className="absolute inset-0">
         <img
-          src={data.image}
-          alt={data.title}
+          src={heroImage}
+          alt={heroTitle}
           className="w-full h-full object-cover"
+          onError={(e) => {
+            // Fallback vers l'image par défaut en cas d'erreur
+            e.currentTarget.src = data.image;
+          }}
         />
         {/* Overlay */}
         <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-black/30" />
@@ -72,18 +100,28 @@ const CategoryHero: React.FC<CategoryHeroProps> = ({ category }) => {
         <div className="container mx-auto px-4">
           <div className="max-w-2xl text-white">
             {/* Category Badge */}
-            <Badge 
-              variant="outline" 
-              className="mb-6 text-white border-white/30 bg-white/10 backdrop-blur-sm text-base px-4 py-2"
-            >
-              {category.toUpperCase()}
-            </Badge>
+            <div className="flex items-center gap-3 mb-6">
+              <Badge
+                variant="outline"
+                className="text-white border-white/30 bg-white/10 backdrop-blur-sm text-base px-4 py-2"
+              >
+                {category.toUpperCase()}
+              </Badge>
+              {collection?.image_url && (
+                <Badge
+                  variant="outline"
+                  className="text-white border-green-400/50 bg-green-500/20 backdrop-blur-sm text-sm px-3 py-1"
+                >
+                  ✓ Image personnalisée
+                </Badge>
+              )}
+            </div>
 
             {/* Title */}
             <h1 className="font-merriweather text-4xl lg:text-6xl font-bold mb-4 leading-tight">
-              {data.title}
+              {heroTitle}
             </h1>
-            
+
             {/* Subtitle */}
             <p className="text-xl lg:text-2xl text-gray-200 mb-6 font-light">
               {data.subtitle}
@@ -91,7 +129,7 @@ const CategoryHero: React.FC<CategoryHeroProps> = ({ category }) => {
 
             {/* Description */}
             <p className="text-lg text-gray-300 mb-8 max-w-xl leading-relaxed">
-              {data.description}
+              {heroDescription}
             </p>
 
             {/* Features */}

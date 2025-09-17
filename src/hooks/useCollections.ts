@@ -65,6 +65,33 @@ export const useCollection = (id: string) => {
   });
 };
 
+// Hook pour récupérer une collection par slug
+export const useCollectionBySlug = (slug: string) => {
+  return useQuery({
+    queryKey: ['collection', 'slug', slug],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('categories')
+        .select('*')
+        .eq('slug', slug)
+        .eq('is_active', true)
+        .single();
+
+      if (error) {
+        // Si la collection n'existe pas, retourner null au lieu de throw
+        if (error.code === 'PGRST116') {
+          return null;
+        }
+        throw error;
+      }
+      return data as Collection;
+    },
+    enabled: !!slug,
+    // Cache la réponse pendant 5 minutes pour éviter les requêtes répétées
+    staleTime: 5 * 60 * 1000,
+  });
+};
+
 // Hook pour créer une collection
 export const useCreateCollection = () => {
   const queryClient = useQueryClient();

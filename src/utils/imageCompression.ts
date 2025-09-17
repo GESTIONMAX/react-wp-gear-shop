@@ -273,3 +273,12 @@ export class ImageCompressor {
     return `${parseFloat((bytes / Math.pow(k, i)).toFixed(1))} ${sizes[i]}`;
   }
 }
+
+// Export simplifié pour usage direct
+export const compressImage = async (
+  file: File,
+  options: CompressionOptions = {}
+): Promise<File> => {
+  const result = await ImageCompressor.compressImage(file, options);
+  return result.file;
+};
