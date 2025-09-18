@@ -82,9 +82,7 @@ const VariantImageManager: React.FC = () => {
       }
 
       // Afficher les variantes trouvées pour sélection
-      console.log('Variantes trouvées:', variants);
-
-      // Utiliser la première variante trouvée ou demander à l'utilisateur
+      // Utiliser la première variante trouvée
       const selectedVariant = variants[0];
 
       // Insérer l'image avec l'UUID réel
@@ -111,8 +109,6 @@ const VariantImageManager: React.FC = () => {
         description: `Image insérée pour la variante: ${selectedVariant.name}`,
       });
 
-      console.log('Variante utilisée:', selectedVariant);
-      console.log('Image insérée:', data);
     } catch (error) {
       console.error('Erreur:', error);
       toast({
@@ -128,16 +124,61 @@ const VariantImageManager: React.FC = () => {
   const handleInsertCustom = async () => {
     setLoading(true);
     try {
-      // TODO: Implémenter l'insertion personnalisée
+      // Validation des données
+      if (!formData.variantId || !formData.imageUrl || !formData.altText) {
+        throw new Error('Veuillez remplir tous les champs obligatoires (ID Variante, URL Image, Texte alternatif)');
+      }
+
+      // Vérifier que la variante existe
+      const { data: variant, error: variantError } = await supabase
+        .from('variants')
+        .select('id, name, sku')
+        .eq('id', formData.variantId)
+        .single();
+
+      if (variantError || !variant) {
+        throw new Error(`Variante introuvable avec l'ID: ${formData.variantId}`);
+      }
+
+      // Insérer l'image de variante
+      const { data, error } = await supabase
+        .from('variant_images')
+        .insert({
+          variant_id: formData.variantId,
+          image_url: formData.imageUrl,
+          storage_path: formData.storagePath,
+          type: formData.type,
+          context: formData.context,
+          alt_text: formData.altText,
+          sort_order: formData.sortOrder
+        })
+        .select()
+        .single();
+
+      if (error) {
+        throw error;
+      }
+
       toast({
-        title: "En développement",
-        description: "Fonctionnalité en cours de développement",
+        title: "Succès",
+        description: `Image ajoutée avec succès à la variante: ${variant.name}`,
+      });
+
+      // Reset du formulaire
+      setFormData({
+        variantId: '',
+        imageUrl: '',
+        storagePath: '',
+        type: 'main',
+        context: 'studio',
+        altText: '',
+        sortOrder: 0
       });
     } catch (error) {
       console.error('Erreur:', error);
       toast({
         title: "Erreur",
-        description: "Une erreur est survenue",
+        description: `Erreur lors de l'insertion: ${error.message}`,
         variant: "destructive",
       });
     } finally {
@@ -201,7 +242,6 @@ const VariantImageManager: React.FC = () => {
         description: `Variante créée: ${variant.name}`,
       });
 
-      console.log('Variante créée:', variant);
     } catch (error) {
       console.error('Erreur:', error);
       toast({
@@ -217,16 +257,135 @@ const VariantImageManager: React.FC = () => {
   const handleScanFolder = async () => {
     setLoading(true);
     try {
-      // TODO: Implémenter le scan automatique
+      // Chercher toutes les variantes Music Shield
+      const { data: variants, error: variantError } = await supabase
+        .from('variants')
+        .select('id, name, sku')
+        .ilike('name', '%music%shield%');
+
+      if (variantError) {
+        throw new Error(`Erreur recherche variantes: ${variantError.message}`);
+      }
+
+      if (!variants || variants.length === 0) {
+        throw new Error('Aucune variante Music Shield trouvée. Créez d\'abord les variantes.');
+      }
+
+      // Images par défaut pour le scan automatique
+      const imagesToInsert = [
+        {
+          filename: 'main-1.png',
+          type: 'main',
+          context: 'studio',
+          sortOrder: 0,
+          altText: 'Image principale'
+        },
+        {
+          filename: 'detail-1.png',
+          type: 'detail',
+          context: 'studio',
+          sortOrder: 1,
+          altText: 'Vue détaillée'
+        },
+        {
+          filename: 'lifestyle-1.png',
+          type: 'lifestyle',
+          context: 'lifestyle',
+          sortOrder: 2,
+          altText: 'Vue lifestyle'
+        },
+        {
+          filename: 'swatch.png',
+          type: 'swatch',
+          context: 'studio',
+          sortOrder: 3,
+          altText: 'Échantillon couleur'
+        }
+      ];
+
+      let insertedCount = 0;
+      const results = [];
+
+      // Pour chaque variante trouvée
+      for (const variant of variants) {
+        // Construire le chemin du dossier basé sur le nom/SKU de la variante
+        const folderName = variant.name
+          .toLowerCase()
+          .replace(/[^a-z0-9\s-]/g, '')
+          .replace(/\s+/g, '-')
+          .replace(/-+/g, '-');
+
+        // Pour chaque image à insérer
+        for (const imageInfo of imagesToInsert) {
+          const storagePath = `${folderName}/${imageInfo.filename}`;
+          const imageUrl = `https://hgapjysrbldjqromnrov.supabase.co/storage/v1/object/public/variant-images/${storagePath}`;
+
+          try {
+            // Vérifier si l'image existe déjà pour cette variante
+            const { data: existingImage } = await supabase
+              .from('variant_images')
+              .select('id')
+              .eq('variant_id', variant.id)
+              .eq('type', imageInfo.type)
+              .single();
+
+            if (!existingImage) {
+              // Insérer l'image si elle n'existe pas
+              const { error: insertError } = await supabase
+                .from('variant_images')
+                .insert({
+                  variant_id: variant.id,
+                  image_url: imageUrl,
+                  storage_path: storagePath,
+                  type: imageInfo.type,
+                  context: imageInfo.context,
+                  alt_text: `${variant.name} - ${imageInfo.altText}`,
+                  sort_order: imageInfo.sortOrder
+                })
+                .select()
+                .single();
+
+              if (insertError) {
+                // Erreur lors de l'insertion
+              } else {
+                insertedCount++;
+                results.push({
+                  variant: variant.name,
+                  image: imageInfo.filename,
+                  success: true
+                });
+              }
+            } else {
+              results.push({
+                variant: variant.name,
+                image: imageInfo.filename,
+                success: false,
+                reason: 'Déjà existante'
+              });
+            }
+          } catch (imageError) {
+            // Erreur lors du traitement de l'image
+            results.push({
+              variant: variant.name,
+              image: imageInfo.filename,
+              success: false,
+              reason: imageError.message
+            });
+          }
+        }
+      }
+
       toast({
-        title: "En développement",
-        description: "Fonctionnalité en cours de développement",
+        title: "Scan terminé",
+        description: `${insertedCount} images insérées sur ${variants.length} variantes traitées`,
       });
+
+
     } catch (error) {
-      console.error('Erreur:', error);
+      console.error('Erreur scan:', error);
       toast({
         title: "Erreur",
-        description: "Une erreur est survenue",
+        description: `Erreur lors du scan: ${error.message}`,
         variant: "destructive",
       });
     } finally {

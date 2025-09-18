@@ -17,7 +17,9 @@
     "audit:fix": "npm audit fix",
     "audit:report": "npm audit --json > security-audit.json",
     "security:check": "npm run audit:security && npm outdated --depth=0",
-    "security:full": "npm run audit:report && npm run security:check"
+    "security:full": "npm run audit:report && npm run security:check",
+    "snyk:test": "snyk test",
+    "snyk:monitor": "snyk monitor"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",

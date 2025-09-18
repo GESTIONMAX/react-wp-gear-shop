@@ -27,16 +27,37 @@
 Dans **Settings > Secrets and Variables > Actions** :
 
 #### **Variables (publiques)**
+Aller dans l'onglet **"Variables"** :
 ```
 VITE_SUPABASE_URL=https://votre-projet.supabase.co
 VITE_SUPABASE_PUBLISHABLE_KEY=eyJhbGciOi...
 ```
 
 #### **Secrets (privés)**
+Aller dans l'onglet **"Secrets"** :
 ```
 VERCEL_TOKEN=your_vercel_token
 VERCEL_ORG_ID=your_org_id
 VERCEL_PROJECT_ID=your_project_id
+```
+
+#### **📋 Guide de Configuration Détaillé**
+
+**1. Variables Supabase (publiques) :**
+- Dans votre dashboard Supabase : **Settings** → **API**
+- `VITE_SUPABASE_URL` : "Project URL"
+- `VITE_SUPABASE_PUBLISHABLE_KEY` : "Project API keys" → "anon public"
+
+**2. Secrets Vercel (privés) :**
+- `VERCEL_TOKEN` : Token configuré pour le compte
+- `VERCEL_ORG_ID` : Dans Vercel → Settings → General → "Team ID"
+- `VERCEL_PROJECT_ID` : Dans votre projet Vercel → Settings → General → "Project ID"
+
+**3. Alternative via CLI Vercel :**
+```bash
+npx vercel link
+# Les IDs seront dans .vercel/project.json
+cat .vercel/project.json
 ```
 
 ### Permissions GitHub

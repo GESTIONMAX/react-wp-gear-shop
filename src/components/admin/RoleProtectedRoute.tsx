@@ -3,7 +3,7 @@ import { Navigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Shield, Loader2, AlertTriangle, Users, UserCheck } from 'lucide-react';
+import { Shield, Loader2, Users, UserCheck } from 'lucide-react';
 import { UserRole } from '@/hooks/useAdmin';
 
 interface RoleProtectedRouteProps {
@@ -23,12 +23,6 @@ const RoleProtectedRoute: React.FC<RoleProtectedRouteProps> = ({
 }) => {
   const { user, loading, userInfo } = useAuth();
 
-  console.log('=== RoleProtectedRoute Debug ===');
-  console.log('User:', !!user, user?.email);
-  console.log('Loading:', loading);
-  console.log('UserInfo:', userInfo);
-  console.log('AllowedRoles:', allowedRoles);
-  console.log('RequireInternal:', requireInternal);
 
   // Chargement en cours
   if (loading) {
@@ -106,17 +100,6 @@ const RoleProtectedRoute: React.FC<RoleProtectedRouteProps> = ({
               )}
             </div>
 
-            {/* Informations de debug en développement */}
-            {process.env.NODE_ENV === 'development' && (
-              <div className="mt-6 p-3 bg-muted rounded text-xs text-left w-full">
-                <strong>Debug Info:</strong><br />
-                Rôle actuel: {userInfo.role || 'aucun'}<br />
-                Type: {userInfo.userType || 'aucun'}<br />
-                Interne: {userInfo.isInternal ? 'oui' : 'non'}<br />
-                Rôles requis: {allowedRoles.join(', ')}<br />
-                Interne requis: {requireInternal ? 'oui' : 'non'}
-              </div>
-            )}
           </CardContent>
         </Card>
       </div>

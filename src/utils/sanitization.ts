@@ -5,7 +5,7 @@
 // Expressions régulières de validation
 const VALIDATION_PATTERNS = {
   email: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-  phone: /^[\+]?[0-9\s\-\(\)]{10,}$/,
+  phone: /^[+]?[0-9\s\-()]{10,}$/,
   alphanumeric: /^[a-zA-Z0-9\s\-_]+$/,
   noScripts: /<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi,
   sqlInjection: /(\b(SELECT|INSERT|UPDATE|DELETE|DROP|CREATE|ALTER|EXEC|UNION|SCRIPT)\b)/gi,
@@ -65,7 +65,7 @@ export function sanitizeEmail(email: string): string | null {
 export function sanitizePhone(phone: string): string | null {
   if (typeof phone !== 'string') return null;
 
-  const sanitized = phone.replace(/[^\+0-9\s\-\(\)]/g, '').trim();
+  const sanitized = phone.replace(/[^+0-9\s\-()]/g, '').trim();
 
   if (!VALIDATION_PATTERNS.phone.test(sanitized)) {
     return null;

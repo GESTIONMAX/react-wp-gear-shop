@@ -14,7 +14,6 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import CreateVariantForm from '@/components/admin/CreateVariantForm';
-import ImageUploadDebug from '@/components/admin/ImageUploadDebug';
 import VariantImageUploader from '@/components/admin/VariantImageUploader';
 import SKUMigrationTest from '@/components/admin/SKUMigrationTest';
 
