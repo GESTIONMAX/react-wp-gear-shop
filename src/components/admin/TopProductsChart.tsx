@@ -1,6 +1,7 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts';
+import ClientOnly from '@/components/ClientOnlyCharts';
 
 interface TopProduct {
   id: string;
@@ -34,7 +35,8 @@ const TopProductsChart: React.FC<TopProductsChartProps> = ({ data, className = '
       <CardContent>
         {data.length > 0 ? (
           <div className="h-80">
-            <ResponsiveContainer width="100%" height="100%">
+            <ClientOnly>
+              <ResponsiveContainer width="100%" height="100%">
               <BarChart 
                 data={data} 
                 margin={{ top: 20, right: 30, left: 20, bottom: 60 }}
@@ -68,7 +70,8 @@ const TopProductsChart: React.FC<TopProductsChartProps> = ({ data, className = '
                   radius={[4, 4, 0, 0]}
                 />
               </BarChart>
-            </ResponsiveContainer>
+              </ResponsiveContainer>
+            </ClientOnly>
           </div>
         ) : (
           <div className="h-80 flex items-center justify-center text-muted-foreground">

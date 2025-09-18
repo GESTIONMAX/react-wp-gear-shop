@@ -1,6 +1,7 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
+import ClientOnly from '@/components/ClientOnlyCharts';
 
 interface SalesData {
   date: string;
@@ -36,7 +37,8 @@ const SalesChart: React.FC<SalesChartProps> = ({ data, className = '' }) => {
       </CardHeader>
       <CardContent>
         <div className="h-80">
-          <ResponsiveContainer width="100%" height="100%">
+          <ClientOnly>
+            <ResponsiveContainer width="100%" height="100%">
             <LineChart data={data} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
               <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
               <XAxis 
@@ -88,6 +90,7 @@ const SalesChart: React.FC<SalesChartProps> = ({ data, className = '' }) => {
               />
             </LineChart>
           </ResponsiveContainer>
+          </ClientOnly>
         </div>
       </CardContent>
     </Card>
