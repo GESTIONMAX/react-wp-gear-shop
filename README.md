@@ -350,6 +350,27 @@ Ce projet est sous licence **MIT** - voir le fichier [LICENSE](LICENSE) pour plu
 
 ---
 
+## 📚 Documentation
+
+### **Guides de Migration et Maintenance**
+
+- **[📋 Post-Lovable Checklist](docs/post-lovable-checklist.md)** - Guide complet pour nettoyer un projet exporté de Lovable
+- **[⚡ Commandes Rapides](docs/quick-commands.md)** - Scripts et commandes de nettoyage en one-liner
+
+### **Sécurité et Audits**
+
+L'application a été auditée et nettoyée selon les meilleures pratiques :
+
+- ✅ **0 vulnérabilités** de sécurité (npm audit)
+- ✅ **Dépendances à jour** (esbuild, vite, react)
+- ✅ **Code propre** sans traces d'outils de développement
+- ✅ **Bundle optimisé** pour la production
+- ✅ **Métadonnées SEO** personnalisées
+
+> 💡 **Astuce** : Consultez la [checklist post-Lovable](docs/post-lovable-checklist.md) pour appliquer la même procédure à vos projets.
+
+---
+
 ## 🎉 Fonctionnalités à venir
 
 ### **Q1 2025**
