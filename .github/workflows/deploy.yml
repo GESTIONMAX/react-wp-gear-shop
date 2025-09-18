@@ -119,7 +119,6 @@ jobs:
     needs: build
     environment:
       name: ${{ github.event.inputs.environment || 'production' }}
-      url: ${{ steps.deploy.outputs.url }}
 
     steps:
       - name: 📥 Checkout code
@@ -160,8 +159,11 @@ jobs:
         run: |
           echo "## 🚀 Deployment Summary" >> $GITHUB_STEP_SUMMARY
           ENV_NAME="${{ github.event.inputs.environment || 'production' }}"
+          DEPLOY_URL="${{ steps.deploy.outputs.url }}"
           echo "- **Environment**: $ENV_NAME" >> $GITHUB_STEP_SUMMARY
-          echo "- **URL**: ${{ steps.deploy.outputs.url }}" >> \
-            $GITHUB_STEP_SUMMARY
+          echo "- **URL**: $DEPLOY_URL" >> $GITHUB_STEP_SUMMARY
           echo "- **Commit**: ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
           echo "- **Deploy time**: $(date)" >> $GITHUB_STEP_SUMMARY
+
+          # Set deployment URL for environment (post-deployment)
+          echo "DEPLOYMENT_URL=$DEPLOY_URL" >> $GITHUB_OUTPUT
