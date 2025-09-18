@@ -1,5 +1,5 @@
 import React from 'react';
-import { Helmet } from 'react-helmet-async';
+import SEO from '@/components/SEO';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
@@ -20,15 +20,13 @@ import {
 const LegalNotice = () => {
   return (
     <>
-      <Helmet>
-        <title>Mentions Légales | MyTechGear.eu - Informations Légales</title>
-        <meta
-          name="description"
-          content="Mentions légales, informations sur l'éditeur, hébergeur et conditions d'utilisation du site MyTechGear.eu - Lunettes connectées premium."
-        />
-        <meta name="robots" content="index, follow" />
-        <link rel="canonical" href="/mentions-legales" />
-      </Helmet>
+      <SEO
+        title="Mentions Légales | MyTechGear.eu - Informations Légales"
+        description="Mentions légales, informations sur l'éditeur, hébergeur et conditions d'utilisation du site MyTechGear.eu - Lunettes connectées premium."
+        url="/mentions-legales"
+        type="website"
+        noIndex={false}
+      />
 
       <div className="min-h-screen bg-background">
         {/* Breadcrumb */}

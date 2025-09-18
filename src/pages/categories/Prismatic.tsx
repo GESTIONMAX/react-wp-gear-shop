@@ -1,5 +1,5 @@
 import React from 'react';
-import { Helmet } from 'react-helmet-async';
+import SEO from '@/components/SEO';
 import { Crown, Gem, Zap, Star } from 'lucide-react';
 import CategoryHero from '@/components/CategoryHero';
 import { ProductVariantCard } from '@/components/ProductVariantCard';
@@ -130,15 +130,15 @@ const Prismatic = () => {
 
   return (
     <>
-      <Helmet>
-        <title>Lunettes Connectées Prismatic | MyTechGear - Luxe & Exclusivité</title>
-        <meta 
-          name="description" 
-          content="Collection Prismatic premium : lunettes connectées haut de gamme avec verres prismatiques, IA avancée, matériaux luxueux. Édition limitée exclusive."
-        />
-        <meta name="keywords" content="lunettes connectées premium, verres prismatiques, luxe tech, édition limitée, smart glasses haut de gamme" />
-        <link rel="canonical" href="/prismatic" />
-      </Helmet>
+      <SEO
+        title="Lunettes Connectées Prismatic | MyTechGear - Luxe & Exclusivité"
+        description="Collection Prismatic premium : lunettes connectées haut de gamme avec verres prismatiques, IA avancée, matériaux luxueux. Édition limitée exclusive."
+        keywords="lunettes connectées premium, verres prismatiques, luxe tech, édition limitée, smart glasses haut de gamme"
+        url="/prismatic"
+        type="website"
+        image="/categories/prismatic-hero.jpg"
+        category="Prismatic"
+      />
 
       <div className="min-h-screen bg-background">
         {/* Breadcrumb */}

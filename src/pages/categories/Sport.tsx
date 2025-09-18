@@ -1,5 +1,5 @@
 import React from 'react';
-import { Helmet } from 'react-helmet-async';
+import SEO from '@/components/SEO';
 import { Trophy, Zap, Shield, Headphones } from 'lucide-react';
 import CategoryHero from '@/components/CategoryHero';
 import { ProductVariantCard } from '@/components/ProductVariantCard';
@@ -130,15 +130,15 @@ const Sport = () => {
 
   return (
     <>
-      <Helmet>
-        <title>Lunettes Connectées Sport | MyTechGear - Performance & Style</title>
-        <meta 
-          name="description" 
-          content="Découvrez notre collection de lunettes connectées sport. Audio intégré, résistance IP67, tracking performance. Parfait pour running, cyclisme, sports outdoor."
-        />
-        <meta name="keywords" content="lunettes connectées sport, audio sport, lunettes running, wearable sport, tech sport" />
-        <link rel="canonical" href="/sport" />
-      </Helmet>
+      <SEO
+        title="Lunettes Connectées Sport | MyTechGear - Performance & Style"
+        description="Découvrez notre collection de lunettes connectées sport. Audio intégré, résistance IP67, tracking performance. Parfait pour running, cyclisme, sports outdoor."
+        keywords="lunettes connectées sport, audio sport, lunettes running, wearable sport, tech sport"
+        url="/sport"
+        type="website"
+        image="/categories/sport-hero.jpg"
+        category="Sport"
+      />
 
       <div className="min-h-screen bg-background">
         {/* Breadcrumb */}

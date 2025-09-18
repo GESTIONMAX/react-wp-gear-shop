@@ -11,6 +11,7 @@ import { useProductBySlug } from '@/hooks/useProducts';
 import { useProductImages } from '@/hooks/useProductImages';
 import { useCart } from '@/contexts/CartContext';
 import { toast } from '@/hooks/use-toast';
+import SEO from '@/components/SEO';
 
 const ProductDetail = () => {
   const { slug } = useParams();
@@ -78,7 +79,21 @@ const ProductDetail = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <>
+      <SEO
+        title={`${product.name} | MyTechGear - Lunettes Connectées`}
+        description={product.description || product.shortDescription || `Découvrez ${product.name}, lunettes connectées de la catégorie ${product.category}. Prix à partir de ${(product.salePrice || product.price) / 100}€.`}
+        keywords={`${product.name}, ${product.category.toLowerCase()}, lunettes connectées, ${product.tags?.join(', ') || 'smart glasses'}`}
+        url={`/product/${product.slug}`}
+        type="product"
+        image={currentImages[0]?.url || '/hero-smart-glasses.jpg'}
+        price={currentVariant?.salePrice || currentVariant?.price || product.salePrice || product.price}
+        currency="EUR"
+        availability={product.inStock ? 'in stock' : 'out of stock'}
+        brand="MyTechGear"
+        category={product.category}
+      />
+      <div className="min-h-screen bg-background">
       {/* Breadcrumb */}
       <div className="border-b bg-muted/30">
         <div className="container mx-auto px-4 py-4">
@@ -364,7 +379,8 @@ const ProductDetail = () => {
           </Tabs>
         </div>
       </div>
-    </div>
+      </div>
+    </>
   );
 };
 

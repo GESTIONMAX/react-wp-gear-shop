@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Helmet } from 'react-helmet-async';
+import SEO from '@/components/SEO';
 import { ArrowLeft, Heart, ShoppingCart, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -40,10 +40,13 @@ const Wishlist = () => {
   if (!user) {
     return (
       <div className="min-h-screen bg-background">
-        <Helmet>
-          <title>{t('wishlist.title')} | MyTechGear</title>
-          <meta name="description" content={t('wishlist.metaDescription')} />
-        </Helmet>
+        <SEO
+          title={`${t('wishlist.title')} | MyTechGear`}
+          description={t('wishlist.metaDescription')}
+          url="/wishlist"
+          type="website"
+          noIndex={true}
+        />
         
         <div className="container mx-auto px-4 py-16">
           <div className="text-center max-w-md mx-auto">
@@ -84,13 +87,13 @@ const Wishlist = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <Helmet>
-        <title>{t('wishlist.title') || 'Mes Favoris'} | MyTechGear</title>
-        <meta 
-          name="description" 
-          content={t('wishlist.metaDescription') || 'Découvrez vos produits favoris et ajoutez-les à votre panier'} 
-        />
-      </Helmet>
+      <SEO
+        title={`${t('wishlist.title') || 'Mes Favoris'} | MyTechGear`}
+        description={t('wishlist.metaDescription') || 'Découvrez vos produits favoris et ajoutez-les à votre panier'}
+        url="/wishlist"
+        type="website"
+        noIndex={true}
+      />
 
       <div className="container mx-auto px-4 py-8">
         {/* Header */}

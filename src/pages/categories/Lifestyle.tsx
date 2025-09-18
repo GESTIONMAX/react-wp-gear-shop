@@ -1,5 +1,5 @@
 import React from 'react';
-import { Helmet } from 'react-helmet-async';
+import SEO from '@/components/SEO';
 import { Sparkles, Users, Palette, Camera } from 'lucide-react';
 import CategoryHero from '@/components/CategoryHero';
 import { ProductVariantCard } from '@/components/ProductVariantCard';
@@ -130,15 +130,15 @@ const Lifestyle = () => {
 
   return (
     <>
-      <Helmet>
-        <title>Lunettes Connectées Lifestyle | MyTechGear - Élégance & Innovation</title>
-        <meta 
-          name="description" 
-          content="Collection lifestyle de lunettes connectées premium. Design élégant, photo/vidéo HD, social connect. Parfait pour le quotidien urbain moderne."
-        />
-        <meta name="keywords" content="lunettes connectées lifestyle, lunettes élégantes, wearable fashion, tech lifestyle, smart glasses" />
-        <link rel="canonical" href="/lifestyle" />
-      </Helmet>
+      <SEO
+        title="Lunettes Connectées Lifestyle | MyTechGear - Élégance & Innovation"
+        description="Collection lifestyle de lunettes connectées premium. Design élégant, photo/vidéo HD, social connect. Parfait pour le quotidien urbain moderne."
+        keywords="lunettes connectées lifestyle, lunettes élégantes, wearable fashion, tech lifestyle, smart glasses"
+        url="/lifestyle"
+        type="website"
+        image="/categories/lifestyle-hero.jpg"
+        category="Lifestyle"
+      />
 
       <div className="min-h-screen bg-background">
         {/* Breadcrumb */}

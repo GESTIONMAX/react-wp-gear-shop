@@ -1,5 +1,5 @@
 import React from 'react';
-import { Helmet } from 'react-helmet-async';
+import SEO from '@/components/SEO';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
@@ -27,15 +27,13 @@ import {
 const TermsOfSale = () => {
   return (
     <>
-      <Helmet>
-        <title>Conditions Générales de Vente | MyTechGear.eu - CGV E-commerce</title>
-        <meta
-          name="description"
-          content="Conditions générales de vente de MyTechGear.eu. Informations sur les commandes, livraisons, retours, garanties et modalités de paiement pour nos lunettes connectées."
-        />
-        <meta name="robots" content="index, follow" />
-        <link rel="canonical" href="/conditions-generales-vente" />
-      </Helmet>
+      <SEO
+        title="Conditions Générales de Vente | MyTechGear.eu - CGV"
+        description="Conditions générales de vente de MyTechGear.eu. Modalités de commande, livraison, paiement et retour pour nos lunettes connectées premium."
+        url="/conditions-generales-vente"
+        type="website"
+        noIndex={false}
+      />
 
       <div className="min-h-screen bg-background">
         {/* Breadcrumb */}

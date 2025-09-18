@@ -1,5 +1,5 @@
 import React from 'react';
-import { Helmet } from 'react-helmet-async';
+import SEO from '@/components/SEO';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
@@ -25,15 +25,13 @@ import {
 const PrivacyPolicy = () => {
   return (
     <>
-      <Helmet>
-        <title>Politique de Confidentialité | MyTechGear.eu - Protection des Données</title>
-        <meta
-          name="description"
-          content="Politique de confidentialité et protection des données personnelles de MyTechGear.eu. Découvrez comment nous collectons, utilisons et protégeons vos informations personnelles."
-        />
-        <meta name="robots" content="index, follow" />
-        <link rel="canonical" href="/politique-confidentialite" />
-      </Helmet>
+      <SEO
+        title="Politique de Confidentialité | MyTechGear.eu - Protection des Données"
+        description="Politique de confidentialité et protection des données personnelles. RGPD conforme, sécurité et transparence assurées pour MyTechGear.eu."
+        url="/politique-confidentialite"
+        type="website"
+        noIndex={false}
+      />
 
       <div className="min-h-screen bg-background">
         {/* Breadcrumb */}

@@ -1,3 +1,7 @@
+User-agent: *
+Allow: /
+
+# Optimized for main search engines
 User-agent: Googlebot
 Allow: /
 
@@ -10,5 +14,25 @@ Allow: /
 User-agent: facebookexternalhit
 Allow: /
 
+# Block admin areas
 User-agent: *
-Allow: /
+Disallow: /admin/
+Disallow: /auth
+Disallow: /checkout
+Disallow: /account
+
+# Allow important files
+Allow: /sitemap.xml
+Allow: /*.js
+Allow: /*.css
+Allow: /*.jpg
+Allow: /*.jpeg
+Allow: /*.png
+Allow: /*.webp
+Allow: /*.svg
+
+# Sitemap location
+Sitemap: https://mytechgear.eu/sitemap.xml
+
+# Crawl delay
+Crawl-delay: 1

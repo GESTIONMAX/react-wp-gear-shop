@@ -1,8 +1,8 @@
 import { Link } from "react-router-dom";
-import { Helmet } from "react-helmet-async";
 import { ArrowRight, Zap, Eye, Trophy, CreditCard, Shield, Clock, CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import SEO from "@/components/SEO";
 import heroImage from "@/assets/hero-smart-glasses.jpg";
 
 const Home = () => {
@@ -41,15 +41,14 @@ const Home = () => {
 
   return (
     <>
-      <Helmet>
-        <title>MyTechGear - Lunettes Connectées de Nouvelle Génération</title>
-        <meta 
-          name="description" 
-          content="Découvrez notre gamme complète de lunettes connectées pour SPORT, LIFESTYLE et PRISMATIC. Technologie française de pointe avec garantie 2 ans." 
-        />
-        <meta name="keywords" content="lunettes connectées, smart glasses, sport, lifestyle, réalité augmentée, wearable technology" />
-        <link rel="canonical" href="/" />
-      </Helmet>
+      <SEO
+        title="MyTechGear - Lunettes Connectées de Nouvelle Génération"
+        description="Découvrez notre gamme complète de lunettes connectées pour SPORT, LIFESTYLE et PRISMATIC. Technologie française de pointe avec garantie 2 ans."
+        keywords="lunettes connectées, smart glasses, sport, lifestyle, réalité augmentée, wearable technology"
+        url="/"
+        type="website"
+        image="/hero-smart-glasses.jpg"
+      />
 
       <main className="min-h-screen">
         {/* Hero Section */}
