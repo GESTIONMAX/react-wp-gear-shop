@@ -13,7 +13,11 @@
     "test:watch": "vitest --config vite.config.test.ts --watch",
     "test:ui": "vitest --config vite.config.test.ts --ui",
     "cleanup:lovable": "./scripts/post-lovable-cleanup.sh",
-    "audit:security": "npm audit --audit-level=moderate"
+    "audit:security": "npm audit --audit-level=moderate",
+    "audit:fix": "npm audit fix",
+    "audit:report": "npm audit --json > security-audit.json",
+    "security:check": "npm run audit:security && npm outdated --depth=0",
+    "security:full": "npm run audit:report && npm run security:check"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",

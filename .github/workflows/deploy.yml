@@ -1,0 +1,160 @@
+name: 🚀 Deploy to Production
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to deploy to'
+        required: true
+        default: 'production'
+        type: choice
+        options:
+          - production
+          - staging
+
+env:
+  NODE_VERSION: '18'
+
+jobs:
+  security-check:
+    name: 🔒 Pre-deployment Security Check
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🔧 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: 📦 Install dependencies
+        run: npm ci --fund false
+
+      - name: 🔍 Critical security audit
+        run: |
+          # Vérification critique avant déploiement
+          if npm audit --audit-level=critical; then
+            echo "✅ No critical vulnerabilities"
+          else
+            echo "❌ Critical vulnerabilities found - deployment blocked"
+            exit 1
+          fi
+
+      - name: 🔍 Environment variables check
+        run: |
+          # Vérifier que les variables d'environnement sont définies
+          if [ -z "${{ vars.VITE_SUPABASE_URL }}" ]; then
+            echo "❌ VITE_SUPABASE_URL not configured"
+            exit 1
+          fi
+
+          if [ -z "${{ vars.VITE_SUPABASE_PUBLISHABLE_KEY }}" ]; then
+            echo "❌ VITE_SUPABASE_PUBLISHABLE_KEY not configured"
+            exit 1
+          fi
+
+          echo "✅ Environment variables configured"
+
+  build:
+    name: 🏗️ Build for Production
+    runs-on: ubuntu-latest
+    needs: security-check
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🔧 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: 📦 Install dependencies
+        run: npm ci --fund false
+
+      - name: 🧪 Run tests
+        run: npm run test
+
+      - name: 🏗️ Build for production
+        run: npm run build
+        env:
+          VITE_SUPABASE_URL: ${{ vars.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_PUBLISHABLE_KEY: ${{ vars.VITE_SUPABASE_PUBLISHABLE_KEY }}
+
+      - name: 🔍 Post-build security check
+        run: |
+          # Vérifier qu'aucun secret n'est exposé
+          if find dist/ -type f -name "*.js" -o -name "*.html" -o -name "*.css" | xargs grep -l "secret\|private\|sk_\|pk_test" 2>/dev/null; then
+            echo "❌ Potential secrets found in build output"
+            exit 1
+          fi
+
+          # Vérifier la taille du bundle
+          TOTAL_SIZE=$(du -sb dist/ | cut -f1)
+          if [ $TOTAL_SIZE -gt 52428800 ]; then # 50MB
+            echo "⚠️ Bundle size is large: $(du -sh dist/)"
+          fi
+
+          echo "✅ Build security check passed"
+
+      - name: 📤 Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: production-build
+          path: dist/
+          retention-days: 7
+
+  deploy:
+    name: 🚀 Deploy to Vercel
+    runs-on: ubuntu-latest
+    needs: build
+    environment:
+      name: ${{ github.event.inputs.environment || 'production' }}
+      url: ${{ steps.deploy.outputs.url }}
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 📥 Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: production-build
+          path: dist/
+
+      - name: 🚀 Deploy to Vercel
+        id: deploy
+        uses: vercel/action@v1
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          vercel-args: '--prod'
+
+      - name: 🔍 Post-deployment health check
+        run: |
+          # Attendre que le déploiement soit accessible
+          sleep 30
+
+          # Vérifier que le site répond
+          URL="${{ steps.deploy.outputs.url }}"
+          if curl -f -s "$URL" > /dev/null; then
+            echo "✅ Deployment accessible at $URL"
+          else
+            echo "❌ Deployment health check failed"
+            exit 1
+          fi
+
+      - name: 📊 Deployment summary
+        run: |
+          echo "## 🚀 Deployment Summary" >> $GITHUB_STEP_SUMMARY
+          echo "- **Environment**: ${{ github.event.inputs.environment || 'production' }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **URL**: ${{ steps.deploy.outputs.url }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Commit**: ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Deploy time**: $(date)" >> $GITHUB_STEP_SUMMARY

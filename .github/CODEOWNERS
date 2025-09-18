@@ -1,0 +1,24 @@
+# 🔒 Code Owners - Sécurité et Reviews
+
+# Global owners
+* @GESTIONMAX
+
+# Security-critical files require security team review
+/.github/ @GESTIONMAX @security-team
+/scripts/ @GESTIONMAX @security-team
+/supabase/ @GESTIONMAX @security-team
+
+# Configuration files
+package.json @GESTIONMAX
+package-lock.json @GESTIONMAX
+vite.config.ts @GESTIONMAX
+.env* @GESTIONMAX
+index.html @GESTIONMAX
+
+# Security utilities
+/src/utils/sanitization.ts @GESTIONMAX @security-team
+/src/hooks/useSecureValidation.ts @GESTIONMAX @security-team
+
+# Documentation
+/docs/ @GESTIONMAX
+README.md @GESTIONMAX
