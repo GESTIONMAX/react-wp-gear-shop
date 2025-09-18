@@ -1,8 +1,9 @@
+---
 name: 🚀 Deploy to Production
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   workflow_dispatch:
     inputs:
       environment:
@@ -90,7 +91,9 @@ jobs:
       - name: 🔍 Post-build security check
         run: |
           # Vérifier qu'aucun secret n'est exposé
-          if find dist/ -type f -name "*.js" -o -name "*.html" -o -name "*.css" | xargs grep -l "secret\|private\|sk_\|pk_test" 2>/dev/null; then
+          if find dist/ -type f -name "*.js" -o -name "*.html" \
+            -o -name "*.css" | xargs grep -l \
+            "secret\|private\|sk_\|pk_test" 2>/dev/null; then
             echo "❌ Potential secrets found in build output"
             exit 1
           fi
@@ -130,12 +133,13 @@ jobs:
 
       - name: 🚀 Deploy to Vercel
         id: deploy
-        uses: vercel/action@v1
+        uses: amondnet/vercel-action@v20
         with:
           vercel-token: ${{ secrets.VERCEL_TOKEN }}
           vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
           vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
           vercel-args: '--prod'
+          working-directory: ./
 
       - name: 🔍 Post-deployment health check
         run: |
@@ -154,7 +158,9 @@ jobs:
       - name: 📊 Deployment summary
         run: |
           echo "## 🚀 Deployment Summary" >> $GITHUB_STEP_SUMMARY
-          echo "- **Environment**: ${{ github.event.inputs.environment || 'production' }}" >> $GITHUB_STEP_SUMMARY
-          echo "- **URL**: ${{ steps.deploy.outputs.url }}" >> $GITHUB_STEP_SUMMARY
+          ENV_NAME="${{ github.event.inputs.environment || 'production' }}"
+          echo "- **Environment**: $ENV_NAME" >> $GITHUB_STEP_SUMMARY
+          echo "- **URL**: ${{ steps.deploy.outputs.url }}" >> \
+            $GITHUB_STEP_SUMMARY
           echo "- **Commit**: ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
           echo "- **Deploy time**: $(date)" >> $GITHUB_STEP_SUMMARY

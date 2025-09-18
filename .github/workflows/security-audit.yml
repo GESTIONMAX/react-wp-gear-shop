@@ -1,14 +1,15 @@
+---
 name: 🔒 Security Audit & Build
 
 on:
   push:
-    branches: [ main, develop, feature/* ]
+    branches: [main, develop, feature/*]
   pull_request:
-    branches: [ main, develop ]
+    branches: [main, develop]
   schedule:
     # Audit automatique tous les lundi à 8h00 UTC
     - cron: '0 8 * * 1'
-  workflow_dispatch: # Permet le déclenchement manuel
+  workflow_dispatch:  # Permet le déclenchement manuel
 
 env:
   NODE_VERSION: '18'
@@ -50,7 +51,8 @@ jobs:
           npm audit --json > audit-report.json || true
 
           # Compter les vulnérabilités
-          VULN_COUNT=$(cat audit-report.json | jq '.metadata.vulnerabilities.total // 0')
+          VULN_COUNT=$(cat audit-report.json | \
+            jq '.metadata.vulnerabilities.total // 0')
           echo "Total vulnerabilities: $VULN_COUNT" >> $GITHUB_STEP_SUMMARY
 
       - name: 📊 Check outdated packages
@@ -134,7 +136,8 @@ jobs:
           echo "## 🔍 Build Security Check" >> $GITHUB_STEP_SUMMARY
 
           # Vérifier qu'aucun secret n'est dans le build
-          if grep -r "sk_" dist/ || grep -r "secret" dist/ || grep -r "private" dist/; then
+          if grep -r "sk_" dist/ || grep -r "secret" dist/ || \
+            grep -r "private" dist/; then
             echo "❌ Potential secrets found in build" >> $GITHUB_STEP_SUMMARY
             exit 1
           else
