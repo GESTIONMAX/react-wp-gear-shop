@@ -8,8 +8,8 @@ const VALIDATION_PATTERNS = {
   phone: /^[+]?[0-9\s\-()]{10,}$/,
   alphanumeric: /^[a-zA-Z0-9\s\-_]+$/,
   noScripts: /<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi,
-  sqlInjection: /(\b(SELECT|INSERT|UPDATE|DELETE|DROP|CREATE|ALTER|EXEC|UNION|SCRIPT)\b)/gi,
-  xss: /(<script|<iframe|<object|<embed|javascript:|vbscript:|onload=|onclick=|onerror=)/gi,
+  sqlInjection: /(SELECT|INSERT|UPDATE|DELETE|DROP|CREATE|ALTER|EXEC|UNION|SCRIPT)/i,
+  xss: /(<script|<iframe|<object|<embed|javascript:|vbscript:|onload=|onclick=|onerror=|onmouseover=|onfocus=|onblur=)/i,
 } as const;
 
 /**
@@ -72,6 +72,23 @@ export function sanitizePhone(phone: string): string | null {
   }
 
   return sanitized;
+}
+
+/**
+ * Valide une adresse email
+ */
+export function isValidEmail(email: string): boolean {
+  if (typeof email !== 'string') return false;
+  return VALIDATION_PATTERNS.email.test(email.trim().toLowerCase());
+}
+
+/**
+ * Valide un numéro de téléphone
+ */
+export function isValidPhone(phone: string): boolean {
+  if (typeof phone !== 'string') return false;
+  const sanitized = phone.replace(/[^+0-9\s\-()]/g, '').trim();
+  return VALIDATION_PATTERNS.phone.test(sanitized);
 }
 
 /**
