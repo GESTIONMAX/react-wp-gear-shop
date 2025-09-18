@@ -33,8 +33,8 @@ describe('Sanitization Utils', () => {
 
     it('should handle edge cases', () => {
       expect(detectXSS('')).toBe(false)
-      expect(detectXSS(null as any)).toBe(false)
-      expect(detectXSS(undefined as any)).toBe(false)
+      expect(detectXSS(null as unknown as string)).toBe(false)
+      expect(detectXSS(undefined as unknown as string)).toBe(false)
     })
   })
 
@@ -89,8 +89,8 @@ describe('Sanitization Utils', () => {
 
     it('should handle edge cases', () => {
       expect(sanitizeEmail('')).toBeNull()
-      expect(sanitizeEmail(null as any)).toBeNull()
-      expect(sanitizeEmail(undefined as any)).toBeNull()
+      expect(sanitizeEmail(null as unknown as string)).toBeNull()
+      expect(sanitizeEmail(undefined as unknown as string)).toBeNull()
     })
   })
 

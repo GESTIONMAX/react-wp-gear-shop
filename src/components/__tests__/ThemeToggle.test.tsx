@@ -12,7 +12,7 @@ vi.mock('lucide-react', () => ({
 describe('ThemeToggle', () => {
   const renderWithTheme = (defaultTheme = 'system') => {
     return render(
-      <ThemeProvider defaultTheme={defaultTheme as any}>
+      <ThemeProvider defaultTheme={defaultTheme as "light" | "dark" | "system"}>
         <ThemeToggle />
       </ThemeProvider>
     )
