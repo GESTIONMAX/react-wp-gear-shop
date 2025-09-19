@@ -16,7 +16,7 @@ on:
           - staging
 
 env:
-  NODE_VERSION: '18'
+  NODE_VERSION: '20'
 
 jobs:
   security-check:
