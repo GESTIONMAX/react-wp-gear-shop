@@ -12,7 +12,6 @@
     "test": "vitest --config vite.config.test.ts",
     "test:watch": "vitest --config vite.config.test.ts --watch",
     "test:ui": "vitest --config vite.config.test.ts --ui",
-    "cleanup:lovable": "./scripts/post-lovable-cleanup.sh",
     "audit:security": "npm audit --audit-level=moderate",
     "audit:fix": "npm audit fix",
     "audit:report": "npm audit --json > security-audit.json",

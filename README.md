@@ -3,10 +3,11 @@
 > **Application e-commerce moderne** spécialisée dans la vente de lunettes connectées premium avec interface d'administration complète et gestion avancée des produits.
 
 [![React](https://img.shields.io/badge/React-18.3.1-blue?logo=react)](https://reactjs.org/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.5.3-blue?logo=typescript)](https://www.typescriptlang.org/)
-[![Vite](https://img.shields.io/badge/Vite-5.4.1-646CFF?logo=vite)](https://vitejs.dev/)
-[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.4.0-38B2AC?logo=tailwind-css)](https://tailwindcss.com/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.8.3-blue?logo=typescript)](https://www.typescriptlang.org/)
+[![Vite](https://img.shields.io/badge/Vite-7.1.6-646CFF?logo=vite)](https://vitejs.dev/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.4.17-38B2AC?logo=tailwind-css)](https://tailwindcss.com/)
 [![Supabase](https://img.shields.io/badge/Supabase-Backend-3ECF8E?logo=supabase)](https://supabase.com/)
+[![shadcn/ui](https://img.shields.io/badge/shadcn%2Fui-Components-black?logo=shadcnui)](https://ui.shadcn.com/)
 
 ## 📸 Aperçu
 
@@ -52,9 +53,9 @@ Une application e-commerce élégante et performante offrant une expérience d'a
 ### **Frontend**
 ```
 ├── React 18.3.1          # Framework UI moderne
-├── TypeScript 5.5.3      # Typage statique robuste
-├── Vite 5.4.1            # Build tool ultra-rapide
-├── Tailwind CSS 3.4.0    # Framework CSS utility-first
+├── TypeScript 5.8.3      # Typage statique robuste
+├── Vite 7.1.6            # Build tool ultra-rapide
+├── Tailwind CSS 3.4.17   # Framework CSS utility-first
 ├── shadcn/ui              # Composants UI premium
 ├── React Query            # Gestion d'état serveur
 ├── React Router 6         # Navigation SPA
@@ -350,24 +351,27 @@ Ce projet est sous licence **MIT** - voir le fichier [LICENSE](LICENSE) pour plu
 
 ---
 
-## 📚 Documentation
+## 📚 Documentation Technique
 
-### **Guides de Migration et Maintenance**
+### **Architecture & Stack**
 
-- **[📋 Post-Lovable Checklist](docs/post-lovable-checklist.md)** - Guide complet pour nettoyer un projet exporté de Lovable
-- **[⚡ Commandes Rapides](docs/quick-commands.md)** - Scripts et commandes de nettoyage en one-liner
+L'application utilise une stack moderne et performante :
+
+- **Frontend** : React 18.3.1 + TypeScript 5.8.3 + Vite 7.1.6
+- **UI Components** : shadcn/ui + Tailwind CSS 3.4.17
+- **State Management** : React Query + Context API
+- **Backend** : Supabase (PostgreSQL + Auth + Storage)
+- **Déploiement** : Vercel avec CDN global
 
 ### **Sécurité et Audits**
 
-L'application a été auditée et nettoyée selon les meilleures pratiques :
+L'application respecte les meilleures pratiques de sécurité :
 
 - ✅ **0 vulnérabilités** de sécurité (npm audit)
-- ✅ **Dépendances à jour** (esbuild, vite, react)
-- ✅ **Code propre** sans traces d'outils de développement
-- ✅ **Bundle optimisé** pour la production
-- ✅ **Métadonnées SEO** personnalisées
-
-> 💡 **Astuce** : Consultez la [checklist post-Lovable](docs/post-lovable-checklist.md) pour appliquer la même procédure à vos projets.
+- ✅ **Dépendances à jour** et compatibles React 18.3
+- ✅ **Code propre** sans références externes
+- ✅ **Bundle optimisé** avec code splitting
+- ✅ **Métadonnées SEO** personnalisées et conformes
 
 ---
 
