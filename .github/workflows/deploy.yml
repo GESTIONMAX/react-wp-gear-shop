@@ -90,11 +90,28 @@ jobs:
 
       - name: 🔍 Post-build security check
         run: |
-          # Vérifier qu'aucun secret n'est exposé
-          if find dist/ -type f -name "*.js" -o -name "*.html" \
-            -o -name "*.css" | xargs grep -l \
-            "secret\|private\|sk_\|pk_test" 2>/dev/null; then
-            echo "❌ Potential secrets found in build output"
+          # Patterns de détection de secrets réels pour production
+          SECRET_PATTERNS=(
+            "sk_[a-zA-Z0-9_]{20,}"              # Stripe secret keys
+            "pk_test_[a-zA-Z0-9_]{20,}"         # Stripe test keys
+            "pk_live_[a-zA-Z0-9_]{20,}"         # Stripe live keys
+            "eyJ[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+" # JWT tokens
+            "(?:password|secret|key|token)\s*[=:]\s*[\"'][^\"']{10,}[\"']" # Explicit secret assignments
+            "ghp_[a-zA-Z0-9_]{36}"              # GitHub tokens
+            "xoxb-[a-zA-Z0-9_-]+"               # Slack bot tokens
+          )
+
+          SECRETS_FOUND=false
+          for pattern in "${SECRET_PATTERNS[@]}"; do
+            if find dist/ -type f \( -name "*.js" -o -name "*.html" -o -name "*.css" \) \
+              -exec grep -l -E "$pattern" {} \; 2>/dev/null | head -1; then
+              echo "❌ Potential secret found with pattern: $pattern"
+              SECRETS_FOUND=true
+            fi
+          done
+
+          if [ "$SECRETS_FOUND" = "true" ]; then
+            echo "❌ Secrets detected in build output"
             exit 1
           fi
 

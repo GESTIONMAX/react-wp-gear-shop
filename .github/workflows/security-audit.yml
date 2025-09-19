@@ -135,10 +135,28 @@ jobs:
         run: |
           echo "## 🔍 Build Security Check" >> $GITHUB_STEP_SUMMARY
 
-          # Vérifier qu'aucun secret n'est dans le build
-          if grep -r "sk_" dist/ || grep -r "secret" dist/ || \
-            grep -r "private" dist/; then
-            echo "❌ Potential secrets found in build" >> $GITHUB_STEP_SUMMARY
+          # Patterns de détection de secrets réels (éviter les faux positifs)
+          SECRET_PATTERNS=(
+            "sk_[a-zA-Z0-9_]{20,}"              # Stripe secret keys
+            "pk_test_[a-zA-Z0-9_]{20,}"         # Stripe test keys
+            "pk_live_[a-zA-Z0-9_]{20,}"         # Stripe live keys
+            "eyJ[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+" # JWT tokens
+            "(?:password|secret|key|token)\s*[=:]\s*[\"'][^\"']{10,}[\"']" # Explicit secret assignments
+            "ghp_[a-zA-Z0-9_]{36}"              # GitHub tokens
+            "xoxb-[a-zA-Z0-9_-]+"               # Slack bot tokens
+          )
+
+          SECRETS_FOUND=false
+          for pattern in "${SECRET_PATTERNS[@]}"; do
+            if find dist/ -type f \( -name "*.js" -o -name "*.html" -o -name "*.css" \) \
+              -exec grep -l -E "$pattern" {} \; 2>/dev/null | head -1; then
+              echo "❌ Potential secret found with pattern: $pattern" >> $GITHUB_STEP_SUMMARY
+              SECRETS_FOUND=true
+            fi
+          done
+
+          if [ "$SECRETS_FOUND" = "true" ]; then
+            echo "❌ Secrets detected in build" >> $GITHUB_STEP_SUMMARY
             exit 1
           else
             echo "✅ No secrets detected in build" >> $GITHUB_STEP_SUMMARY
