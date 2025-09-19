@@ -133,7 +133,7 @@ const CreateVariantForm: React.FC<CreateVariantFormProps> = ({ onClose, onSucces
         Object.entries(formData.attributes).filter(([_, value]) => value.trim() !== '')
       );
 
-      let variantResult: any;
+      let variantResult: { data?: ProductVariant; error?: Error };
 
       if (editingVariant) {
         // Mettre à jour la variante existante

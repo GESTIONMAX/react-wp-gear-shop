@@ -88,7 +88,7 @@ const AdminSettings: React.FC = () => {
     }
   }, [shopSettings, shopForm]);
 
-  const onSubmitShop = (data: any) => {
+  const onSubmitShop = (data: { shop_name: string; shop_description: string; shop_email: string; shop_phone: string; shop_address: Record<string, string> }) => {
     updateSettings.mutate({
       category: 'shop',
       settings: {

@@ -8,6 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { useWishlistWithProducts, useToggleWishlist } from '@/hooks/useWishlist';
 import { useCart } from '@/contexts/CartContext';
+import { Product, ProductVariant } from '@/types';
 import { useAuth } from '@/contexts/AuthContext';
 import { useTranslation } from 'react-i18next';
 
@@ -25,7 +26,7 @@ const Wishlist = () => {
     }).format(price);
   };
 
-  const handleAddToCart = (product: any, variantId?: string) => {
+  const handleAddToCart = (product: Product, variantId?: string) => {
     addItem(product, 1, variantId);
   };
 
@@ -137,9 +138,9 @@ const Wishlist = () => {
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {wishlistItems.map(({ wishlistItem, product }: any) => {
+            {wishlistItems.map(({ wishlistItem, product }: { wishlistItem: { id: string; product_variant_id?: string }; product: Product }) => {
               const variant = wishlistItem.product_variant_id 
-                ? product.variants?.find((v: any) => v.id === wishlistItem.product_variant_id)
+                ? product.variants?.find((v: ProductVariant) => v.id === wishlistItem.product_variant_id)
                 : null;
               
               const currentPrice = variant?.salePrice || variant?.price || product.salePrice || product.price;

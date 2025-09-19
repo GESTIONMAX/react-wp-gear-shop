@@ -355,7 +355,7 @@ const AdminOrders: React.FC = () => {
                     <p><strong>Nom:</strong> {selectedOrder.profiles?.first_name} {selectedOrder.profiles?.last_name}</p>
                     <p><strong>Email:</strong> {selectedOrder.profiles?.email}</p>
                     {selectedOrder.profiles && 'phone' in selectedOrder.profiles && (
-                      <p><strong>Téléphone:</strong> {(selectedOrder.profiles as any).phone || 'Non renseigné'}</p>
+                      <p><strong>Téléphone:</strong> {(selectedOrder.profiles as { phone?: string }).phone || 'Non renseigné'}</p>
                     )}
                   </CardContent>
                 </Card>

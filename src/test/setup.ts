@@ -1,5 +1,6 @@
 import '@testing-library/jest-dom'
 import { vi } from 'vitest'
+import React from 'react'
 
 // Mock Supabase client
 vi.mock('@/integrations/supabase/client', () => ({
@@ -40,15 +41,15 @@ vi.mock('react-router-dom', () => ({
   useNavigate: () => vi.fn(),
   useParams: () => ({}),
   useLocation: () => ({ pathname: '/' }),
-  BrowserRouter: ({ children }: { children: any }) => children,
-  Routes: ({ children }: { children: any }) => children,
-  Route: ({ element }: { element: any }) => element,
-  Link: ({ children, to }: { children: any; to: string }) => children,
+  BrowserRouter: ({ children }: { children: React.ReactNode }) => children,
+  Routes: ({ children }: { children: React.ReactNode }) => children,
+  Route: ({ element }: { element: React.ReactNode }) => element,
+  Link: ({ children, to }: { children: React.ReactNode; to: string }) => children,
 }))
 
 // Mock react-helmet-async
 vi.mock('react-helmet-async', () => ({
-  HelmetProvider: ({ children }: { children: any }) => children,
+  HelmetProvider: ({ children }: { children: React.ReactNode }) => children,
   Helmet: () => null,
 }))
 

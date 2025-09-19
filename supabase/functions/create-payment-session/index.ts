@@ -9,6 +9,24 @@ const corsHeaders = {
   'Access-Control-Max-Age': '86400', // 24 hours
 };
 
+interface OrderItem {
+  product_id: string;
+  product_variant_id?: string;
+  product_name: string;
+  variant_name?: string;
+  quantity: number;
+  unit_price: number;
+  total_price: number;
+}
+
+interface OrderData {
+  user_id: string;
+  total_amount: number;
+  billing_address: Record<string, string>;
+  shipping_address: Record<string, string>;
+  order_items: OrderItem[];
+}
+
 const stripeKey = Deno.env.get('STRIPE_SECRET_KEY');
 const supabaseUrl = Deno.env.get('SUPABASE_URL');
 const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
@@ -56,7 +74,7 @@ serve(async (req) => {
     console.log('Order created:', order.id);
 
     // Create order items
-    const orderItems = orderData.order_items.map((item: any) => ({
+    const orderItems = orderData.order_items.map((item: OrderItem) => ({
       ...item,
       order_id: order.id,
     }));
@@ -71,7 +89,7 @@ serve(async (req) => {
     }
 
     // Create Stripe line items
-    const lineItems = orderData.order_items.map((item: any) => ({
+    const lineItems = orderData.order_items.map((item: OrderItem) => ({
       price_data: {
         currency: 'eur',
         product_data: {

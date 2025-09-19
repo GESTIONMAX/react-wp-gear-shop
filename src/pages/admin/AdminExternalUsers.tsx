@@ -18,6 +18,21 @@ import {
 } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+
+interface ExternalUser {
+  id: string;
+  email: string;
+  first_name?: string;
+  last_name?: string;
+  phone?: string;
+  address?: string;
+  city?: string;
+  postal_code?: string;
+  country?: string;
+  total_orders?: number;
+  total_spent?: number;
+  created_at: string;
+}
 import {
   Users,
   Search,
@@ -39,7 +54,7 @@ import { fr } from 'date-fns/locale';
 
 const AdminExternalUsers = () => {
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedUser, setSelectedUser] = useState<any>(null);
+  const [selectedUser, setSelectedUser] = useState<ExternalUser | null>(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [editFormData, setEditFormData] = useState({
     first_name: '',
@@ -58,7 +73,7 @@ const AdminExternalUsers = () => {
   const { data: customerStats } = useCustomerStats();
   const { mutate: updateCustomer, isPending: isUpdating } = useUpdateCustomer();
 
-  const handleEditUser = (user: any) => {
+  const handleEditUser = (user: ExternalUser) => {
     setSelectedUser(user);
     setEditFormData({
       first_name: user.first_name || '',

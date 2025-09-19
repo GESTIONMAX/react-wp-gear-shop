@@ -37,7 +37,7 @@ import { fr } from 'date-fns/locale';
 const AdminSystemUsers = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [roleFilter, setRoleFilter] = useState<string>('all');
-  const [selectedUser, setSelectedUser] = useState<any>(null);
+  const [selectedUser, setSelectedUser] = useState<{ id: string; email: string; role?: string; created_at: string } | null>(null);
   const [isAddingUser, setIsAddingUser] = useState(false);
   const [newUserForm, setNewUserForm] = useState({
     email: '',

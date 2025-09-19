@@ -147,7 +147,7 @@ const SalesChart: React.FC<SalesChartProps> = ({ data, className = '' }) => {
                 ]}
                 tooltip={({ point }) => {
                   const serieColor = point?.color || '#3b82f6';
-                  const serieId = (point as any)?.serie?.id || 'Unknown';
+                  const serieId = (point as { serie?: { id?: string } })?.serie?.id || 'Unknown';
 
                   return (
                     <div

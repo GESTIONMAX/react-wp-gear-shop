@@ -56,7 +56,7 @@ export const filterVariantsByCategory = (
   
   return variants.filter(({ product }) => {
     const productCategoryName = (product.category || '').toLowerCase();
-    const productCategorySlug = (product as any).categorySlug ? (product as any).categorySlug.toLowerCase() : '';
+    const productCategorySlug = (product as { categorySlug?: string }).categorySlug ? (product as { categorySlug?: string }).categorySlug.toLowerCase() : '';
     const targetCategory = category.toLowerCase();
     
     // Debug log pour voir les correspondances

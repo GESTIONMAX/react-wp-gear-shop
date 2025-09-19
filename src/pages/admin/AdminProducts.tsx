@@ -10,7 +10,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Loader2, Search, Package, Plus, MoreHorizontal, Edit, Trash2, Eye, EyeOff, Images } from 'lucide-react';
-import { useAdminProducts, useDeleteProduct, useToggleProductStatus, useCreateProduct, useUpdateProduct } from '@/hooks/useAdminProducts';
+import { useAdminProducts, useDeleteProduct, useToggleProductStatus, useCreateProduct, useUpdateProduct, CreateProductData, UpdateProductData } from '@/hooks/useAdminProducts';
 import ProductForm from '@/components/admin/ProductForm';
 import ProductImageUploader from '@/components/admin/ProductImageUploader';
 import { toast } from '@/hooks/use-toast';
@@ -21,7 +21,7 @@ const AdminProducts = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [categoryFilter, setCategoryFilter] = useState<string>('all');
   const [statusFilter, setStatusFilter] = useState<string>('all');
-  const [selectedProduct, setSelectedProduct] = useState<any>(null);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [showImageManager, setShowImageManager] = useState(false);
@@ -72,12 +72,12 @@ const AdminProducts = () => {
     }
   };
 
-  const handleEdit = (product: any) => {
+  const handleEdit = (product: Product) => {
     setSelectedProduct(product);
     setIsEditDialogOpen(true);
   };
 
-  const handleCreateProduct = async (productData: any) => {
+  const handleCreateProduct = async (productData: CreateProductData) => {
     try {
       // Le ProductForm envoie les prix en euros, on les convertit en centimes ici
       const cleanData = {
@@ -107,7 +107,7 @@ const AdminProducts = () => {
     }
   };
 
-  const handleUpdateProduct = async (productData: any) => {
+  const handleUpdateProduct = async (productData: UpdateProductData) => {
     try {
       // Le ProductForm envoie les prix en euros, on les convertit en centimes ici
       const cleanData = {
