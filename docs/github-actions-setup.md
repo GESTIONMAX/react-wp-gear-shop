@@ -30,7 +30,7 @@ Dans **Settings > Secrets and Variables > Actions** :
 Aller dans l'onglet **"Variables"** :
 ```
 VITE_SUPABASE_URL=https://votre-projet.supabase.co
-VITE_SUPABASE_PUBLISHABLE_KEY=eyJhbGciOi...
+VITE_SUPABASE_PUBLISHABLE_KEY=your_supabase_anon_key_here
 ```
 
 #### **Secrets (privés)**
