@@ -1,7 +1,7 @@
 import React, { Suspense } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 
-// Lazy load charts to prevent SSR issues with recharts
+// Lazy load charts to prevent SSR issues with chart libraries
 const SalesChart = React.lazy(() => import('./admin/SalesChart'));
 const TopProductsChart = React.lazy(() => import('./admin/TopProductsChart'));
 

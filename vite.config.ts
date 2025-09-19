@@ -50,7 +50,7 @@ export default defineConfig(({ mode }) => ({
             './src/pages/admin/AdminInternalUsers'
           ],
           // Séparer les composants charts
-          'charts': ['recharts', 'lucide-react'],
+          'charts': ['@nivo/bar', '@nivo/line', '@nivo/core', 'lucide-react'],
           // Séparer les composants UI Radix
           'ui-components': [
             '@radix-ui/react-accordion',

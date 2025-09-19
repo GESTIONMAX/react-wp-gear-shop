@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 
 // This component ensures charts only render on the client side
-// to prevent SSR hydration mismatches with recharts
+// to prevent SSR hydration mismatches with chart libraries (Recharts, Nivo, etc.)
 
 interface ClientOnlyProps {
   children: React.ReactNode;

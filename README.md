@@ -8,6 +8,7 @@
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.4.17-38B2AC?logo=tailwind-css)](https://tailwindcss.com/)
 [![Supabase](https://img.shields.io/badge/Supabase-Backend-3ECF8E?logo=supabase)](https://supabase.com/)
 [![shadcn/ui](https://img.shields.io/badge/shadcn%2Fui-Components-black?logo=shadcnui)](https://ui.shadcn.com/)
+[![Nivo](https://img.shields.io/badge/Nivo-0.99.0-FF6B6B?logo=d3dotjs)](https://nivo.rocks/)
 
 ## 📸 Aperçu
 
@@ -57,6 +58,7 @@ Une application e-commerce élégante et performante offrant une expérience d'a
 ├── Vite 7.1.6            # Build tool ultra-rapide
 ├── Tailwind CSS 3.4.17   # Framework CSS utility-first
 ├── shadcn/ui              # Composants UI premium
+├── Nivo 0.99.0            # Bibliothèque de graphiques modernes
 ├── React Query            # Gestion d'état serveur
 ├── React Router 6         # Navigation SPA
 ├── React Hook Form        # Gestion des formulaires
@@ -183,7 +185,7 @@ Les migrations sont versionnées dans `/supabase/migrations/` avec :
 
 ### **Admin Dashboard**
 - **Métriques temps réel** (ventes, visiteurs, conversions)
-- **Graphiques interactifs** avec charts.js
+- **Graphiques interactifs** avec Nivo (Bar Charts, Line Charts)
 - **Exports de données** (CSV, PDF)
 - **Gestion des stocks** avec alertes
 - **Système de notifications**
@@ -351,6 +353,30 @@ Ce projet est sous licence **MIT** - voir le fichier [LICENSE](LICENSE) pour plu
 
 ---
 
+## 📈 Migration Recharts → Nivo
+
+### **Problème résolu**
+Recharts présentait des problèmes de compatibilité avec React 18.3.1 :
+- Erreurs liées aux React internals
+- Problèmes d'hydration SSR
+- Warnings de performance
+
+### **Solution adoptée**
+Migration complète vers **Nivo 0.99.0** :
+- ✅ **TopProductsChart.tsx** → ResponsiveBar
+- ✅ **SalesChart.tsx** → ResponsiveLine
+- ✅ **Suppression complète** de Recharts
+- ✅ **Bundle optimisé** (-20 dépendances)
+
+### **Avantages**
+- 🚀 **Performances améliorées**
+- 🔧 **100% compatible React 18**
+- 🎨 **Thèmes cohérents** avec Tailwind CSS
+- 📱 **SSR optimisé** sans hydration issues
+- 💡 **API moderne** et TypeScript-friendly
+
+---
+
 ## 📚 Documentation Technique
 
 ### **Architecture & Stack**
@@ -359,6 +385,7 @@ L'application utilise une stack moderne et performante :
 
 - **Frontend** : React 18.3.1 + TypeScript 5.8.3 + Vite 7.1.6
 - **UI Components** : shadcn/ui + Tailwind CSS 3.4.17
+- **Charts & Analytics** : Nivo 0.99.0 (migration depuis Recharts)
 - **State Management** : React Query + Context API
 - **Backend** : Supabase (PostgreSQL + Auth + Storage)
 - **Déploiement** : Vercel avec CDN global
@@ -369,6 +396,7 @@ L'application respecte les meilleures pratiques de sécurité :
 
 - ✅ **0 vulnérabilités** de sécurité (npm audit)
 - ✅ **Dépendances à jour** et compatibles React 18.3
+- ✅ **Migration Recharts → Nivo** pour résoudre les problèmes React 18 internals
 - ✅ **Code propre** sans références externes
 - ✅ **Bundle optimisé** avec code splitting
 - ✅ **Métadonnées SEO** personnalisées et conformes
