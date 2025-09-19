@@ -173,8 +173,17 @@ const AdminDashboard: React.FC = () => {
 
         {/* Graphiques et métriques avancées */}
         <div className="grid gap-6 lg:grid-cols-2">
-          <SalesChart data={stats?.orders.salesByDay || []} />
-          <TopProductsChart data={stats?.products.topSelling || []} />
+          <SalesChart data={(stats?.orders.salesByDay || []).map(item => ({
+            date: item.date,
+            orders: item.amount || 0,
+            revenue: item.amount || 0
+          }))} />
+          <TopProductsChart data={(stats?.products.topSelling || []).map((item, index) => ({
+            id: `product-${index}`,
+            name: item.name,
+            quantity: item.count || 0,
+            revenue: (item.count || 0) * 2000 // Estimation du revenu
+          }))} />
         </div>
 
         {/* Graphiques et détails */}

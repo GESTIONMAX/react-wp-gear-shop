@@ -49,12 +49,12 @@ jobs:
       - name: 🔍 Environment variables check
         run: |
           # Vérifier que les variables d'environnement sont définies
-          if [ -z "${{ vars.VITE_SUPABASE_URL }}" ]; then
+          if [ -z "${{ secrets.VITE_SUPABASE_URL }}" ]; then
             echo "❌ VITE_SUPABASE_URL not configured"
             exit 1
           fi
 
-          if [ -z "${{ vars.VITE_SUPABASE_PUBLISHABLE_KEY }}" ]; then
+          if [ -z "${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY }}" ]; then
             echo "❌ VITE_SUPABASE_PUBLISHABLE_KEY not configured"
             exit 1
           fi
@@ -85,8 +85,8 @@ jobs:
       - name: 🏗️ Build for production
         run: npm run build
         env:
-          VITE_SUPABASE_URL: ${{ vars.VITE_SUPABASE_URL }}
-          VITE_SUPABASE_PUBLISHABLE_KEY: ${{ vars.VITE_SUPABASE_PUBLISHABLE_KEY }}
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY }}
 
       - name: 🔍 Post-build security check
         run: |
@@ -140,6 +140,9 @@ jobs:
           vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
           vercel-args: '--prod'
           working-directory: ./
+        env:
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY }}
 
       - name: 🔍 Post-deployment health check
         run: |
