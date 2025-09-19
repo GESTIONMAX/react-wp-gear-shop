@@ -146,27 +146,28 @@ const SalesChart: React.FC<SalesChartProps> = ({ data, className = '' }) => {
                   }
                 ]}
                 tooltip={({ point }) => {
-                  const serieColor = (point as any).color || 'hsl(var(--primary))';
-                  const serieId = (point as any).id || 'Unknown';
+                  const serieColor = point?.color || '#3b82f6';
+                  const serieId = (point as any)?.serie?.id || 'Unknown';
 
                   return (
                     <div
                       style={{
-                        background: 'hsl(var(--background))',
-                        border: '1px solid hsl(var(--border))',
+                        background: 'white',
+                        border: '1px solid #e2e8f0',
                         borderRadius: '8px',
                         padding: '12px',
                         fontSize: '12px',
-                        boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)'
+                        boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)',
+                        color: '#1e293b'
                       }}
                     >
                       <div style={{ marginBottom: '4px', fontWeight: '600' }}>
-                        Date: {point.data.originalDate ? formatDate(point.data.originalDate as string) : point.data.xFormatted}
+                        Date: {point?.data?.originalDate ? formatDate(point.data.originalDate as string) : point?.data?.xFormatted || 'N/A'}
                       </div>
                       <div style={{ color: serieColor, fontWeight: '500' }}>
                         {serieId}: {serieId === 'Revenus'
-                          ? formatCurrency(point.data.originalValue as number || (point.data.y as number * 100))
-                          : point.data.originalValue || point.data.y
+                          ? formatCurrency((point?.data?.originalValue as number) || ((point?.data?.y as number) * 100) || 0)
+                          : (point?.data?.originalValue || point?.data?.y || 0)
                         }
                       </div>
                     </div>

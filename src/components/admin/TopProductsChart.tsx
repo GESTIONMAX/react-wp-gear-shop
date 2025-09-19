@@ -90,22 +90,23 @@ const TopProductsChart: React.FC<TopProductsChartProps> = ({ data, className = '
                 tooltip={({ value, data }) => (
                   <div
                     style={{
-                      background: 'hsl(var(--background))',
-                      border: '1px solid hsl(var(--border))',
+                      background: 'white',
+                      border: '1px solid #e2e8f0',
                       borderRadius: '8px',
                       padding: '12px',
                       fontSize: '12px',
-                      boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)'
+                      boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)',
+                      color: '#1e293b'
                     }}
                   >
                     <div style={{ marginBottom: '4px', fontWeight: '600' }}>
-                      Produit: {data.fullName}
+                      Produit: {data?.fullName || 'N/A'}
                     </div>
-                    <div style={{ color: 'hsl(var(--primary))' }}>
+                    <div style={{ color: '#3b82f6' }}>
                       Quantité vendue: {value}
                     </div>
-                    {data.revenue && (
-                      <div style={{ color: 'hsl(var(--muted-foreground))' }}>
+                    {data?.revenue && (
+                      <div style={{ color: '#64748b' }}>
                         Revenus: {formatCurrency(data.revenue)}
                       </div>
                     )}
