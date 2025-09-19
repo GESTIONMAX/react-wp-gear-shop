@@ -27,7 +27,7 @@ export const useOrders = () => {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      return data as any[];
+      return data as Order[];
     },
   });
 };
@@ -57,7 +57,7 @@ export const useOrder = (orderId: string) => {
         .single();
 
       if (error) throw error;
-      return data as any;
+      return data as Order;
     },
     enabled: !!orderId,
   });
@@ -69,7 +69,7 @@ export const useCreateOrder = () => {
   const { toast } = useToast();
   
   return useMutation({
-    mutationFn: async (orderData: any) => {
+    mutationFn: async (orderData: Omit<Order, 'id' | 'created_at' | 'updated_at'> & { order_items: Omit<OrderItem, 'id' | 'order_id'>[] }) => {
       // Séparer les items de la commande
       const { order_items, ...orderFields } = orderData;
       
@@ -84,7 +84,7 @@ export const useCreateOrder = () => {
 
       // Créer les items de la commande
       if (order_items && order_items.length > 0) {
-        const itemsWithOrderId = order_items.map((item: any) => ({
+        const itemsWithOrderId = order_items.map((item: Omit<OrderItem, 'id' | 'order_id'>) => ({
           ...item,
           order_id: order.id,
         }));
@@ -172,7 +172,7 @@ export const useAdminOrders = () => {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      return data as any[];
+      return data as Order[];
     },
   });
 };
@@ -202,7 +202,7 @@ export const useAdminOrder = (orderId: string) => {
         .single();
 
       if (error) throw error;
-      return data as any;
+      return data as Order;
     },
     enabled: !!orderId,
   });

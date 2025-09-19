@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
+import { ShippingAddress } from '@/types';
 
 export interface ClientData {
   id: string;
@@ -14,8 +15,8 @@ export interface ClientData {
   city: string | null;
   postal_code: string | null;
   country: string | null;
-  preferred_shipping_address: any | null;
-  preferred_billing_address: any | null;
+  preferred_shipping_address: ShippingAddress | null;
+  preferred_billing_address: ShippingAddress | null;
   marketing_phone: string | null;
   marketing_consent: boolean;
   notes: string | null;

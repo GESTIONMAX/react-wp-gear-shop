@@ -8,16 +8,26 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
 import { X, Upload, Image } from 'lucide-react';
 
+interface ProductVariant {
+  id: string;
+  product_id: string;
+  name: string;
+  sku?: string;
+  price: number;
+  stock_quantity: number;
+  attributes?: Record<string, string>;
+}
+
 interface CreateVariantFormProps {
   onClose: () => void;
   onSuccess: () => void;
-  editingVariant?: any;
+  editingVariant?: ProductVariant;
 }
 
 const CreateVariantForm: React.FC<CreateVariantFormProps> = ({ onClose, onSuccess, editingVariant }) => {
   const [loading, setLoading] = useState(false);
   const [uploadingImages, setUploadingImages] = useState(false);
-  const [products, setProducts] = useState<any[]>([]);
+  const [products, setProducts] = useState<{ id: string; name: string; slug: string }[]>([]);
   const [selectedImages, setSelectedImages] = useState<File[]>([]);
   const [imagePreview, setImagePreview] = useState<string[]>([]);
   const [formData, setFormData] = useState({
@@ -123,11 +133,11 @@ const CreateVariantForm: React.FC<CreateVariantFormProps> = ({ onClose, onSucces
         Object.entries(formData.attributes).filter(([_, value]) => value.trim() !== '')
       );
 
-      let variantResult;
+      let variantResult: any;
 
       if (editingVariant) {
         // Mettre à jour la variante existante
-        const updateData: any = {
+        const updateData: Partial<ProductVariant> = {
           product_id: formData.product_id,
           name: formData.name,
           price: Math.round(parseFloat(formData.price) * 100),
@@ -151,7 +161,7 @@ const CreateVariantForm: React.FC<CreateVariantFormProps> = ({ onClose, onSucces
         variantResult = updatedVariant;
       } else {
         // Créer une nouvelle variante
-        const insertData: any = {
+        const insertData: Omit<ProductVariant, 'id'> & { in_stock: boolean } = {
           product_id: formData.product_id,
           name: formData.name,
           price: Math.round(parseFloat(formData.price) * 100),

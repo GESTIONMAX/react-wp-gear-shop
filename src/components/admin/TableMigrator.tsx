@@ -6,8 +6,8 @@ import { toast } from '@/hooks/use-toast';
 
 const TableMigrator: React.FC = () => {
   const [loading, setLoading] = useState(false);
-  const [variantsData, setVariantsData] = useState<any[]>([]);
-  const [productVariantsData, setProductVariantsData] = useState<any[]>([]);
+  const [variantsData, setVariantsData] = useState<{ id: string; name: string; sku?: string; product_id: string; price?: number; attributes?: Record<string, any> }[]>([]);
+  const [productVariantsData, setProductVariantsData] = useState<{ id: string; name: string; price: number }[]>([]);
 
   useEffect(() => {
     loadTableData();

@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -65,17 +65,17 @@ const ProductImageCarousel: React.FC<ProductImageCarouselProps> = ({
     }
   }, [selectedIndex]);
 
-  const goToPrevious = () => {
+  const goToPrevious = useCallback(() => {
     setSelectedIndex((prev) => (prev - 1 + images.length) % images.length);
-  };
+  }, [images.length]);
 
-  const goToNext = () => {
+  const goToNext = useCallback(() => {
     setSelectedIndex((prev) => (prev + 1) % images.length);
-  };
+  }, [images.length]);
 
-  const toggleAutoPlay = () => {
+  const toggleAutoPlay = useCallback(() => {
     setIsAutoPlaying(!isAutoPlaying);
-  };
+  }, [isAutoPlaying]);
 
   const toggleFullscreen = () => {
     setIsFullscreen(!isFullscreen);
@@ -126,7 +126,7 @@ const ProductImageCarousel: React.FC<ProductImageCarouselProps> = ({
 
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [isFullscreen]);
+  }, [isFullscreen, goToNext, goToPrevious, toggleAutoPlay]);
 
   if (!images || images.length === 0) {
     return (

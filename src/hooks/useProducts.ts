@@ -37,7 +37,7 @@ export const useProducts = () => {
         throw categoriesError;
       }
 
-      const categoryMap = new Map(categories.map((c: any) => [c.id, c]));
+      const categoryMap = new Map(categories.map((c: { id: string; name: string; slug: string }) => [c.id, c]));
       
       console.log('🏷️ Category mapping:', Object.fromEntries(categoryMap));
 

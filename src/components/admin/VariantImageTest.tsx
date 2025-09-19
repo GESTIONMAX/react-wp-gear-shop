@@ -5,7 +5,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useVariantMainImage } from '@/hooks/useVariantImages';
 
 const VariantImageTest: React.FC = () => {
-  const [variants, setVariants] = useState<any[]>([]);
+  const [variants, setVariants] = useState<{ id: string; name: string; sku?: string; product_id: string }[]>([]);
   const [selectedVariantId, setSelectedVariantId] = useState<string>('');
   const [loading, setLoading] = useState(false);
 

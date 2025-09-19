@@ -88,7 +88,7 @@ export const useUpdateSettingsCategory = () => {
   const queryClient = useQueryClient();
   
   return useMutation({
-    mutationFn: async ({ category, settings }: { category: string; settings: Record<string, any> }) => {
+    mutationFn: async ({ category, settings }: { category: string; settings: Record<string, string | number | boolean> }) => {
       const updates = Object.entries(settings).map(([key, value]) => 
         supabase
           .from('site_settings')

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { ProductVariant } from '@/types';
 import AdminLayout from '@/components/admin/AdminLayout';
 import { Layers3, Plus, Package, Edit, Trash2, Eye, EyeOff, Images } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -22,7 +23,7 @@ const AdminVariants: React.FC = () => {
   const toggleStock = useToggleVariantStock();
   const deleteVariant = useDeleteVariant();
   const [showCreateForm, setShowCreateForm] = useState(false);
-  const [editingVariant, setEditingVariant] = useState<any>(null);
+  const [editingVariant, setEditingVariant] = useState<ProductVariant | null>(null);
   const [showImageManager, setShowImageManager] = useState(false);
   const [selectedVariantForImages, setSelectedVariantForImages] = useState<{
     id: string;
@@ -47,7 +48,7 @@ const AdminVariants: React.FC = () => {
     setShowCreateForm(true);
   };
 
-  const handleEditVariant = (variant: any) => {
+  const handleEditVariant = (variant: ProductVariant) => {
     setEditingVariant(variant);
     setShowCreateForm(true);
   };

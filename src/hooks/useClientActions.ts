@@ -2,7 +2,8 @@ import { useState, useCallback } from 'react';
 import { useUpdateClientData } from './useClientData';
 import { useQueryClient } from '@tanstack/react-query';
 import { toast } from './use-toast';
-import { ShippingAddress } from '@/types';
+import { ShippingAddress, User } from '@/types';
+import { ClientData } from './useClientData';
 
 export interface ProfileForm {
   first_name: string;
@@ -37,12 +38,12 @@ const initialProfileForm: ProfileForm = {
 export const useClientActions = () => {
   const [editingProfile, setEditingProfile] = useState(false);
   const [profileForm, setProfileForm] = useState<ProfileForm>(initialProfileForm);
-  const [selectedUser, setSelectedUser] = useState<any>(null);
+  const [selectedUser, setSelectedUser] = useState<User | null>(null);
 
   const updateClientData = useUpdateClientData();
   const queryClient = useQueryClient();
 
-  const handleEditProfile = useCallback((clientData: any) => {
+  const handleEditProfile = useCallback((clientData: ClientData) => {
     if (clientData) {
       const newForm: ProfileForm = {
         first_name: clientData.first_name || '',
@@ -98,7 +99,7 @@ export const useClientActions = () => {
     setProfileForm(initialProfileForm);
   }, []);
 
-  const handleSelectUser = useCallback((user: any) => {
+  const handleSelectUser = useCallback((user: User) => {
     setSelectedUser(user);
   }, []);
 

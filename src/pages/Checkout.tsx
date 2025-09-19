@@ -653,7 +653,7 @@ const Checkout = () => {
                 <CardContent>
                   <RadioGroup
                     value={formData.paymentMethod}
-                    onValueChange={(value) => setFormData(prev => ({ ...prev, paymentMethod: value as any }))}
+                    onValueChange={(value) => setFormData(prev => ({ ...prev, paymentMethod: value as 'card' | 'paypal' | 'bank_transfer' }))}
                   >
                     <div className="flex items-center space-x-2">
                       <RadioGroupItem value="card" id="card" />

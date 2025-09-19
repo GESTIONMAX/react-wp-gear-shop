@@ -35,7 +35,7 @@ export function useSecureValidation() {
   const validateForm = useCallback((
     data: Record<string, { value: string; type?: 'string' | 'email' | 'phone' | 'html' }>
   ) => {
-    const results: Record<string, any> = {};
+    const results: Record<string, { isValid: boolean; sanitized: string; errors: string[] }> = {};
     const allErrors: Record<string, string[]> = {};
     let isFormValid = true;
 

@@ -18,8 +18,8 @@ import { ProfileForm } from '@/hooks/useClientActions';
 
 interface ClientDetailDialogProps {
   user: ClientWithRole | null;
-  orders: any[];
-  invoices: any[];
+  orders: Order[];
+  invoices: Invoice[];
   editingProfile: boolean;
   setEditingProfile: (editing: boolean) => void;
   profileForm: ProfileForm;

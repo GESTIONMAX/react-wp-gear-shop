@@ -35,7 +35,7 @@ export interface ClientData {
 
 export interface UpdateClientData {
   mutate: (data: { userId: string; updates: Partial<ClientData> }) => void;
-  mutateAsync: (data: { userId: string; updates: Partial<ClientData> }) => Promise<any>;
+  mutateAsync: (data: { userId: string; updates: Partial<ClientData> }) => Promise<ClientData>;
   isPending: boolean;
   isError: boolean;
   error: Error | null;

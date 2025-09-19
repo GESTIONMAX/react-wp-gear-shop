@@ -14,6 +14,7 @@ import { useAdminProducts, useDeleteProduct, useToggleProductStatus, useCreatePr
 import ProductForm from '@/components/admin/ProductForm';
 import ProductImageUploader from '@/components/admin/ProductImageUploader';
 import { toast } from '@/hooks/use-toast';
+import { Product } from '@/types';
 
 // Page de gestion des produits
 const AdminProducts = () => {

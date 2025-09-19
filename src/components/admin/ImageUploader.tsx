@@ -49,7 +49,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({
         onImagesUploaded(newImages);
       }
     }
-  }, [images, maxImages, uploadImage, onImagesUploaded]);
+  }, [images, maxImages, uploadImage, onImagesUploaded, uploadOptions]);
 
   const allowedExtensions = bucketConfig.allowedTypes.map(type => {
     const ext = type.split('/')[1];

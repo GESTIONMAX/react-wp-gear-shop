@@ -34,7 +34,7 @@ const Wishlist = () => {
       productId,
       variantId,
       isInWishlist: true,
-    });
+    } as { productId: string; variantId?: string; isInWishlist: boolean });
   };
 
   if (!user) {

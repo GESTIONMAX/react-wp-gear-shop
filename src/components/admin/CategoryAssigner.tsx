@@ -7,8 +7,8 @@ import { toast } from '@/hooks/use-toast';
 
 const CategoryAssigner: React.FC = () => {
   const [loading, setLoading] = useState(false);
-  const [products, setProducts] = useState<any[]>([]);
-  const [categories, setCategories] = useState<any[]>([]);
+  const [products, setProducts] = useState<{ id: string; name: string; slug: string; category_id?: string }[]>([]);
+  const [categories, setCategories] = useState<{ id: string; name: string; slug: string }[]>([]);
   const [selectedProduct, setSelectedProduct] = useState<string>('');
   const [selectedCategory, setSelectedCategory] = useState<string>('');
 

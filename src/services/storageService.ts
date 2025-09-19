@@ -112,7 +112,7 @@ export class StorageService {
         if (pathParts.length >= 3 && pathParts[0] === 'categories') {
           return {
             categoryId: pathParts[1],
-            type: pathParts[2] as any
+            type: pathParts[2] as 'main' | 'gallery' | 'thumbnail' | 'hero' | 'icon' | 'logo'
           };
         }
         break;
@@ -122,7 +122,7 @@ export class StorageService {
         if (pathParts.length >= 3 && pathParts[0] === 'products') {
           return {
             productId: pathParts[1],
-            type: pathParts[2] as any
+            type: pathParts[2] as 'main' | 'gallery' | 'thumbnail' | 'hero' | 'icon' | 'logo'
           };
         }
         break;
@@ -140,7 +140,7 @@ export class StorageService {
         if (pathParts.length >= 3 && pathParts[0] === 'ui') {
           return {
             folder: pathParts[1],
-            type: pathParts[2] as any
+            type: pathParts[2] as 'main' | 'gallery' | 'thumbnail' | 'hero' | 'icon' | 'logo'
           };
         }
         break;
