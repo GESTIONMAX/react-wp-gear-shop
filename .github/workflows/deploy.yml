@@ -124,7 +124,7 @@ jobs:
           echo "✅ Build security check passed"
 
       - name: 📤 Upload build artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: production-build
           path: dist/
