@@ -87,7 +87,7 @@ jobs:
           fi
 
       - name: 📤 Upload audit artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         if: always()
         with:
           name: security-audit-${{ github.sha }}
@@ -167,7 +167,7 @@ jobs:
           echo "📦 Bundle size: $BUNDLE_SIZE" >> $GITHUB_STEP_SUMMARY
 
       - name: 📤 Upload build artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         if: matrix.node-version == 20
         with:
           name: build-${{ github.sha }}
