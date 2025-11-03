@@ -21,7 +21,7 @@
     "snyk:monitor": "snyk monitor"
   },
   "dependencies": {
-    "@hookform/resolvers": "^3.10.0",
+    "@hookform/resolvers": "^5.2.2",
     "@nivo/bar": "^0.99.0",
     "@nivo/core": "^0.99.0",
     "@nivo/line": "^0.99.0",
